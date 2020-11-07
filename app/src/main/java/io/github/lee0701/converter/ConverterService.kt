@@ -16,16 +16,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.dictionary.MapDictionary
 import io.github.lee0701.converter.dictionary.PrefixSearchDictionary
-import java.io.DataInputStream
 
 class ConverterService: AccessibilityService() {
 
     private val rect = Rect()
-    private var candidatesView: View? = null
-    
+    private val statusBarHeight get() = resources.getDimensionPixelSize(
+        resources.getIdentifier("status_bar_height", "dimen", "android"))
+
     lateinit var dictionary: MapHanjaDictionary
-    var conversionIndex = 0
-    var preserveConversionIndex = false
+    private var candidatesView: View? = null
+    private var conversionIndex = 0
+    private var preserveConversionIndex = false
 
     override fun onCreate() {
         super.onCreate()
@@ -94,13 +95,17 @@ class ConverterService: AccessibilityService() {
         val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         if(candidatesView == null) {
             candidatesView = LayoutInflater.from(this).inflate(R.layout.candidates_view, null)
-            val height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200f, resources.displayMetrics).toInt()
+
+            val height = 200
+            val heightPixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height.toFloat(), resources.displayMetrics).toInt()
+            val y = if(rect.centerY() < resources.displayMetrics.heightPixels / 2) rect.bottom else rect.top - heightPixels
+
             val type = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) TYPE_APPLICATION_OVERLAY else TYPE_SYSTEM_ALERT
             val flags = FLAG_NOT_FOCUSABLE or FLAG_NOT_TOUCH_MODAL
-            val offset = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24f, resources.displayMetrics).toInt()
+
             val params = WindowManager.LayoutParams(
-                WRAP_CONTENT, height,
-                rect.left, rect.top + offset,
+                WRAP_CONTENT, heightPixels,
+                rect.left, y - statusBarHeight,
                 type, flags,
                 PixelFormat.TRANSLUCENT
             )
