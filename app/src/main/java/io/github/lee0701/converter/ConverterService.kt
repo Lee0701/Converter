@@ -14,11 +14,35 @@ import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.github.lee0701.converter.dictionary.MapDictionary
+import io.github.lee0701.converter.dictionary.PrefixSearchDictionary
 
 class ConverterService: AccessibilityService() {
 
     private val rect = Rect()
     private var candidatesView: View? = null
+    
+    lateinit var dictionary: MapHanjaDictionary
+    var conversionIndex = 0
+    var preserveConversionIndex = false
+
+    override fun onCreate() {
+        super.onCreate()
+        val map = mutableMapOf<String, List<HanjaDictionary.Entry>>()
+        val br = assets.open("wordlist_example.txt").bufferedReader()
+        while(true) {
+            val line = br.readLine() ?: break
+            val values = line.split(",")
+            if(values.size < 2) continue
+            val key = values[1]
+            val value = values[0]
+            val extra = values.getOrNull(2)
+            val frequency = values.getOrNull(3)?.toInt() ?: 0
+            val entry = HanjaDictionary.Entry(value, extra, frequency)
+            map[key] = (map[key] ?: listOf()) + entry
+        }
+        dictionary = MapHanjaDictionary(map)
+    }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         if(event.eventType != AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED) return
@@ -26,22 +50,42 @@ class ConverterService: AccessibilityService() {
         source.getBoundsInScreen(rect)
         val text = event.text.firstOrNull() ?: return
         val word = text.split("\\s".toRegex()).lastOrNull()
-        if(word != null) {
-            onWord(word) {
-                val replacement = it + word.drop(it.length)
-                val pasteText = text.dropLast(word.length).toString() + replacement
-                val arguments = Bundle()
-                arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, pasteText)
-                source.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
-            }
+        if(!preserveConversionIndex)conversionIndex = 0
+        preserveConversionIndex = false
+        if(word != null) onWord(word) { replaceWord(source, text.toString(), word, it) }
+    }
+
+    private fun replaceWord(source: AccessibilityNodeInfo, fullText: String, original: String, replacement: String) {
+        val fullReplacement = replacement + original.drop(replacement.length)
+        val pasteText = fullText.dropLast(original.length) + fullReplacement
+        pasteFullText(source, pasteText)
+        if(fullReplacement == original) {
+            onWord(fullReplacement) { replaceWord(source, fullText, fullReplacement, it) }
+        } else {
+            preserveConversionIndex = true
         }
     }
 
+    private fun pasteFullText(source: AccessibilityNodeInfo, text: String) {
+        val arguments = Bundle()
+        arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text)
+        source.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
+    }
+
     private fun onWord(word: String, onReplacement: (String) -> Unit) {
-        if(word.endsWith("asdf")) {
-            showWindow(listOf("aoeu", "arst"), onReplacement)
-        } else {
-            destroyWindow()
+        val conversionTarget = word.drop(conversionIndex)
+        if(conversionTarget.isEmpty()) return destroyWindow()
+
+        val result = dictionary.search(conversionTarget)
+        if(result == null) destroyWindow()
+        else {
+            val original = listOf(conversionTarget[0].toString(), conversionTarget).toHashSet().toList()
+            val candidates = original + result.flatten().map { it.result }
+            showWindow(candidates) {
+                val replacement = word.take(conversionIndex) + it
+                conversionIndex += it.length
+                onReplacement(replacement)
+            }
         }
     }
 
@@ -74,6 +118,9 @@ class ConverterService: AccessibilityService() {
 
     override fun onInterrupt() {
     }
+    
+    class MapHanjaDictionary(entries: Map<String, List<HanjaDictionary.Entry>>)
+        : PrefixSearchDictionary<List<HanjaDictionary.Entry>>(MapDictionary(entries))
 
     class CandidateListAdapter(private val dataset: Array<String>, private val onItemClick: (String) -> Unit)
         : RecyclerView.Adapter<CandidateListAdapter.CandidateItemViewHolder>() {
