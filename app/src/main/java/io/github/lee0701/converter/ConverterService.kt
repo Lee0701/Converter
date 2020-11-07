@@ -120,7 +120,11 @@ class ConverterService: AccessibilityService() {
     }
     
     class MapHanjaDictionary(entries: Map<String, List<HanjaDictionary.Entry>>)
-        : PrefixSearchDictionary<List<HanjaDictionary.Entry>>(MapDictionary(entries))
+        : PrefixSearchDictionary<List<HanjaDictionary.Entry>>(MapDictionary(entries)) {
+        override fun search(key: String): List<List<HanjaDictionary.Entry>>? {
+            return super.search(key)?.map { list -> list.sortedByDescending { it.frequency } }
+        }
+    }
 
     class CandidateListAdapter(private val dataset: Array<String>, private val onItemClick: (String) -> Unit)
         : RecyclerView.Adapter<CandidateListAdapter.CandidateItemViewHolder>() {
