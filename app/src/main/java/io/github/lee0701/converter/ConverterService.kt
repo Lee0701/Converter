@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.dictionary.MapDictionary
 import io.github.lee0701.converter.dictionary.PrefixSearchDictionary
+import java.io.DataInputStream
 
 class ConverterService: AccessibilityService() {
 
@@ -93,11 +94,12 @@ class ConverterService: AccessibilityService() {
         val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         if(candidatesView == null) {
             candidatesView = LayoutInflater.from(this).inflate(R.layout.candidates_view, null)
+            val height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200f, resources.displayMetrics).toInt()
             val type = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) TYPE_APPLICATION_OVERLAY else TYPE_SYSTEM_ALERT
             val flags = FLAG_NOT_FOCUSABLE or FLAG_NOT_TOUCH_MODAL
             val offset = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24f, resources.displayMetrics).toInt()
             val params = WindowManager.LayoutParams(
-                WRAP_CONTENT, WRAP_CONTENT,
+                WRAP_CONTENT, height,
                 rect.left, rect.top + offset,
                 type, flags,
                 PixelFormat.TRANSLUCENT
