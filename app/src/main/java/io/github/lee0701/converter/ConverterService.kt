@@ -4,44 +4,57 @@ import android.accessibilityservice.AccessibilityService
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.WindowManager
+import android.os.Bundle
+import android.util.TypedValue
+import android.view.*
 import android.view.accessibility.AccessibilityEvent
 import kotlinx.android.synthetic.main.candidates_view.view.*
 import android.view.WindowManager.LayoutParams.*
+import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class ConverterService: AccessibilityService() {
 
-    val rect = Rect()
-    var candidatesView: View? = null
+    private val rect = Rect()
+    private var candidatesView: View? = null
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         if(event.eventType != AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED) return
-        val word = event.text.firstOrNull()?.split("\\s".toRegex())?.lastOrNull()
+        val source = event.source
+        source.getBoundsInScreen(rect)
+        val text = event.text.firstOrNull() ?: return
+        val word = text.split("\\s".toRegex()).lastOrNull()
         if(word != null) {
-            onWord(word)
+            onWord(word) {
+                val replacement = it + word.drop(it.length)
+                val pasteText = text.dropLast(word.length).toString() + replacement
+                val arguments = Bundle()
+                arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, pasteText)
+                source.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
+            }
         }
     }
 
-    fun onWord(word: String) {
-        if(word == "asdf") {
-            showWindow(listOf("aoeu"))
+    private fun onWord(word: String, onReplacement: (String) -> Unit) {
+        if(word.endsWith("asdf")) {
+            showWindow(listOf("aoeu", "arst"), onReplacement)
         } else {
             destroyWindow()
         }
     }
 
-    fun showWindow(candidates: List<String>) {
+    private fun showWindow(candidates: List<String>, onReplacement: (String) -> Unit) {
         val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         if(candidatesView == null) {
             candidatesView = LayoutInflater.from(this).inflate(R.layout.candidates_view, null)
             val type = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) TYPE_APPLICATION_OVERLAY else TYPE_SYSTEM_ALERT
             val flags = FLAG_NOT_FOCUSABLE or FLAG_NOT_TOUCH_MODAL
+            val offset = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24f, resources.displayMetrics).toInt()
             val params = WindowManager.LayoutParams(
                 WRAP_CONTENT, WRAP_CONTENT,
-                rect.left, rect.top,
+                rect.left, rect.top + offset,
                 type, flags,
                 PixelFormat.TRANSLUCENT
             )
@@ -49,10 +62,11 @@ class ConverterService: AccessibilityService() {
             windowManager.addView(candidatesView, params)
         }
         val view = candidatesView ?: return
-        view.text.text = candidates.firstOrNull() ?: ""
+        view.list.layoutManager = LinearLayoutManager(this)
+        view.list.adapter = CandidateListAdapter(candidates.toTypedArray(), onReplacement)
     }
 
-    fun destroyWindow() {
+    private fun destroyWindow() {
         val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         if(candidatesView != null) windowManager.removeView(candidatesView)
         candidatesView = null
@@ -60,4 +74,25 @@ class ConverterService: AccessibilityService() {
 
     override fun onInterrupt() {
     }
+
+    class CandidateListAdapter(private val dataset: Array<String>, private val onItemClick: (String) -> Unit)
+        : RecyclerView.Adapter<CandidateListAdapter.CandidateItemViewHolder>() {
+
+        class CandidateItemViewHolder(val textView: TextView): RecyclerView.ViewHolder(textView)
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CandidateItemViewHolder {
+            val textView = LayoutInflater.from(parent.context).inflate(R.layout.candidate_item, parent, false) as TextView
+            return CandidateItemViewHolder(textView)
+        }
+
+        override fun onBindViewHolder(holder: CandidateItemViewHolder, position: Int) {
+            holder.textView.text = dataset[position]
+            holder.textView.setOnClickListener { this.onItemClick(dataset[position]) }
+        }
+
+        override fun getItemCount(): Int {
+            return dataset.size
+        }
+    }
+
 }
