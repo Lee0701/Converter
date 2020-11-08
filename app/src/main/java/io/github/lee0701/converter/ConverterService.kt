@@ -51,26 +51,20 @@ class ConverterService: AccessibilityService() {
             AccessibilityEvent.TYPE_WINDOWS_CHANGED -> {
                 destroyWindow()
             }
-            AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> {
+            AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED, AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
                 val source = event.source
                 source.getBoundsInScreen(rect)
-                val text = event.text.firstOrNull() ?: return
+                val text = event.text.firstOrNull()?.toString() ?: return
                 val word = text.split("\\s".toRegex()).lastOrNull()
                 if(!preserveConversionIndex)conversionIndex = 0
                 preserveConversionIndex = false
-                if(word != null) onWord(word) { replaceWord(source, text.toString(), word, it) }
+                if(word != null) onWord(word) {
+                    val replacement = it + word.drop(it.length)
+                    val pasteText = text.dropLast(word.length) + replacement
+                    pasteFullText(source, pasteText)
+                    preserveConversionIndex = true
+                }
             }
-        }
-    }
-
-    private fun replaceWord(source: AccessibilityNodeInfo, fullText: String, original: String, replacement: String) {
-        val fullReplacement = replacement + original.drop(replacement.length)
-        val pasteText = fullText.dropLast(original.length) + fullReplacement
-        pasteFullText(source, pasteText)
-        if(fullReplacement == original) {
-            onWord(fullReplacement) { replaceWord(source, fullText, fullReplacement, it) }
-        } else {
-            preserveConversionIndex = true
         }
     }
 
