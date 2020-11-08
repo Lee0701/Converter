@@ -47,14 +47,20 @@ class ConverterService: AccessibilityService() {
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
-        if(event.eventType != AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED) return
-        val source = event.source
-        source.getBoundsInScreen(rect)
-        val text = event.text.firstOrNull() ?: return
-        val word = text.split("\\s".toRegex()).lastOrNull()
-        if(!preserveConversionIndex)conversionIndex = 0
-        preserveConversionIndex = false
-        if(word != null) onWord(word) { replaceWord(source, text.toString(), word, it) }
+        when(event.eventType) {
+            AccessibilityEvent.TYPE_WINDOWS_CHANGED -> {
+                destroyWindow()
+            }
+            AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> {
+                val source = event.source
+                source.getBoundsInScreen(rect)
+                val text = event.text.firstOrNull() ?: return
+                val word = text.split("\\s".toRegex()).lastOrNull()
+                if(!preserveConversionIndex)conversionIndex = 0
+                preserveConversionIndex = false
+                if(word != null) onWord(word) { replaceWord(source, text.toString(), word, it) }
+            }
+        }
     }
 
     private fun replaceWord(source: AccessibilityNodeInfo, fullText: String, original: String, replacement: String) {
