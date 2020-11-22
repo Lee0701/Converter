@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.dictionary.DiskDictionary
 import io.github.lee0701.converter.dictionary.ListDictionary
 import io.github.lee0701.converter.dictionary.PrefixSearchDictionary
+import kotlinx.android.synthetic.main.candidate_item.view.*
 
 class ConverterService: AccessibilityService() {
 
@@ -71,8 +72,8 @@ class ConverterService: AccessibilityService() {
         val result = dictionary.search(conversionTarget)
         if(result == null) destroyWindow()
         else {
-            val original = listOf(conversionTarget[0].toString(), conversionTarget).toHashSet().toList()
-            val candidates = original + result.flatten().map { it.result }
+            val original = listOf(conversionTarget[0].toString(), conversionTarget).toHashSet().toList().map { Candidate(it, "") }
+            val candidates = original + result.flatten().map { Candidate(it.result, it.extra ?: "") }
             showWindow(candidates) {
                 val replacement = word.take(conversionIndex) + it
                 conversionIndex += it.length
@@ -82,7 +83,7 @@ class ConverterService: AccessibilityService() {
     }
 
     @SuppressLint("InflateParams")
-    private fun showWindow(candidates: List<String>, onReplacement: (String) -> Unit) {
+    private fun showWindow(candidates: List<Candidate>, onReplacement: (String) -> Unit) {
         val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         if(candidatesView == null) {
             val candidatesView = LayoutInflater.from(this).inflate(R.layout.candidates_view, null)
@@ -134,24 +135,32 @@ class ConverterService: AccessibilityService() {
     class PrefixSearchHanjaDictionary(dictionary: ListDictionary<HanjaDictionary.Entry>)
         : PrefixSearchDictionary<List<HanjaDictionary.Entry>>(dictionary)
 
-    class CandidateListAdapter(private val data: Array<String>, private val onItemClick: (String) -> Unit)
+    class CandidateListAdapter(private val data: Array<Candidate>, private val onItemClick: (String) -> Unit)
         : RecyclerView.Adapter<CandidateListAdapter.CandidateItemViewHolder>() {
 
-        class CandidateItemViewHolder(val textView: TextView): RecyclerView.ViewHolder(textView)
+        class CandidateItemViewHolder(val view: View): RecyclerView.ViewHolder(view)
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CandidateItemViewHolder {
-            val textView = LayoutInflater.from(parent.context).inflate(R.layout.candidate_item, parent, false) as TextView
+            val textView = LayoutInflater.from(parent.context).inflate(R.layout.candidate_item, parent, false)
             return CandidateItemViewHolder(textView)
         }
 
         override fun onBindViewHolder(holder: CandidateItemViewHolder, position: Int) {
-            holder.textView.text = data[position]
-            holder.textView.setOnClickListener { this.onItemClick(data[position]) }
+            val text = holder.view.text as TextView
+            val extra = holder.view.extra as TextView
+            text.text = data[position].text
+            extra.text = data[position].extra
+            holder.view.setOnClickListener { this.onItemClick(data[position].text) }
         }
 
         override fun getItemCount(): Int {
             return data.size
         }
     }
+
+    data class Candidate(
+        val text: String,
+        val extra: String
+    )
 
 }
