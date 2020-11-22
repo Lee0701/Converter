@@ -41,7 +41,7 @@ class ConverterService: AccessibilityService() {
                 destroyWindow()
             }
             AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED, AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
-                val source = event.source
+                val source = event.source ?: return
                 source.getBoundsInScreen(rect)
                 val text = event.text.firstOrNull()?.toString() ?: return
                 val word = text.split("\\s".toRegex()).lastOrNull()
@@ -86,7 +86,16 @@ class ConverterService: AccessibilityService() {
         val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         if(candidatesView == null) {
             val candidatesView = LayoutInflater.from(this).inflate(R.layout.candidates_view, null)
+            candidatesView.close.setOnClickListener { destroyWindow() }
             candidatesView.list.layoutManager = LinearLayoutManager(this)
+            candidatesView.list.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    val p = (candidatesView.list.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                    val count = candidatesView.list.adapter?.itemCount ?: 0
+                    candidatesView.count.text = resources.getString(R.string.candidates_count_format).format(p, count)
+                }
+            })
 
             val width = 160
             val widthPixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width.toFloat(), resources.displayMetrics).toInt()
@@ -110,16 +119,7 @@ class ConverterService: AccessibilityService() {
         }
         val view = candidatesView ?: return
         view.list.adapter = CandidateListAdapter(candidates.toTypedArray(), onReplacement)
-        view.list.addOnScrollListener(object: RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val p = (view.list.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-                val count = view.list.adapter?.itemCount ?: 0
-                view.count.text = resources.getString(R.string.candidates_count_format).format(p, count)
-            }
-        })
         view.list.scrollToPosition(0)
-        view.close.setOnClickListener { destroyWindow() }
     }
 
     private fun destroyWindow() {
