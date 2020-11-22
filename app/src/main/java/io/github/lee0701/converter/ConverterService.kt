@@ -84,7 +84,10 @@ class ConverterService: AccessibilityService() {
         if(candidatesView == null) {
             candidatesView = LayoutInflater.from(this).inflate(R.layout.candidates_view, null)
 
-            val height = 120
+            val width = 160
+            val widthPixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width.toFloat(), resources.displayMetrics).toInt()
+
+            val height = 160
             val heightPixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height.toFloat(), resources.displayMetrics).toInt()
             val y = if(rect.centerY() < resources.displayMetrics.heightPixels / 2) rect.bottom else rect.top - heightPixels
 
@@ -92,7 +95,7 @@ class ConverterService: AccessibilityService() {
             val flags = FLAG_NOT_FOCUSABLE or FLAG_NOT_TOUCH_MODAL
 
             val params = WindowManager.LayoutParams(
-                WRAP_CONTENT, heightPixels,
+                widthPixels, heightPixels,
                 rect.left, y - statusBarHeight,
                 type, flags,
                 PixelFormat.TRANSLUCENT
@@ -103,6 +106,8 @@ class ConverterService: AccessibilityService() {
         val view = candidatesView ?: return
         view.list.layoutManager = LinearLayoutManager(this)
         view.list.adapter = CandidateListAdapter(candidates.toTypedArray(), onReplacement)
+        view.count.text = "${candidates.size}"
+        view.close.setOnClickListener { destroyWindow() }
     }
 
     private fun destroyWindow() {
