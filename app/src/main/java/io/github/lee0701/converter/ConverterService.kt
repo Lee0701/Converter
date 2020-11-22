@@ -56,7 +56,7 @@ class ConverterService: AccessibilityService() {
                 source.getBoundsInScreen(rect)
                 val text = event.text.firstOrNull()?.toString() ?: return
                 val word = text.split("\\s".toRegex()).lastOrNull()
-                if(!preserveConversionIndex)conversionIndex = 0
+                if(!preserveConversionIndex) conversionIndex = 0
                 preserveConversionIndex = false
                 if(word != null) onWord(word) {
                     val replacement = it + word.drop(it.length)
