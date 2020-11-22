@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.dictionary.DiskDictionary
 import io.github.lee0701.converter.dictionary.ListDictionary
-import io.github.lee0701.converter.dictionary.MapDictionary
 import io.github.lee0701.converter.dictionary.PrefixSearchDictionary
 
 class ConverterService: AccessibilityService() {
@@ -85,7 +84,7 @@ class ConverterService: AccessibilityService() {
         if(candidatesView == null) {
             candidatesView = LayoutInflater.from(this).inflate(R.layout.candidates_view, null)
 
-            val height = 200
+            val height = 120
             val heightPixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height.toFloat(), resources.displayMetrics).toInt()
             val y = if(rect.centerY() < resources.displayMetrics.heightPixels / 2) rect.bottom else rect.top - heightPixels
 
