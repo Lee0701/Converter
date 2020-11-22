@@ -1,6 +1,7 @@
 package io.github.lee0701.converter
 
 import android.accessibilityservice.AccessibilityService
+import android.annotation.SuppressLint
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
@@ -24,7 +25,7 @@ class ConverterService: AccessibilityService() {
     private val statusBarHeight get() = resources.getDimensionPixelSize(
         resources.getIdentifier("status_bar_height", "dimen", "android"))
 
-    lateinit var dictionary: PrefixSearchHanjaDictionary
+    private lateinit var dictionary: PrefixSearchHanjaDictionary
     private var candidatesView: View? = null
     private var conversionIndex = 0
     private var preserveConversionIndex = false
@@ -53,6 +54,7 @@ class ConverterService: AccessibilityService() {
                     preserveConversionIndex = true
                 }
             }
+            else -> {}
         }
     }
 
@@ -79,6 +81,7 @@ class ConverterService: AccessibilityService() {
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun showWindow(candidates: List<String>, onReplacement: (String) -> Unit) {
         val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         if(candidatesView == null) {
@@ -101,7 +104,7 @@ class ConverterService: AccessibilityService() {
                 type, flags,
                 PixelFormat.TRANSLUCENT
             )
-            params.gravity = Gravity.TOP or Gravity.LEFT
+            params.gravity = Gravity.TOP or Gravity.START
             windowManager.addView(candidatesView, params)
             this.candidatesView = candidatesView
         }
@@ -131,7 +134,7 @@ class ConverterService: AccessibilityService() {
     class PrefixSearchHanjaDictionary(dictionary: ListDictionary<HanjaDictionary.Entry>)
         : PrefixSearchDictionary<List<HanjaDictionary.Entry>>(dictionary)
 
-    class CandidateListAdapter(private val dataset: Array<String>, private val onItemClick: (String) -> Unit)
+    class CandidateListAdapter(private val data: Array<String>, private val onItemClick: (String) -> Unit)
         : RecyclerView.Adapter<CandidateListAdapter.CandidateItemViewHolder>() {
 
         class CandidateItemViewHolder(val textView: TextView): RecyclerView.ViewHolder(textView)
@@ -142,12 +145,12 @@ class ConverterService: AccessibilityService() {
         }
 
         override fun onBindViewHolder(holder: CandidateItemViewHolder, position: Int) {
-            holder.textView.text = dataset[position]
-            holder.textView.setOnClickListener { this.onItemClick(dataset[position]) }
+            holder.textView.text = data[position]
+            holder.textView.setOnClickListener { this.onItemClick(data[position]) }
         }
 
         override fun getItemCount(): Int {
-            return dataset.size
+            return data.size
         }
     }
 
