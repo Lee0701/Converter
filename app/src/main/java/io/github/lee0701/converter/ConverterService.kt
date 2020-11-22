@@ -14,6 +14,8 @@ import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.github.lee0701.converter.dictionary.DiskDictionary
+import io.github.lee0701.converter.dictionary.ListDictionary
 import io.github.lee0701.converter.dictionary.MapDictionary
 import io.github.lee0701.converter.dictionary.PrefixSearchDictionary
 
@@ -23,32 +25,19 @@ class ConverterService: AccessibilityService() {
     private val statusBarHeight get() = resources.getDimensionPixelSize(
         resources.getIdentifier("status_bar_height", "dimen", "android"))
 
-    lateinit var dictionary: MapHanjaDictionary
+    lateinit var dictionary: PrefixSearchHanjaDictionary
     private var candidatesView: View? = null
     private var conversionIndex = 0
     private var preserveConversionIndex = false
 
     override fun onCreate() {
         super.onCreate()
-        val map = mutableMapOf<String, List<HanjaDictionary.Entry>>()
-        val br = assets.open("wordlist_example.txt").bufferedReader()
-        while(true) {
-            val line = br.readLine() ?: break
-            val values = line.split(",")
-            if(values.size < 2) continue
-            val key = values[1]
-            val value = values[0]
-            val extra = values.getOrNull(2)
-            val frequency = values.getOrNull(3)?.toInt() ?: 0
-            val entry = HanjaDictionary.Entry(value, extra, frequency)
-            map[key] = (map[key] ?: listOf()) + entry
-        }
-        dictionary = MapHanjaDictionary(map)
+        dictionary = PrefixSearchHanjaDictionary(DiskDictionary(assets.open("dict.bin")))
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         when(event.eventType) {
-            AccessibilityEvent.TYPE_WINDOWS_CHANGED, AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED -> {
+            AccessibilityEvent.TYPE_WINDOWS_CHANGED -> {
                 destroyWindow()
             }
             AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED, AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
@@ -125,13 +114,9 @@ class ConverterService: AccessibilityService() {
 
     override fun onInterrupt() {
     }
-    
-    class MapHanjaDictionary(entries: Map<String, List<HanjaDictionary.Entry>>)
-        : PrefixSearchDictionary<List<HanjaDictionary.Entry>>(MapDictionary(entries)) {
-        override fun search(key: String): List<List<HanjaDictionary.Entry>>? {
-            return super.search(key)?.map { list -> list.sortedByDescending { it.frequency } }
-        }
-    }
+
+    class PrefixSearchHanjaDictionary(dictionary: ListDictionary<HanjaDictionary.Entry>)
+        : PrefixSearchDictionary<List<HanjaDictionary.Entry>>(dictionary)
 
     class CandidateListAdapter(private val dataset: Array<String>, private val onItemClick: (String) -> Unit)
         : RecyclerView.Adapter<CandidateListAdapter.CandidateItemViewHolder>() {
