@@ -31,9 +31,9 @@ class DiskDictionary(input: InputStream): ListDictionary<HanjaDictionary.Entry> 
         p += 2
         return (0 until entries).map {
             val result = getChars(data, p)
-            p += result.length*2 + 1
+            p += result.length*2 + 2
             val extra = getChars(data, p)
-            p += extra.length*2 + 1
+            p += extra.length*2 + 2
             val frequency = data.getShort(p).toInt()
             p += 2
             HanjaDictionary.Entry(result, extra, frequency)
@@ -44,8 +44,8 @@ class DiskDictionary(input: InputStream): ListDictionary<HanjaDictionary.Entry> 
         val sb = StringBuilder()
         var i = 0
         while(true) {
-            if(bb.get(idx + i).toInt() == 0) break
             val c = bb.getChar(idx + i)
+            if(c.toInt() == 0) break
             sb.append(c)
             i += 2
         }
