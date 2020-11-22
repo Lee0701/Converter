@@ -82,7 +82,8 @@ class ConverterService: AccessibilityService() {
     private fun showWindow(candidates: List<String>, onReplacement: (String) -> Unit) {
         val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         if(candidatesView == null) {
-            candidatesView = LayoutInflater.from(this).inflate(R.layout.candidates_view, null)
+            val candidatesView = LayoutInflater.from(this).inflate(R.layout.candidates_view, null)
+            candidatesView.list.layoutManager = LinearLayoutManager(this)
 
             val width = 160
             val widthPixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width.toFloat(), resources.displayMetrics).toInt()
@@ -102,11 +103,19 @@ class ConverterService: AccessibilityService() {
             )
             params.gravity = Gravity.TOP or Gravity.LEFT
             windowManager.addView(candidatesView, params)
+            this.candidatesView = candidatesView
         }
         val view = candidatesView ?: return
-        view.list.layoutManager = LinearLayoutManager(this)
         view.list.adapter = CandidateListAdapter(candidates.toTypedArray(), onReplacement)
-        view.count.text = "${candidates.size}"
+        view.list.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val p = (view.list.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                val count = view.list.adapter?.itemCount ?: 0
+                view.count.text = resources.getString(R.string.candidates_count_format).format(p, count)
+            }
+        })
+        view.list.scrollToPosition(0)
         view.close.setOnClickListener { destroyWindow() }
     }
 
