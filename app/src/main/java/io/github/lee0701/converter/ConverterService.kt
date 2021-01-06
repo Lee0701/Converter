@@ -13,6 +13,7 @@ import android.view.WindowManager.LayoutParams.*
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.TextView
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.dictionary.DiskDictionary
@@ -95,17 +96,17 @@ class ConverterService: AccessibilityService() {
         if(candidatesView == null) {
             val candidatesView = LayoutInflater.from(this).inflate(R.layout.candidates_view, null)
             candidatesView.close.setOnClickListener { destroyWindow() }
-            candidatesView.list.layoutManager = LinearLayoutManager(this)
+            candidatesView.list.layoutManager = GridLayoutManager(this, 2)
             candidatesView.list.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
-                    val p = (candidatesView.list.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                    val p = (candidatesView.list.layoutManager as GridLayoutManager).findFirstVisibleItemPosition()
                     val count = candidatesView.list.adapter?.itemCount ?: 0
                     candidatesView.count.text = resources.getString(R.string.candidates_count_format).format(p, count)
                 }
             })
 
-            val width = 160
+            val width = 200
             val widthPixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width.toFloat(), resources.displayMetrics).toInt()
 
             val height = 160
