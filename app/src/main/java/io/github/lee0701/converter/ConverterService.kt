@@ -14,7 +14,6 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.dictionary.DiskDictionary
 import io.github.lee0701.converter.dictionary.ListDictionary
@@ -142,18 +141,18 @@ class ConverterService: AccessibilityService() {
 
     private fun preProcessConversionTarget(conversionTarget: String): String {
         if(conversionTarget.isEmpty()) return conversionTarget
-        if(!isHanja(conversionTarget[0])) return conversionTarget
-        val hanjaIndex = conversionTarget.indexOfLast { c -> isHanja(c) }
-        if(hanjaIndex == -1 || hanjaIndex == conversionTarget.length-1) return conversionTarget
-        else return conversionTarget.substring(hanjaIndex + 1)
+        if(isHangul(conversionTarget[0])) return conversionTarget
+        val hangulIndex = conversionTarget.indexOfFirst { c -> isHangul(c) }
+        if(hangulIndex == -1 || hangulIndex >= conversionTarget.length) return ""
+        else return conversionTarget.substring(hangulIndex)
     }
 
     private fun getExtraCandidates(conversionTarget: String): List<String> {
         val list = mutableListOf<String>()
-        val hangulIndex = conversionTarget.indexOfFirst { c -> isHangul(c) }
-        if(hangulIndex == -1) list += conversionTarget
-        else if(hangulIndex > 0) list += conversionTarget.substring(0 until hangulIndex)
-        if(isHangul(conversionTarget[0])) list += conversionTarget[0].toString()
+        val nonHangulIndex = conversionTarget.indexOfFirst { c -> !isHangul(c) }
+        if(nonHangulIndex > 0) list += conversionTarget.substring(0 until nonHangulIndex)
+        else list += conversionTarget
+        if(isHangul(conversionTarget[0])) list.add(0, conversionTarget[0].toString())
         return list.toList()
     }
 
