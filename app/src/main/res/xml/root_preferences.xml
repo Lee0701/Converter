@@ -1,0 +1,44 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="@string/conversion_header">
+
+        <ListPreference
+            app:key="conversion_output"
+            app:title="@string/conversion_output_title"
+            app:useSimpleSummaryProvider="true"
+            app:entries="@array/conversion_output_entries"
+            app:entryValues="@array/conversion_output_values"
+            app:defaultValue="hanja_only" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/visuals_header">
+
+        <SeekBarPreference
+            app:key="window_width"
+            app:title="@string/window_width_title"
+            app:showSeekBarValue="true"
+            android:defaultValue="4"
+            app:min="3"
+            android:max="10" />
+
+        <SeekBarPreference
+            app:key="window_height"
+            app:title="@string/window_height_title"
+            app:showSeekBarValue="true"
+            app:defaultValue="5"
+            app:min="3"
+            android:max="10" />
+
+        <SeekBarPreference
+            app:key="column_count"
+            app:title="@string/column_count_title"
+            app:showSeekBarValue="true"
+            app:defaultValue="2"
+            app:min="1"
+            android:max="4" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

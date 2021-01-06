@@ -1,0 +1,14 @@
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="conversion_output_entries">
+        <item>@string/hanja_only</item>
+        <item>@string/hanja_hangul</item>
+        <item>@string/hangul_hanja</item>
+    </string-array>
+
+    <string-array name="conversion_output_values">
+        <item>hanja_only</item>
+        <item>hanja_hangul</item>
+        <item>hangul_hanja</item>
+    </string-array>
+</resources>
