@@ -11,15 +11,15 @@
     <string name="conversion_header">Conversion</string>
     <string name="visuals_header">Visuals</string>
 
-    <!-- Messages Preferences -->
-    <string name="conversion_output_title">Conversion Output</string>
-    <string name="signature_title">Your signature</string>
+    <!-- Conversion Preferences -->
+    <string name="output_format_title">Conversion Output Format</string>
 
     <string name="hanja_only">Hanja Only</string>
+    <string name="hanjahangul">HanjaHangul</string>
     <string name="hanja_hangul">Hanja(Hangul)</string>
     <string name="hangul_hanja">Hangul(Hanja)</string>
 
-    <!-- Sync Preferences -->
+    <!-- Visuals Preferences -->
     <string name="window_width_title">Conversion Window Width</string>
     <string name="window_height_title">Conversion Window Height</string>
     <string name="column_count_title">Conversion Results Column Count</string>

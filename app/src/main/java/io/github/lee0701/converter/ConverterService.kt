@@ -2,17 +2,20 @@ package io.github.lee0701.converter
 
 import android.accessibilityservice.AccessibilityService
 import android.annotation.SuppressLint
+import android.content.SharedPreferences
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.TypedValue
 import android.view.*
 import android.view.WindowManager.LayoutParams.*
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.TextView
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.dictionary.DiskDictionary
@@ -23,21 +26,31 @@ import kotlinx.android.synthetic.main.candidates_view.view.*
 
 class ConverterService: AccessibilityService() {
 
-    private val handler = Handler()
+    private val windowSizeMultiplier = 40
 
+    private val handler = Handler(Looper.getMainLooper())
     private val rect = Rect()
     private val statusBarHeight get() = resources.getDimensionPixelSize(
         resources.getIdentifier("status_bar_height", "dimen", "android"))
 
-    private lateinit var source: AccessibilityNodeInfo
+    private lateinit var preferences: SharedPreferences
     private lateinit var dictionary: PrefixSearchHanjaDictionary
     private var candidatesView: View? = null
     private var conversionIndex = 0
     private var preserveConversionIndex = false
 
+    private val outputFormats = mapOf<String, (String, String) -> String>(
+        "hanja_only" to { hanja, hangul -> hanja },
+        "hanjahangul" to { hanja, hangul -> if(hanja == hangul) hanja else "$hanja$hangul" },
+        "hanja_hangul" to { hanja, hangul -> if(hanja == hangul) hanja else "$hanja($hangul)" },
+        "hangul_hanja" to { hanja, hangul -> if(hanja == hangul) hanja else "$hangul($hanja)" }
+    )
+
     override fun onCreate() {
         super.onCreate()
         dictionary = PrefixSearchHanjaDictionary(DiskDictionary(assets.open("dict.bin")))
+        PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
+        preferences = PreferenceManager.getDefaultSharedPreferences(this)
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
@@ -50,12 +63,16 @@ class ConverterService: AccessibilityService() {
                 if(!preserveConversionIndex) conversionIndex = 0
                 preserveConversionIndex = false
                 if(word != null) {
-                    fun replace(it: String) {
-                        val replacement = it + word.drop(it.length)
+                    fun replace(result: String) {
+                        val formatted = result.take(conversionIndex) + (outputFormats[preferences.getString("output_format", "hanja_only")]
+                            ?.let { it -> it(result.drop(conversionIndex), word.drop(conversionIndex).take(result.length - conversionIndex)) }
+                            ?: result)
+                        val replacement = formatted + word.drop(result.length)
                         val pasteText = text.dropLast(word.length) + replacement
                         pasteFullText(source, pasteText)
+                        conversionIndex = formatted.length
                         preserveConversionIndex = true
-                        handler.post { onWord(replacement) { replace(it) } }
+                        handler.postDelayed({ onWord(replacement) { replace(it) } }, 10)
                     }
                     handler.removeCallbacksAndMessages(null)
                     onWord(word) { replace(it) }
@@ -83,7 +100,6 @@ class ConverterService: AccessibilityService() {
             val candidates = original + result.flatten().map { Candidate(it.result, it.extra ?: "") }
             showWindow(candidates) {
                 val replacement = word.take(conversionIndex) + it
-                conversionIndex += it.length
                 onReplacement(replacement)
             }
         }
@@ -92,10 +108,12 @@ class ConverterService: AccessibilityService() {
     @SuppressLint("InflateParams")
     private fun showWindow(candidates: List<Candidate>, onReplacement: (String) -> Unit) {
         val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+
+        val columnCount = preferences.getInt("column_count", 2)
         if(candidatesView == null) {
             val candidatesView = LayoutInflater.from(this).inflate(R.layout.candidates_view, null)
             candidatesView.close.setOnClickListener { destroyWindow() }
-            candidatesView.list.layoutManager = GridLayoutManager(this, 2)
+            candidatesView.list.layoutManager = GridLayoutManager(this, columnCount)
             candidatesView.list.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
@@ -105,10 +123,10 @@ class ConverterService: AccessibilityService() {
                 }
             })
 
-            val width = 200
+            val width = preferences.getInt("window_width", 5) * windowSizeMultiplier
             val widthPixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width.toFloat(), resources.displayMetrics).toInt()
 
-            val height = 160
+            val height = preferences.getInt("window_height", 4) * windowSizeMultiplier
             val heightPixels = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height.toFloat(), resources.displayMetrics).toInt()
             val y = if(rect.centerY() < resources.displayMetrics.heightPixels / 2) rect.bottom else rect.top - heightPixels
 
