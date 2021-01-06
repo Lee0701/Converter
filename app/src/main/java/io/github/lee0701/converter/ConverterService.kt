@@ -6,11 +6,11 @@ import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.TypedValue
 import android.view.*
-import android.view.accessibility.AccessibilityEvent
-import kotlinx.android.synthetic.main.candidates_view.view.*
 import android.view.WindowManager.LayoutParams.*
+import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,13 +19,17 @@ import io.github.lee0701.converter.dictionary.DiskDictionary
 import io.github.lee0701.converter.dictionary.ListDictionary
 import io.github.lee0701.converter.dictionary.PrefixSearchDictionary
 import kotlinx.android.synthetic.main.candidate_item.view.*
+import kotlinx.android.synthetic.main.candidates_view.view.*
 
 class ConverterService: AccessibilityService() {
+
+    private val handler = Handler()
 
     private val rect = Rect()
     private val statusBarHeight get() = resources.getDimensionPixelSize(
         resources.getIdentifier("status_bar_height", "dimen", "android"))
 
+    private lateinit var source: AccessibilityNodeInfo
     private lateinit var dictionary: PrefixSearchHanjaDictionary
     private var candidatesView: View? = null
     private var conversionIndex = 0
@@ -41,15 +45,20 @@ class ConverterService: AccessibilityService() {
             AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED, AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
                 val source = event.source ?: return
                 source.getBoundsInScreen(rect)
-                val text = event.text.firstOrNull()?.toString() ?: return
+                val text = event.text.firstOrNull()?.toString() ?: return destroyWindow()
                 val word = text.split("\\s".toRegex()).lastOrNull()
                 if(!preserveConversionIndex) conversionIndex = 0
                 preserveConversionIndex = false
-                if(word != null) onWord(word) {
-                    val replacement = it + word.drop(it.length)
-                    val pasteText = text.dropLast(word.length) + replacement
-                    pasteFullText(source, pasteText)
-                    preserveConversionIndex = true
+                if(word != null) {
+                    fun replace(it: String) {
+                        val replacement = it + word.drop(it.length)
+                        val pasteText = text.dropLast(word.length) + replacement
+                        pasteFullText(source, pasteText)
+                        preserveConversionIndex = true
+                        handler.post { onWord(replacement) { replace(it) } }
+                    }
+                    handler.removeCallbacksAndMessages(null)
+                    onWord(word) { replace(it) }
                 }
             }
             else -> {}
@@ -64,6 +73,7 @@ class ConverterService: AccessibilityService() {
 
     private fun onWord(word: String, onReplacement: (String) -> Unit) {
         val conversionTarget = preProcessConversionTarget(word.drop(conversionIndex))
+        conversionIndex += (word.length - conversionIndex) - conversionTarget.length
         if(conversionTarget.isEmpty()) return destroyWindow()
 
         val result = dictionary.search(conversionTarget)
