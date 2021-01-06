@@ -63,13 +63,13 @@ class ConverterService: AccessibilityService() {
     }
 
     private fun onWord(word: String, onReplacement: (String) -> Unit) {
-        val conversionTarget = word.drop(conversionIndex)
+        val conversionTarget = preProcessConversionTarget(word.drop(conversionIndex))
         if(conversionTarget.isEmpty()) return destroyWindow()
 
         val result = dictionary.search(conversionTarget)
         if(result == null) destroyWindow()
         else {
-            val original = extraCandidates(conversionTarget).toHashSet().toList().map { Candidate(it, "") }
+            val original = getExtraCandidates(conversionTarget).toHashSet().toList().map { Candidate(it, "") }
             val candidates = original + result.flatten().map { Candidate(it.result, it.extra ?: "") }
             showWindow(candidates) {
                 val replacement = word.take(conversionIndex) + it
@@ -129,7 +129,15 @@ class ConverterService: AccessibilityService() {
     override fun onInterrupt() {
     }
 
-    private fun extraCandidates(conversionTarget: String): List<String> {
+    private fun preProcessConversionTarget(conversionTarget: String): String {
+        if(conversionTarget.isEmpty()) return conversionTarget
+        if(!isHanja(conversionTarget[0])) return conversionTarget
+        val hanjaIndex = conversionTarget.indexOfLast { c -> isHanja(c) }
+        if(hanjaIndex == -1 || hanjaIndex == conversionTarget.length-1) return conversionTarget
+        else return conversionTarget.substring(hanjaIndex + 1)
+    }
+
+    private fun getExtraCandidates(conversionTarget: String): List<String> {
         val list = mutableListOf<String>()
         val hangulIndex = conversionTarget.indexOfFirst { c -> isHangul(c) }
         if(hangulIndex == -1) list += conversionTarget
