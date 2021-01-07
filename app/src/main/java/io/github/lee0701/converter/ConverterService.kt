@@ -97,7 +97,8 @@ class ConverterService: AccessibilityService() {
         if(result == null) destroyWindow()
         else {
             val extra = getExtraCandidates(conversionTarget).map { Candidate(it, "") }
-            val candidates = extra + result.flatten().distinct().map { Candidate(it.result, it.extra ?: "") }
+            val candidates = extra + result.map { list -> list.sortedByDescending { it.frequency } }
+                .flatten().distinct().map { Candidate(it.result, it.extra ?: "") }
             showWindow(candidates) {
                 val replacement = word.take(conversionIndex) + it
                 onReplacement(replacement)
