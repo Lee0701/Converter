@@ -4,13 +4,9 @@ import android.accessibilityservice.AccessibilityService
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.*
-import android.view.WindowManager.LayoutParams.*
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.preference.PreferenceManager
-import kotlinx.android.synthetic.main.candidate_item.view.*
-import kotlinx.android.synthetic.main.candidates_view.view.*
 import kotlin.math.abs
 
 class ConverterService: AccessibilityService(), HanjaConverter.Listener {
@@ -34,6 +30,8 @@ class ConverterService: AccessibilityService(), HanjaConverter.Listener {
         super.onCreate()
         PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
         hanjaConverter = HanjaConverter(this, this)
+        PreferenceManager.getDefaultSharedPreferences(this)
+            .registerOnSharedPreferenceChangeListener { _, _ -> hanjaConverter = HanjaConverter(this, this) }
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
