@@ -44,10 +44,14 @@ class ConverterService: AccessibilityService() {
         dictionary = PrefixSearchHanjaDictionary(DiskDictionary(assets.open("dict.bin")))
         PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
+
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         when(event.eventType) {
+            AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED -> {
+                if(event.source?.inputType == 0) destroyWindow()
+            }
             AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED, AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
                 val source = event.source ?: return
                 source.getBoundsInScreen(rect)
