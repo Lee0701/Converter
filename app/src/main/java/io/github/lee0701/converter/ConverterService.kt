@@ -25,9 +25,10 @@ class ConverterService: AccessibilityService(), HanjaConverter.Listener {
     private var lastCursor = 0
     private var startIndex = 0
     private var endIndex = Integer.MAX_VALUE
+    private var cursorMovedByConversion = false
 
     private val backSpaced get() = cursor - lastCursor < 0
-    private val cursorManuallyMoved get() = cursor < startIndex || cursor > endIndex || abs(cursor - lastCursor) > 1
+    private val cursorManuallyMoved get() = !cursorMovedByConversion && (cursor < startIndex || cursor > endIndex || abs(cursor - lastCursor) > 1)
 
     override fun onCreate() {
         super.onCreate()
@@ -59,6 +60,7 @@ class ConverterService: AccessibilityService(), HanjaConverter.Listener {
                 if(getCurrentWord().isEmpty()) {
                     resetInput()
                 }
+                cursorMovedByConversion = false
 
                 onInput()
             }
@@ -66,7 +68,9 @@ class ConverterService: AccessibilityService(), HanjaConverter.Listener {
                 source.getBoundsInScreen(hanjaConverter.rect)
 
                 // backspace or manual movement
-                if(backSpaced || cursorManuallyMoved) resetInput()
+                if(backSpaced || cursorManuallyMoved) {
+                    resetInput()
+                }
 
             }
             else -> { }
@@ -87,14 +91,18 @@ class ConverterService: AccessibilityService(), HanjaConverter.Listener {
 
     override fun onReplacement(replacement: String, index: Int, length: Int) {
         val word = getCurrentWord()
+        val diff = replacement.length - length
         endIndex = cursor
         val pasteText = text.take(startIndex) + word.take(index) + replacement + word.drop(length) + text.drop(endIndex)
         pasteFullText(pasteText)
         // For some apps that trigger cursor change event already
         text = pasteText
+        cursor += diff
+        endIndex = cursor
         setTextCursor(cursor)
-        startIndex += length
-        handler.post { hanjaConverter.onWord(getCurrentWord() ?: return@post) }
+        startIndex += replacement.length
+        cursorMovedByConversion = true
+        handler.post { hanjaConverter.onWord(getCurrentWord()) }
     }
 
     private fun getCurrentWord(): String {
