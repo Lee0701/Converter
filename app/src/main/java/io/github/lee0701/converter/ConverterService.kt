@@ -39,13 +39,6 @@ class ConverterService: AccessibilityService() {
     private var conversionIndex = 0
     private var preserveConversionIndex = false
 
-    private val outputFormats = mapOf<String, (String, String) -> String>(
-        "hanja_only" to { hanja, hangul -> hanja },
-        "hanjahangul" to { hanja, hangul -> if(hanja == hangul) hanja else "$hanja$hangul" },
-        "hanja_hangul" to { hanja, hangul -> if(hanja == hangul) hanja else "$hanja($hangul)" },
-        "hangul_hanja" to { hanja, hangul -> if(hanja == hangul) hanja else "$hangul($hanja)" }
-    )
-
     override fun onCreate() {
         super.onCreate()
         dictionary = PrefixSearchHanjaDictionary(DiskDictionary(assets.open("dict.bin")))
@@ -64,9 +57,10 @@ class ConverterService: AccessibilityService() {
                 preserveConversionIndex = false
                 if(word != null) {
                     fun replace(result: String) {
-                        val formatted = result.take(conversionIndex) + (outputFormats[preferences.getString("output_format", "hanja_only")]
-                            ?.let { it -> it(result.drop(conversionIndex), word.drop(conversionIndex).take(result.length - conversionIndex)) }
-                            ?: result)
+                        val format = preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
+                        val hanja = result.drop(conversionIndex)
+                        val hangul = word.drop(conversionIndex).take(result.length - conversionIndex)
+                        val formatted = result.take(conversionIndex) + (format?.let { it(hanja, hangul) } ?: result)
                         val replacement = formatted + word.drop(result.length)
                         val pasteText = text.dropLast(word.length) + replacement
                         pasteFullText(source, pasteText)
