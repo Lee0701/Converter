@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Converter</string>
+    <string name="app_name">Hanja Converter</string>
 
     <string name="candidates_count_format">%1$s / %2$s</string>
     <string name="close">Close</string>
