@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">漢字變換器</string>
+
+    <string name="close">닫기</string>
+
+    <!-- Settings Activity -->
+    <string name="title_activity_settings">漢字變換器 設定</string>
+
+    <!-- Preference Titles -->
+    <string name="service_header">서비스</string>
+    <string name="conversion_header">變換</string>
+    <string name="visuals_header">視覺</string>
+
+    <!-- Service Preferences -->
+    <string name="enable_service_title">接近性 서비스 活性化</string>
+    <string name="enable_service_summary">\'漢字變換器\'를 켜 주세요.</string>
+    <string name="enable_overlay_permission_title">오버레이 權限 活性化</string>
+
+    <!-- Conversion Preferences -->
+    <string name="output_format_title">變換 出力 포맷</string>
+
+    <string name="hanja_only">漢字</string>
+    <string name="hanjahangul">漢字한글</string>
+    <string name="hanja_hangul">漢字(한글)</string>
+    <string name="hangul_hanja">한글(漢字)</string>
+
+    <!-- Visuals Preferences -->
+    <string name="window_width_title">變換 結果窓 너비</string>
+    <string name="window_height_title">變換 結果窓 높이</string>
+    <string name="column_count_title">變換結果 列數</string>
+</resources>

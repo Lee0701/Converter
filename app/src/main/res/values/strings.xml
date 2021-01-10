@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Hanja Converter</string>
 
-    <string name="candidates_count_format">%1$s / %2$s</string>
+    <string name="candidates_count_format" translatable="false">%1$s / %2$s</string>
     <string name="close">Close</string>
 
     <!-- Settings Activity -->
