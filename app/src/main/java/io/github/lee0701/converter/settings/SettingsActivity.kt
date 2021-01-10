@@ -1,8 +1,9 @@
-package io.github.lee0701.converter
+package io.github.lee0701.converter.settings
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
+import io.github.lee0701.converter.R
 
 class SettingsActivity : AppCompatActivity() {
 

@@ -1,6 +1,17 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <PreferenceCategory app:title="@string/service_header">
+
+        <io.github.lee0701.converter.settings.OpenAccessibilitySettingsPreference
+            app:title="@string/enable_service_title"
+            android:summary="@string/enable_service_summary" />
+
+        <io.github.lee0701.converter.settings.EnableOverlayPermissionsPreference
+            app:title="@string/enable_overlay_permission_title" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory app:title="@string/conversion_header">
 
         <ListPreference

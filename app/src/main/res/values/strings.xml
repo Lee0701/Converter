@@ -8,8 +8,14 @@
     <string name="title_activity_settings">Hanja Converter Settings</string>
 
     <!-- Preference Titles -->
+    <string name="service_header">Service</string>
     <string name="conversion_header">Conversion</string>
     <string name="visuals_header">Visuals</string>
+
+    <!-- Service Preferences -->
+    <string name="enable_service_title">Enable Accessibility Service</string>
+    <string name="enable_service_summary">Please enable \'Hanja Converter\'.</string>
+    <string name="enable_overlay_permission_title">Enable Overlay Permission</string>
 
     <!-- Conversion Preferences -->
     <string name="output_format_title">Conversion Output Format</string>
