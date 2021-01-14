@@ -2,27 +2,25 @@ package io.github.lee0701.converter
 
 import android.content.Context
 import android.graphics.Rect
-import android.util.TypedValue
 import androidx.preference.PreferenceManager
+import io.github.lee0701.converter.candidates.CandidatesWindow
+import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow
+import io.github.lee0701.converter.candidates.VerticalCandidatesWindow
 import io.github.lee0701.converter.dictionary.DiskDictionary
 import io.github.lee0701.converter.dictionary.ListDictionary
 import io.github.lee0701.converter.dictionary.PrefixSearchDictionary
 
 class HanjaConverter(private val context: Context, private val listener: Listener) {
 
-    private val resources = context.resources
-    private val statusBarHeight get() = resources.getDimensionPixelSize(
-        resources.getIdentifier("status_bar_height", "dimen", "android"))
-
-    private val windowSizeMultiplier = 40
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-    private val columnCount = preferences.getInt("column_count", 2)
-    private val windowWidth = getWindowSize(preferences.getInt("window_width", 5))
-    private val windowHeight = getWindowSize(preferences.getInt("window_height", 4))
 
-    private val outputFormat = preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
+    private val outputFormat =
+        preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
 
-    private val candidatesWindow = CandidatesWindow(context, columnCount, windowWidth, windowHeight)
+    private val candidatesWindow: CandidatesWindow = when(preferences.getString("window_type", "horizontal")) {
+        "horizontal" -> HorizontalCandidatesWindow(context)
+        else -> VerticalCandidatesWindow(context)
+    }
     private val dictionary = PrefixSearchHanjaDictionary(DiskDictionary(context.assets.open("dict.bin")))
     val rect = Rect()
 
@@ -38,11 +36,7 @@ class HanjaConverter(private val context: Context, private val listener: Listene
             val candidates = extra + result.map { list -> list.sortedByDescending { it.frequency } }
                 .flatten().distinct().map { CandidatesWindow.Candidate(it.result, it.extra ?: "") }
 
-            val yPos =
-                if(rect.centerY() < resources.displayMetrics.heightPixels / 2) rect.bottom - statusBarHeight
-                else rect.top - windowHeight - statusBarHeight
-
-            candidatesWindow.show(candidates, rect.left, yPos) { hanja ->
+            candidatesWindow.show(candidates, rect) { hanja ->
                 val hangul = word.drop(lengthDiff).take(hanja.length)
                 val formatted = (outputFormat?.let { it(hanja, hangul) } ?: hanja)
                 listener.onReplacement(formatted, lengthDiff, hanja.length)
@@ -74,12 +68,6 @@ class HanjaConverter(private val context: Context, private val listener: Listene
     private fun isHangul(c: Char) = c.toInt() in 0xAC00 .. 0xD7AF
             || c.toInt() in 0x1100 .. 0x11FF || c.toInt() in 0xA960 .. 0xA97F
             || c.toInt() in 0xD7B0 .. 0xD7FF || c.toInt() in 0x3130 .. 0x318F
-
-    private fun getWindowSize(sizeInPref: Int): Int = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        (sizeInPref * windowSizeMultiplier).toFloat(),
-        context.resources.displayMetrics
-    ).toInt()
 
     class PrefixSearchHanjaDictionary(dictionary: ListDictionary<HanjaDictionary.Entry>)
         : PrefixSearchDictionary<List<HanjaDictionary.Entry>>(dictionary)
