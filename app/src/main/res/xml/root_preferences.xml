@@ -35,7 +35,8 @@
             app:defaultValue="horizontal" />
 
         <io.github.lee0701.converter.settings.ShowCandidateWindowAdjusterPreference
-            app:title="@string/adjust_window_title" />
+            app:title="@string/adjust_window_title"
+            app:summary="@string/adjust_window_summary" />
 
         <SeekBarPreference
             app:key="window_width"

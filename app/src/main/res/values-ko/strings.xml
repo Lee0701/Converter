@@ -2,7 +2,17 @@
 <resources>
     <string name="app_name">漢字變換器</string>
 
+    <string name="settings_saved">設定을 貯藏했습니다.</string>
+
     <string name="close">닫기</string>
+    <string name="save">貯藏</string>
+    <string name="discard">取消</string>
+    <string name="move">移動</string>
+    <string name="up">위</string>
+    <string name="down">아래</string>
+    <string name="larger">크게</string>
+    <string name="smaller">작게</string>
+
 
     <!-- Settings Activity -->
     <string name="title_activity_settings">漢字變換器 設定</string>
@@ -26,7 +36,13 @@
     <string name="hangul_hanja">한글(漢字)</string>
 
     <!-- Visuals Preferences -->
+    <string name="window_type_title">變換 結果窓 種類</string>
+    <string name="adjust_window_title">變換 結果窓 (가로) 調整</string>
+    <string name="adjust_window_summary">키보드의 單語 推薦欄에 맞게 調整해 주세요.</string>
     <string name="window_width_title">變換 結果窓 너비</string>
     <string name="window_height_title">變換 結果窓 높이</string>
     <string name="column_count_title">變換結果 列數</string>
+
+    <string name="horizontal_list">가로 目錄</string>
+    <string name="vertical_list">세로 目錄</string>
 </resources>
