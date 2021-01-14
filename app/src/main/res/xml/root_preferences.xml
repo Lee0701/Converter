@@ -50,6 +50,9 @@
             app:min="1"
             android:max="4" />
 
+        <io.github.lee0701.converter.settings.ShowCandidateWindowAdjusterPreference
+            app:title="@string/adjust_window_title" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

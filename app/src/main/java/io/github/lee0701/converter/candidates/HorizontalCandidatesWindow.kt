@@ -14,9 +14,7 @@ import io.github.lee0701.converter.R
 import kotlinx.android.synthetic.main.candidate_item_horizontal.view.*
 import kotlinx.android.synthetic.main.candidates_view_horizontal.view.*
 
-class HorizontalCandidatesWindow(
-    private val context: Context
-): CandidatesWindow(context) {
+class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow(context) {
 
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val windowY = preferences.getInt("horizontal_window_y", 500)
@@ -45,7 +43,8 @@ class HorizontalCandidatesWindow(
             val flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
 
             val params = WindowManager.LayoutParams(
-                WindowManager.LayoutParams.MATCH_PARENT, windowHeight, 0, windowY,
+                WindowManager.LayoutParams.MATCH_PARENT, windowHeight,
+                0, windowY,
                 type, flags, PixelFormat.TRANSLUCENT
             )
             params.gravity = Gravity.TOP or Gravity.START

@@ -3,6 +3,13 @@
 
     <string name="candidates_count_format" translatable="false">%1$s / %2$s</string>
     <string name="close">Close</string>
+    <string name="save">Save</string>
+    <string name="discard">Discard</string>
+    <string name="move">Move</string>
+    <string name="up">Up</string>
+    <string name="down">Down</string>
+    <string name="larger">Larger</string>
+    <string name="smaller">Smaller</string>
 
     <!-- Settings Activity -->
     <string name="title_activity_settings">Hanja Converter Settings</string>
@@ -29,4 +36,5 @@
     <string name="window_width_title">Conversion Window Width</string>
     <string name="window_height_title">Conversion Window Height</string>
     <string name="column_count_title">Conversion Results Column Count</string>
+    <string name="adjust_window_title">Adjust Horizontal Conversion Results Window</string>
 </resources>
