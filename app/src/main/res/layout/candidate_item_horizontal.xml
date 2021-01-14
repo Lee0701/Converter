@@ -3,20 +3,25 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
+    android:layout_gravity="center_vertical"
+    android:gravity="center_vertical"
     android:background="?android:attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginHorizontal="10dp"
         android:textSize="18sp" />
     <TextView
         android:id="@+id/extra"
-        android:layout_width="match_parent"
+        android:maxWidth="60dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="1dp"
-        android:textSize="14sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="2dp"
+        android:textSize="12sp"
         android:textColor="@android:color/darker_gray"
         android:singleLine="true"
         android:ellipsize="none"
