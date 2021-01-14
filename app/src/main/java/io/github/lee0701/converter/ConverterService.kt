@@ -91,14 +91,14 @@ class ConverterService: AccessibilityService(), HanjaConverter.Listener {
         val word = getCurrentWord()
         val diff = replacement.length - length
         endIndex = cursor
-        val pasteText = text.take(startIndex) + word.take(index) + replacement + word.drop(length) + text.drop(endIndex)
+        val pasteText = text.take(startIndex) + word.take(index) + replacement + word.drop(index + length) + text.drop(endIndex)
         pasteFullText(pasteText)
         // For some apps that trigger cursor change event already
         text = pasteText
         cursor += diff
         endIndex = cursor
         setTextCursor(cursor)
-        startIndex += replacement.length
+        startIndex += replacement.length + index
         cursorMovedByConversion = true
         handler.post { hanjaConverter.onWord(getCurrentWord()) }
     }
