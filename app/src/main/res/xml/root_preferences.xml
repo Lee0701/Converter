@@ -26,6 +26,17 @@
 
     <PreferenceCategory app:title="@string/visuals_header">
 
+        <ListPreference
+            app:key="window_type"
+            app:title="@string/window_type_title"
+            app:useSimpleSummaryProvider="true"
+            app:entries="@array/window_type_entries"
+            app:entryValues="@array/window_type_values"
+            app:defaultValue="horizontal" />
+
+        <io.github.lee0701.converter.settings.ShowCandidateWindowAdjusterPreference
+            app:title="@string/adjust_window_title" />
+
         <SeekBarPreference
             app:key="window_width"
             app:title="@string/window_width_title"
@@ -49,9 +60,6 @@
             app:defaultValue="2"
             app:min="1"
             android:max="4" />
-
-        <io.github.lee0701.converter.settings.ShowCandidateWindowAdjusterPreference
-            app:title="@string/adjust_window_title" />
 
     </PreferenceCategory>
 

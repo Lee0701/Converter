@@ -33,8 +33,12 @@
     <string name="hangul_hanja">Hangul(Hanja)</string>
 
     <!-- Visuals Preferences -->
+    <string name="window_type_title">Conversion Window Type</string>
+    <string name="adjust_window_title">Adjust Horizontal Conversion Window</string>
     <string name="window_width_title">Conversion Window Width</string>
     <string name="window_height_title">Conversion Window Height</string>
     <string name="column_count_title">Conversion Results Column Count</string>
-    <string name="adjust_window_title">Adjust Horizontal Conversion Results Window</string>
+
+    <string name="horizontal_list">Horizontal List</string>
+    <string name="vertical_list">Vertical List</string>
 </resources>

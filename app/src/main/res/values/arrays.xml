@@ -1,5 +1,4 @@
 <resources>
-    <!-- Reply Preference -->
     <string-array name="output_format_entries">
         <item>@string/hanja_only</item>
         <item>@string/hanjahangul</item>
@@ -12,5 +11,15 @@
         <item>hanjahangul</item>
         <item>hanja_hangul</item>
         <item>hangul_hanja</item>
+    </string-array>
+
+    <string-array name="window_type_entries">
+        <item>@string/horizontal_list</item>
+        <item>@string/vertical_list</item>
+    </string-array>
+
+    <string-array name="window_type_values">
+        <item>horizontal</item>
+        <item>vertical</item>
     </string-array>
 </resources>
