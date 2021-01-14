@@ -12,9 +12,9 @@ import kotlin.math.abs
 class ConverterService: AccessibilityService(), HanjaConverter.Listener {
 
     private val handler = Handler(Looper.getMainLooper())
+    private lateinit var source: AccessibilityNodeInfo
 
     private lateinit var hanjaConverter: HanjaConverter
-    private lateinit var source: AccessibilityNodeInfo
 
     private var text: String = ""
     private var cursor = 0
@@ -30,8 +30,19 @@ class ConverterService: AccessibilityService(), HanjaConverter.Listener {
         super.onCreate()
         PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
         hanjaConverter = HanjaConverter(this, this)
-        PreferenceManager.getDefaultSharedPreferences(this)
-            .registerOnSharedPreferenceChangeListener { _, _ -> hanjaConverter = HanjaConverter(this, this) }
+        INSTANCE = this
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        INSTANCE = null
+    }
+
+    override fun onInterrupt() {
+    }
+
+    fun restartHanjaConverter() {
+        hanjaConverter = HanjaConverter(this, this)
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
@@ -107,9 +118,6 @@ class ConverterService: AccessibilityService(), HanjaConverter.Listener {
         return text.take(cursor).drop(startIndex).split("\\s".toRegex()).lastOrNull() ?: ""
     }
 
-    override fun onInterrupt() {
-    }
-
     private fun pasteFullText(fullText: String) {
         val arguments = Bundle()
         arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, fullText)
@@ -121,6 +129,10 @@ class ConverterService: AccessibilityService(), HanjaConverter.Listener {
         arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, cursor)
         arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, cursor)
         source.performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, arguments)
+    }
+
+    companion object {
+        var INSTANCE: ConverterService? = null
     }
 
 }

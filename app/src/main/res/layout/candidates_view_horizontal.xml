@@ -21,8 +21,8 @@
 
     <ImageButton
         android:id="@+id/close"
-        android:layout_width="16sp"
-        android:layout_height="16sp"
+        android:layout_width="32sp"
+        android:layout_height="32sp"
         android:layout_gravity="center"
         android:background="@drawable/ic_baseline_close_24"
         android:backgroundTint="@android:color/black"

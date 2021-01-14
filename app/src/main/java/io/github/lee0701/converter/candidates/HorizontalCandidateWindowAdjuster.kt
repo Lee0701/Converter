@@ -12,6 +12,7 @@ import android.view.MotionEvent
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.preference.PreferenceManager
+import io.github.lee0701.converter.ConverterService
 import io.github.lee0701.converter.R
 import kotlinx.android.synthetic.main.adjust_candidates_view_horizontal.view.*
 
@@ -80,6 +81,7 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
             editor.putInt("horizontal_window_height", windowHeight)
             editor.apply()
             Toast.makeText(context, R.string.settings_saved, Toast.LENGTH_SHORT).show()
+            ConverterService.INSTANCE?.restartHanjaConverter()
         }
 
         window.discard.setOnClickListener {
