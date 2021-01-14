@@ -11,6 +11,8 @@
     <string name="larger">Larger</string>
     <string name="smaller">Smaller</string>
 
+    <string name="settings_saved">Saved.</string>
+
     <!-- Settings Activity -->
     <string name="title_activity_settings">Hanja Converter Settings</string>
 
