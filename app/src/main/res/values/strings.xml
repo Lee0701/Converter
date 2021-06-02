@@ -41,7 +41,14 @@
     <string name="window_width_title">Vertical Conversion Window Width</string>
     <string name="window_height_title">Vertical Conversion Window Height</string>
     <string name="column_count_title">Vertical Conversion Window Results Column Count</string>
+    <string name="window_color_title">Conversion Window Color</string>
+    <string name="custom_window_color_title">Custom Conversion Window Color</string>
+    <string name="custom_window_color_summary">Set \'Custom\' color for conversion window</string>
 
     <string name="horizontal_list">Horizontal List</string>
     <string name="vertical_list">Vertical List</string>
+
+    <string name="color_default">Default</string>
+    <string name="color_gboard">Gboard</string>
+    <string name="color_custom">Custom</string>
 </resources>

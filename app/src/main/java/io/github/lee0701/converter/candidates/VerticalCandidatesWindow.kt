@@ -16,7 +16,8 @@ import kotlinx.android.synthetic.main.candidate_item_vertical.view.*
 import kotlinx.android.synthetic.main.candidates_view_vertical.view.*
 
 class VerticalCandidatesWindow(
-    private val context: Context
+    private val context: Context,
+    private val color: Int
 ): CandidatesWindow(context) {
 
     private val resources = context.resources
@@ -39,7 +40,7 @@ class VerticalCandidatesWindow(
     override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (String) -> Unit) {
         if(candidatesView == null) {
             val candidatesView = LayoutInflater.from(context).inflate(R.layout.candidates_view_vertical, null)
-            candidatesView.alpha = 0.75f
+            candidatesView.setBackgroundColor(color)
             candidatesView.close.setOnClickListener { destroy() }
             candidatesView.list.layoutManager = GridLayoutManager(context, columnCount)
             candidatesView.list.addOnScrollListener(object: RecyclerView.OnScrollListener() {

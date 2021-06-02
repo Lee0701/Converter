@@ -22,4 +22,16 @@
         <item>horizontal</item>
         <item>vertical</item>
     </string-array>
+
+    <string-array name="window_color_entries">
+        <item>@string/color_default</item>
+        <item>@string/color_gboard</item>
+        <item>@string/color_custom</item>
+    </string-array>
+
+    <string-array name="window_color_values">
+        <item>default</item>
+        <item>gboard</item>
+        <item>custom</item>
+    </string-array>
 </resources>

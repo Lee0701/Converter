@@ -14,7 +14,10 @@ import io.github.lee0701.converter.R
 import kotlinx.android.synthetic.main.candidate_item_horizontal.view.*
 import kotlinx.android.synthetic.main.candidates_view_horizontal.view.*
 
-class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow(context) {
+class HorizontalCandidatesWindow(
+    private val context: Context,
+    private val color: Int
+): CandidatesWindow(context) {
 
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val windowY = preferences.getInt("horizontal_window_y", 500)
@@ -27,6 +30,7 @@ class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow
     override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (String) -> Unit) {
         if(candidatesView == null) {
             val candidatesView = LayoutInflater.from(context).inflate(R.layout.candidates_view_horizontal, null)
+            candidatesView.setBackgroundColor(color)
             candidatesView.close.setOnClickListener { destroy() }
             candidatesView.list.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             candidatesView.list.addOnScrollListener(object: RecyclerView.OnScrollListener() {
