@@ -86,8 +86,7 @@
 
         <io.github.lee0701.converter.settings.ColorEditTextPreference
             android:key="custom_window_color_text"
-            android:title="aoeu"
-            android:summary="arst"
+            android:title="@string/custom_window_color_text_title"
             android:defaultValue="0" />
     </PreferenceCategory>
 

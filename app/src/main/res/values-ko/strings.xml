@@ -47,6 +47,7 @@
     <string name="show_extra_summary">變換 候補別로 追加情報 (訓 等)을 表示합니다.</string>
     <string name="custom_window_color_title">使用者 色相</string>
     <string name="custom_window_color_summary">變換 結果窓의 \'使用者\' 色相을 變更합니다.</string>
+    <string name="custom_window_color_text_title">使用者 色相 (直接入力)</string>
 
     <string name="horizontal_list">가로 目錄</string>
     <string name="vertical_list">세로 目錄</string>

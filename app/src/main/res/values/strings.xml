@@ -46,6 +46,7 @@
     <string name="window_color_title">Conversion Window Color</string>
     <string name="custom_window_color_title">Custom Conversion Window Color</string>
     <string name="custom_window_color_summary">Set \'Custom\' color for conversion window</string>
+    <string name="custom_window_color_text_title">Custom Conversion Window Color (Text)</string>
 
     <string name="horizontal_list">Horizontal List</string>
     <string name="vertical_list">Vertical List</string>
