@@ -72,9 +72,10 @@ class VerticalCandidatesWindow(
             windowManager.addView(candidatesView, params)
             this.candidatesView = candidatesView
         }
+        val layout = if(showExtra) R.layout.candidate_item_vertical else R.layout.candidate_item_vertical_without_extra
         val view = candidatesView ?: return
         view.list.adapter =
-            CandidateListAdapter(R.layout.candidate_item_vertical, textColor, extraColor,
+            CandidateListAdapter(layout, textColor, extraColor,
                 candidates.toTypedArray(), onItemClick)
         view.list.scrollToPosition(0)
         windowShown = true

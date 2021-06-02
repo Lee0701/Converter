@@ -62,6 +62,12 @@
             app:min="1"
             android:max="4" />
 
+        <CheckBoxPreference
+            app:key="show_extra"
+            app:title="@string/show_extra_title"
+            android:summary="@string/show_extra_summary"
+            android:defaultValue="true" />
+
         <ListPreference
             app:key="window_color"
             app:title="@string/window_color_title"

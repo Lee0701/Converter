@@ -11,12 +11,15 @@ abstract class CandidatesWindow(context: Context) {
 
     protected val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     protected val windowManager = context.getSystemService(AccessibilityService.WINDOW_SERVICE) as WindowManager
+
     protected val customWindowColor =
         preferences.getInt("custom_window_color", CandidateWindowColor.DEFAULT)
     protected val windowColor =
         preferences.getString("window_color", "default").let { CandidateWindowColor.of(it ?: "", customWindowColor) }
     protected val textColor = CandidateWindowColor.textColorOf(windowColor)
     protected val extraColor = CandidateWindowColor.extraColorOf(windowColor)
+
+    protected val showExtra = preferences.getBoolean("show_extra", true)
 
     abstract fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (String) -> Unit)
     abstract fun destroy()
