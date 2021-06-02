@@ -22,7 +22,15 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowHomeEnabled(false)
 
         PreferenceManager.getDefaultSharedPreferences(this)
-            .registerOnSharedPreferenceChangeListener { _, _ ->
+            .registerOnSharedPreferenceChangeListener { preferences, key ->
+                when(key) {
+                    "custom_window_color" -> {
+                        preferences.edit().putInt("custom_window_color_text", preferences.getInt(key, 0)).apply()
+                    }
+                    "custom_window_color_text" -> {
+                        preferences.edit().putInt("custom_window_color", preferences.getInt(key, 0)).apply()
+                    }
+                }
                 ConverterService.INSTANCE?.restartHanjaConverter()
             }
     }

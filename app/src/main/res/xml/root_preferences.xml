@@ -74,9 +74,15 @@
             android:key="custom_window_color"
             android:title="@string/custom_window_color_title"
             android:summary="@string/custom_window_color_summary"
-            app:defaultValue="?android:colorBackground"
+            app:default_color="@android:color/black"
             app:preference_dialog_negative="@string/discard"
             app:preference_dialog_positive="@string/save" />
+
+        <io.github.lee0701.converter.settings.ColorEditTextPreference
+            android:key="custom_window_color_text"
+            android:title="aoeu"
+            android:summary="arst"
+            android:defaultValue="0" />
     </PreferenceCategory>
 
 </PreferenceScreen>
