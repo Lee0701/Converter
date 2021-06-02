@@ -22,10 +22,10 @@ class CandidateListAdapter(
         val view = LayoutInflater.from(parent.context).inflate(itemLayoutRes, parent, false)
         val text = view.text as TextView
         text.setTextColor(textColor)
-        text.alpha = 0.54f
+        text.alpha = CandidateWindowColor.ALPHA
         val extra = view.extra as TextView
         extra.setTextColor(extraColor)
-        extra.alpha = 0.54f
+        extra.alpha = CandidateWindowColor.ALPHA
         return CandidateItemViewHolder(view)
     }
 

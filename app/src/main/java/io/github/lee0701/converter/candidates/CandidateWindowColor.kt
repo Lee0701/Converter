@@ -4,6 +4,8 @@ import android.graphics.Color
 import androidx.core.graphics.ColorUtils
 
 object CandidateWindowColor {
+    const val ALPHA = 0.54f
+
     const val DEFAULT = (0xFFFAFAFA).toInt()
     const val GBOARD = (0xFFE8EAED).toInt()
 

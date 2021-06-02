@@ -2,6 +2,7 @@ package io.github.lee0701.converter.candidates
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
@@ -30,6 +31,10 @@ class HorizontalCandidatesWindow(
             val candidatesView = LayoutInflater.from(context).inflate(R.layout.candidates_view_horizontal, null)
             candidatesView.setBackgroundColor(windowColor)
             candidatesView.close.setOnClickListener { destroy() }
+            candidatesView.close.backgroundTintList = ColorStateList.valueOf(textColor)
+            candidatesView.close.alpha = CandidateWindowColor.ALPHA
+            candidatesView.count.setTextColor(textColor)
+            candidatesView.count.alpha = CandidateWindowColor.ALPHA
             candidatesView.list.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             candidatesView.list.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 @SuppressLint("SetTextI18n")
