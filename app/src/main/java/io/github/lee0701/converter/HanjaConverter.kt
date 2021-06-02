@@ -17,14 +17,10 @@ class HanjaConverter(private val context: Context, private val listener: Listene
 
     private val outputFormat =
         preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
-    private val customWindowColor =
-        preferences.getInt("custom_window_color", CandidateWindowColor.DEFAULT)
-    private val windowColor =
-        preferences.getString("window_color", "default").let { CandidateWindowColor.of(it ?: "", customWindowColor) }
 
     private val candidatesWindow: CandidatesWindow = when(preferences.getString("window_type", "horizontal")) {
-        "horizontal" -> HorizontalCandidatesWindow(context, windowColor)
-        else -> VerticalCandidatesWindow(context, windowColor)
+        "horizontal" -> HorizontalCandidatesWindow(context)
+        else -> VerticalCandidatesWindow(context)
     }
     private val dictionary = PrefixSearchHanjaDictionary(DiskDictionary(context.assets.open("dict.bin")))
     val rect = Rect()

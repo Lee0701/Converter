@@ -6,18 +6,17 @@ import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
 import android.util.TypedValue
-import android.view.*
-import android.widget.TextView
-import androidx.preference.PreferenceManager
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.WindowManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.R
-import kotlinx.android.synthetic.main.candidate_item_vertical.view.*
 import kotlinx.android.synthetic.main.candidates_view_vertical.view.*
 
 class VerticalCandidatesWindow(
-    private val context: Context,
-    private val color: Int
+    private val context: Context
 ): CandidatesWindow(context) {
 
     private val resources = context.resources
@@ -28,7 +27,6 @@ class VerticalCandidatesWindow(
 
     private val windowSizeMultiplier = 40
 
-    private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val columnCount = preferences.getInt("column_count", 2)
     private val windowWidth = getWindowSize(preferences.getInt("window_width", 5))
     private val windowHeight = getWindowSize(preferences.getInt("window_height", 4))
@@ -40,7 +38,7 @@ class VerticalCandidatesWindow(
     override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (String) -> Unit) {
         if(candidatesView == null) {
             val candidatesView = LayoutInflater.from(context).inflate(R.layout.candidates_view_vertical, null)
-            candidatesView.setBackgroundColor(color)
+            candidatesView.setBackgroundColor(windowColor)
             candidatesView.close.setOnClickListener { destroy() }
             candidatesView.list.layoutManager = GridLayoutManager(context, columnCount)
             candidatesView.list.addOnScrollListener(object: RecyclerView.OnScrollListener() {
@@ -71,7 +69,8 @@ class VerticalCandidatesWindow(
         }
         val view = candidatesView ?: return
         view.list.adapter =
-            CandidateListAdapter(candidates.toTypedArray(), onItemClick)
+            CandidateListAdapter(R.layout.candidate_item_vertical, textColor, extraColor,
+                candidates.toTypedArray(), onItemClick)
         view.list.scrollToPosition(0)
         windowShown = true
     }
@@ -87,28 +86,5 @@ class VerticalCandidatesWindow(
         (sizeInPref * windowSizeMultiplier).toFloat(),
         context.resources.displayMetrics
     ).toInt()
-
-    class CandidateListAdapter(private val data: Array<Candidate>, private val onItemClick: (String) -> Unit)
-        : RecyclerView.Adapter<CandidateListAdapter.CandidateItemViewHolder>() {
-
-        class CandidateItemViewHolder(val view: View): RecyclerView.ViewHolder(view)
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CandidateItemViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.candidate_item_vertical, parent, false)
-            return CandidateItemViewHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: CandidateItemViewHolder, position: Int) {
-            val text = holder.view.text as TextView
-            val extra = holder.view.extra as TextView
-            text.text = data[position].text
-            extra.text = data[position].extra
-            holder.view.setOnClickListener { this.onItemClick(data[position].text) }
-        }
-
-        override fun getItemCount(): Int {
-            return data.size
-        }
-    }
 
 }

@@ -5,21 +5,19 @@ import android.content.Context
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
-import android.view.*
-import android.widget.TextView
-import androidx.preference.PreferenceManager
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.WindowManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.R
-import kotlinx.android.synthetic.main.candidate_item_horizontal.view.*
 import kotlinx.android.synthetic.main.candidates_view_horizontal.view.*
 
 class HorizontalCandidatesWindow(
-    private val context: Context,
-    private val color: Int
+    private val context: Context
 ): CandidatesWindow(context) {
 
-    private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
     private val windowY = preferences.getInt("horizontal_window_y", 500)
     private val windowHeight = preferences.getInt("horizontal_window_height", 200)
 
@@ -30,7 +28,7 @@ class HorizontalCandidatesWindow(
     override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (String) -> Unit) {
         if(candidatesView == null) {
             val candidatesView = LayoutInflater.from(context).inflate(R.layout.candidates_view_horizontal, null)
-            candidatesView.setBackgroundColor(color)
+            candidatesView.setBackgroundColor(windowColor)
             candidatesView.close.setOnClickListener { destroy() }
             candidatesView.list.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             candidatesView.list.addOnScrollListener(object: RecyclerView.OnScrollListener() {
@@ -57,7 +55,8 @@ class HorizontalCandidatesWindow(
         }
         val view = candidatesView ?: return
         view.list.adapter =
-            CandidateListAdapter(candidates.toTypedArray(), onItemClick)
+            CandidateListAdapter(R.layout.candidate_item_horizontal, textColor, extraColor,
+                candidates.toTypedArray(), onItemClick)
         view.list.scrollToPosition(0)
         windowShown = true
     }
@@ -66,29 +65,6 @@ class HorizontalCandidatesWindow(
         if(candidatesView != null) windowManager.removeView(candidatesView)
         candidatesView = null
         windowShown = false
-    }
-
-    class CandidateListAdapter(private val data: Array<Candidate>, private val onItemClick: (String) -> Unit)
-        : RecyclerView.Adapter<CandidateListAdapter.CandidateItemViewHolder>() {
-
-        class CandidateItemViewHolder(val view: View): RecyclerView.ViewHolder(view)
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CandidateItemViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.candidate_item_horizontal, parent, false)
-            return CandidateItemViewHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: CandidateItemViewHolder, position: Int) {
-            val text = holder.view.text as TextView
-            val extra = holder.view.extra as TextView
-            text.text = data[position].text
-            extra.text = data[position].extra
-            holder.view.setOnClickListener { this.onItemClick(data[position].text) }
-        }
-
-        override fun getItemCount(): Int {
-            return data.size
-        }
     }
 
 }
