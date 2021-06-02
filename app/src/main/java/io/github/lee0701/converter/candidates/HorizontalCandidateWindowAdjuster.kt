@@ -3,6 +3,7 @@ package io.github.lee0701.converter.candidates
 import android.accessibilityservice.AccessibilityService
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.PixelFormat
 import android.os.Build
 import android.util.TypedValue
@@ -13,6 +14,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.preference.PreferenceManager
 import io.github.lee0701.converter.ConverterService
+import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow.Key
 import io.github.lee0701.converter.R
 import kotlinx.android.synthetic.main.adjust_candidates_view_horizontal.view.*
 
@@ -21,8 +23,12 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
     private val windowManager = context.getSystemService(AccessibilityService.WINDOW_SERVICE) as WindowManager
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-    private var windowY = preferences.getInt("horizontal_window_y", 500)
-    private var windowHeight = preferences.getInt("horizontal_window_height", 200)
+    private val landscape get() = context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    private val keyWindowY get() = if(landscape) Key.Y_LANDSCAPE else Key.Y_PORTRAIT
+    private val keyWindowHeight get() = if(landscape) Key.HEIGHT_LANDSCAPE else Key.HEIGHT_PORTRAIT
+    private var windowY = preferences.getInt(keyWindowY, 500)
+    private var windowHeight = preferences.getInt(keyWindowHeight, 200)
 
     private val type = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
     private val flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
@@ -77,16 +83,16 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
 
         window.save.setOnClickListener {
             val editor = preferences.edit()
-            editor.putInt("horizontal_window_y", windowY)
-            editor.putInt("horizontal_window_height", windowHeight)
+            editor.putInt(keyWindowY, windowY)
+            editor.putInt(keyWindowHeight, windowHeight)
             editor.apply()
             Toast.makeText(context, R.string.settings_saved, Toast.LENGTH_SHORT).show()
             ConverterService.INSTANCE?.restartHanjaConverter()
         }
 
         window.discard.setOnClickListener {
-            windowY = preferences.getInt("horizontal_window_y", windowY)
-            windowHeight = preferences.getInt("horizontal_window_height", windowHeight)
+            windowY = preferences.getInt(keyWindowY, windowY)
+            windowHeight = preferences.getInt(keyWindowHeight, windowHeight)
             windowManager.updateViewLayout(window, layoutParams)
         }
 

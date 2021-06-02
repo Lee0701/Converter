@@ -16,9 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.R
 import kotlinx.android.synthetic.main.candidates_view_vertical.view.*
 
-class VerticalCandidatesWindow(
-    private val context: Context
-): CandidatesWindow(context) {
+class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(context) {
 
     private val resources = context.resources
     private val statusBarHeight

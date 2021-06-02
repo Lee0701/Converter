@@ -1,6 +1,7 @@
 package io.github.lee0701.converter
 
 import android.accessibilityservice.AccessibilityService
+import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper

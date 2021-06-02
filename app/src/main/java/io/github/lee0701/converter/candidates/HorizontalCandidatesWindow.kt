@@ -3,6 +3,7 @@ package io.github.lee0701.converter.candidates
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.PixelFormat
 import android.graphics.Rect
 import android.os.Build
@@ -15,12 +16,12 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.R
 import kotlinx.android.synthetic.main.candidates_view_horizontal.view.*
 
-class HorizontalCandidatesWindow(
-    private val context: Context
-): CandidatesWindow(context) {
+class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow(context) {
 
-    private val windowY = preferences.getInt("horizontal_window_y", 500)
-    private val windowHeight = preferences.getInt("horizontal_window_height", 200)
+    private val landscape get() = context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    private val windowY get() = preferences.getInt(if(landscape) Key.Y_LANDSCAPE else Key.Y_PORTRAIT, 500)
+    private val windowHeight get() = preferences.getInt(if(landscape) Key.HEIGHT_LANDSCAPE else Key.HEIGHT_PORTRAIT, 200)
 
     private var candidatesView: View? = null
     private var windowShown = false
@@ -71,6 +72,13 @@ class HorizontalCandidatesWindow(
         if(candidatesView != null) windowManager.removeView(candidatesView)
         candidatesView = null
         windowShown = false
+    }
+
+    object Key {
+        const val Y_PORTRAIT = "horizontal_window_y_portrait"
+        const val HEIGHT_PORTRAIT = "horizontal_window_height_portrait"
+        const val Y_LANDSCAPE = "horizontal_window_y_landscape"
+        const val HEIGHT_LANDSCAPE = "horizontal_window_height_landscape"
     }
 
 }
