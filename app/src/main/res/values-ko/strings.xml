@@ -43,6 +43,8 @@
     <string name="window_height_title">變換 (세로) 結果窓 높이</string>
     <string name="column_count_title">變換 結果窓 (세로) 列 數</string>
     <string name="window_color_title">變換 結果窓 色相</string>
+    <string name="show_extra_title">追加情報 表示</string>
+    <string name="show_extra_summary">變換 候補別로 追加情報 (訓 等)을 表示합니다.</string>
     <string name="custom_window_color_title">使用者 色相</string>
     <string name="custom_window_color_summary">變換 結果窓의 \'使用者\' 色相을 變更합니다.</string>
 
