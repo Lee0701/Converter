@@ -24,6 +24,7 @@
     <string name="service_header">Service</string>
     <string name="conversion_header">Conversion</string>
     <string name="visuals_header">Visuals</string>
+    <string name="about_header">About</string>
 
     <!-- Service Preferences -->
     <string name="enable_service_title">Enable Accessibility Service</string>
@@ -63,4 +64,7 @@
     <string name="color_samsung_light">Samsung Light</string>
     <string name="color_samsung_dark">Samsung Dark</string>
     <string name="color_custom">Custom</string>
+
+    <!-- About Preferences -->
+    <string name="about_oss_licenses">Open source Licenses</string>
 </resources>
