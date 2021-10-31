@@ -30,7 +30,7 @@ android {
     }
     flavorDimensions "version"
     productFlavors {
-        main {
+        common {
             dimension "version"
             applicationIdSuffix ""
             versionCode 3
@@ -40,9 +40,6 @@ android {
                     appIcon: "@mipmap/ic_launcher",
                     appIconRound: "@mipmap/ic_launcher_round"
             ]
-            aaptOptions {
-                ignoreAssetsPattern 'model.tflite:wordlist.txt' //use : as delimiter
-            }
         }
         donation {
             dimension "version"
@@ -54,6 +51,15 @@ android {
                     appIcon: "@mipmap/ic_launcher_donation",
                     appIconRound: "@mipmap/ic_launcher_donation_round"
             ]
+        }
+    }
+    applicationVariants.all { variant ->
+        if (variant.productFlavors[0].name == 'common') {
+            variant.mergeAssetsProvider.configure {
+                doLast {
+                    delete(fileTree(dir: outputDir, includes: ['**/model.tflite', '**/wordlist.txt']))
+                }
+            }
         }
     }
 }
