@@ -66,5 +66,7 @@
     <string name="color_custom">Custom</string>
 
     <!-- About Preferences -->
-    <string name="about_oss_licenses">Open source Licenses</string>
+    <string name="about_oss_licenses_title">Open source Licenses</string>
+    <string name="about_app_info_title">Hanja Converter</string>
+    <string name="about_app_info_summary">Developer contact: hgl1002@naver.com</string>
 </resources>

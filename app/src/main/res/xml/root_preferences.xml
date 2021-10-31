@@ -91,7 +91,10 @@
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/about_header">
+        <Preference
+            android:title="@string/about_app_info_title"
+            android:summary="@string/about_app_info_summary" />
         <io.github.lee0701.converter.settings.OssLicensesMenuPreference
-            android:title="@string/about_oss_licenses" />
+            android:title="@string/about_oss_licenses_title" />
     </PreferenceCategory>
 </PreferenceScreen>
