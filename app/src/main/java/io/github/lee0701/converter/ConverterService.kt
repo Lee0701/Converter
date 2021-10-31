@@ -21,10 +21,10 @@ class ConverterService: AccessibilityService() {
     private lateinit var source: AccessibilityNodeInfo
 
     private var outputFormat: OutputFormat? = null
-    val rect = Rect()
+    private val rect = Rect()
 
     private lateinit var hanjaConverter: HanjaConverter
-    private lateinit var predictor: Predictor
+    private var predictor: Predictor? = null
     private lateinit var candidatesWindow: CandidatesWindow
 
     private var text: String = ""
@@ -46,7 +46,7 @@ class ConverterService: AccessibilityService() {
             preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
 
         hanjaConverter = HanjaConverter(this, outputFormat)
-        predictor = Predictor(this)
+        if(BuildConfig.IS_DONATION) predictor = Predictor(this)
         candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
             "horizontal" -> HorizontalCandidatesWindow(this)
             else -> VerticalCandidatesWindow(this)
@@ -119,7 +119,7 @@ class ConverterService: AccessibilityService() {
         val targetWord = hanjaConverter.preProcessWord(word)
         if(text.isEmpty()) candidatesWindow.destroy()
         else if(targetWord.isEmpty()) {
-            val candidates = predictor.predict(predictor.tokenize(getTextBeforeCursor()))
+            val candidates = predictor?.let { it.predict(it.tokenize(getTextBeforeCursor())) } ?: emptyList()
             if(candidates.isEmpty()) candidatesWindow.destroy()
             else showPrediction(candidates)
         }
