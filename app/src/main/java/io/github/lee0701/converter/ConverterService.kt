@@ -1,21 +1,28 @@
 package io.github.lee0701.converter
 
 import android.accessibilityservice.AccessibilityService
-import android.content.res.Configuration
+import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.preference.PreferenceManager
+import io.github.lee0701.converter.candidates.CandidatesWindow
+import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow
+import io.github.lee0701.converter.candidates.VerticalCandidatesWindow
 import kotlin.math.abs
 
-class ConverterService: AccessibilityService(), HanjaConverter.Listener {
+class ConverterService: AccessibilityService() {
 
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var source: AccessibilityNodeInfo
 
+    private var outputFormat: OutputFormat? = null
+    val rect = Rect()
+
     private lateinit var hanjaConverter: HanjaConverter
+    private lateinit var candidatesWindow: CandidatesWindow
 
     private var text: String = ""
     private var cursor = 0
@@ -30,7 +37,16 @@ class ConverterService: AccessibilityService(), HanjaConverter.Listener {
     override fun onCreate() {
         super.onCreate()
         PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
-        hanjaConverter = HanjaConverter(this, this)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+        outputFormat =
+            preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
+
+        hanjaConverter = HanjaConverter(this, outputFormat)
+        candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
+            "horizontal" -> HorizontalCandidatesWindow(this)
+            else -> VerticalCandidatesWindow(this)
+        }
         INSTANCE = this
     }
 
@@ -43,7 +59,7 @@ class ConverterService: AccessibilityService(), HanjaConverter.Listener {
     }
 
     fun restartHanjaConverter() {
-        hanjaConverter = HanjaConverter(this, this)
+        hanjaConverter = HanjaConverter(this, outputFormat)
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
@@ -64,7 +80,7 @@ class ConverterService: AccessibilityService(), HanjaConverter.Listener {
 
         when(event.eventType) {
             AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> {
-                source.getBoundsInScreen(hanjaConverter.rect)
+                source.getBoundsInScreen(rect)
 
                 // Word break inserted
                 if(getCurrentWord().isEmpty()) {
@@ -75,7 +91,7 @@ class ConverterService: AccessibilityService(), HanjaConverter.Listener {
                 onInput()
             }
             AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
-                source.getBoundsInScreen(hanjaConverter.rect)
+                source.getBoundsInScreen(rect)
 
                 // backspace or manual movement
                 if(backSpaced || cursorManuallyMoved) {
@@ -96,10 +112,22 @@ class ConverterService: AccessibilityService(), HanjaConverter.Listener {
     private fun onInput() {
         handler.removeCallbacksAndMessages(null)
         val word = getCurrentWord()
-        hanjaConverter.onWord(word)
+        val targetWord = hanjaConverter.preProcessWord(word)
+        if(targetWord.isEmpty()) candidatesWindow.destroy()
+        else showCandidates(word, targetWord, hanjaConverter.convert(word))
     }
 
-    override fun onReplacement(replacement: String, index: Int, length: Int) {
+    private fun showCandidates(word: String, targetWord: String, candidates: List<CandidatesWindow.Candidate>) {
+        val lengthDiff = word.length - targetWord.length
+        candidatesWindow.show(candidates, rect) { hanja ->
+            val hangul = word.drop(lengthDiff).take(hanja.length)
+            val formatted = (outputFormat?.let { it(hanja, hangul) } ?: hanja)
+            onReplacement(formatted, lengthDiff, hanja.length)
+        }
+
+    }
+
+    private fun onReplacement(replacement: String, index: Int, length: Int) {
         val word = getCurrentWord()
         val diff = replacement.length - length
         endIndex = cursor
@@ -112,7 +140,7 @@ class ConverterService: AccessibilityService(), HanjaConverter.Listener {
         setTextCursor(cursor)
         startIndex += replacement.length + index
         cursorMovedByConversion = true
-        handler.post { hanjaConverter.onWord(getCurrentWord()) }
+        handler.post { onInput() }
     }
 
     private fun getCurrentWord(): String {

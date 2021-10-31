@@ -1,56 +1,31 @@
 package io.github.lee0701.converter
 
 import android.content.Context
-import android.graphics.Rect
-import androidx.preference.PreferenceManager
-import io.github.lee0701.converter.candidates.CandidateWindowColor
 import io.github.lee0701.converter.candidates.CandidatesWindow
-import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow
-import io.github.lee0701.converter.candidates.VerticalCandidatesWindow
 import io.github.lee0701.converter.dictionary.DiskDictionary
 import io.github.lee0701.converter.dictionary.ListDictionary
 import io.github.lee0701.converter.dictionary.PrefixSearchDictionary
 
-class HanjaConverter(private val context: Context, private val listener: Listener) {
+class HanjaConverter(
+    context: Context,
+    private val outputFormat: OutputFormat?,
+) {
 
-    private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-
-    private val outputFormat =
-        preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
-
-    private val candidatesWindow: CandidatesWindow = when(preferences.getString("window_type", "horizontal")) {
-        "horizontal" -> HorizontalCandidatesWindow(context)
-        else -> VerticalCandidatesWindow(context)
-    }
     private val dictionary = PrefixSearchHanjaDictionary(DiskDictionary(context.assets.open("dict.bin")))
-    val rect = Rect()
 
-    fun onWord(word: String) {
-        val conversionTarget = preProcessConversionTarget(word)
-        val lengthDiff = word.length - conversionTarget.length
-        if(conversionTarget.isEmpty()) return candidatesWindow.destroy()
-
-        val result = dictionary.search(conversionTarget)
-        if(result == null) candidatesWindow.destroy()
-        else {
-            val extra = getExtraCandidates(conversionTarget).map { CandidatesWindow.Candidate(it, "") }
-            val candidates = extra + result.map { list -> list.sortedByDescending { it.frequency } }
-                .flatten().distinct().map { CandidatesWindow.Candidate(it.result, it.extra ?: "") }
-
-            candidatesWindow.show(candidates, rect) { hanja ->
-                val hangul = word.drop(lengthDiff).take(hanja.length)
-                val formatted = (outputFormat?.let { it(hanja, hangul) } ?: hanja)
-                listener.onReplacement(formatted, lengthDiff, hanja.length)
-            }
-        }
+    fun convert(word: String): List<CandidatesWindow.Candidate> {
+        val result = dictionary.search(word) ?: return emptyList()
+        val extra = getExtraCandidates(word).map { CandidatesWindow.Candidate(it, "") }
+        return extra + result.map { list -> list.sortedByDescending { it.frequency } }
+            .flatten().distinct().map { CandidatesWindow.Candidate(it.result, it.extra ?: "") }
     }
 
-    private fun preProcessConversionTarget(conversionTarget: String): String {
-        if(conversionTarget.isEmpty()) return conversionTarget
-        if(isHangul(conversionTarget[0])) return conversionTarget
-        val hangulIndex = conversionTarget.indexOfFirst { c -> isHangul(c) }
-        if(hangulIndex == -1 || hangulIndex >= conversionTarget.length) return ""
-        else return conversionTarget.substring(hangulIndex)
+    fun preProcessWord(word: String): String {
+        if(word.isEmpty()) return word
+        if(isHangul(word[0])) return word
+        val hangulIndex = word.indexOfFirst { c -> isHangul(c) }
+        if(hangulIndex == -1 || hangulIndex >= word.length) return ""
+        else return word.substring(hangulIndex)
     }
 
     private fun getExtraCandidates(conversionTarget: String): List<String> {
@@ -72,9 +47,5 @@ class HanjaConverter(private val context: Context, private val listener: Listene
 
     class PrefixSearchHanjaDictionary(dictionary: ListDictionary<HanjaDictionary.Entry>)
         : PrefixSearchDictionary<List<HanjaDictionary.Entry>>(dictionary)
-
-    interface Listener {
-        fun onReplacement(replacement: String, index: Int, length: Int)
-    }
 
 }
