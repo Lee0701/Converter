@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import io.github.lee0701.converter.ConverterService
-import io.github.lee0701.converter.HanjaConverter
 import io.github.lee0701.converter.R
 
 class SettingsActivity : AppCompatActivity() {
