@@ -56,6 +56,9 @@
     <string name="vertical_list">Vertical List</string>
 
     <string name="color_default">Default</string>
-    <string name="color_gboard">Gboard</string>
+    <string name="color_gboard_light_flat">Gboard Light Flat</string>
+    <string name="color_gboard_dark_flat">Gboard Dark Flat</string>
+    <string name="color_gboard_light_border">Gboard Light Border</string>
+    <string name="color_gboard_dark_border">Gboard Dark Border</string>
     <string name="color_custom">Custom</string>
 </resources>
