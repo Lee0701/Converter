@@ -24,6 +24,7 @@
     <string name="service_header">서비스</string>
     <string name="conversion_header">變換</string>
     <string name="visuals_header">視覺</string>
+    <string name="about_header">情報</string>
 
     <!-- Service Preferences -->
     <string name="enable_service_title">接近性 서비스 活性化</string>
@@ -63,4 +64,7 @@
     <string name="color_samsung_light">三星 라이트</string>
     <string name="color_samsung_dark">三星 다크</string>
     <string name="color_custom">使用者</string>
+
+    <!-- About Preferences -->
+    <string name="about_oss_licenses">오픈소스 라이선스</string>
 </resources>
