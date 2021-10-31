@@ -29,6 +29,8 @@
         <item>@string/color_gboard_dark_flat</item>
         <item>@string/color_gboard_light_border</item>
         <item>@string/color_gboard_dark_border</item>
+        <item>@string/color_samsung_light</item>
+        <item>@string/color_samsung_dark</item>
         <item>@string/color_custom</item>
     </string-array>
 
@@ -38,6 +40,8 @@
         <item>gboard_dark_flat</item>
         <item>gboard_light_border</item>
         <item>gboard_dark_border</item>
+        <item>samsung_light</item>
+        <item>samsung_dark</item>
         <item>custom</item>
     </string-array>
 </resources>
