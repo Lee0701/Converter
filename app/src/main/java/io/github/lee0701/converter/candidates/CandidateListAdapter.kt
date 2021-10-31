@@ -12,6 +12,7 @@ class CandidateListAdapter(
     private val itemLayoutRes: Int,
     private val textColor: Int,
     private val extraColor: Int,
+    private val textAlpha: Float,
     private val data: Array<CandidatesWindow.Candidate>,
     private val onItemClick: (String) -> Unit
 ): RecyclerView.Adapter<CandidateListAdapter.CandidateItemViewHolder>() {
@@ -22,10 +23,10 @@ class CandidateListAdapter(
         val view = LayoutInflater.from(parent.context).inflate(itemLayoutRes, parent, false)
         val text = view.text as TextView
         text.setTextColor(textColor)
-        text.alpha = CandidateWindowColor.ALPHA
+        text.alpha = textAlpha
         val extra = view.extra as TextView
         extra.setTextColor(extraColor)
-        extra.alpha = CandidateWindowColor.ALPHA
+        extra.alpha = textAlpha
         return CandidateItemViewHolder(view)
     }
 

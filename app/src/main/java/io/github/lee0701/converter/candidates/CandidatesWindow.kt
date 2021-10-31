@@ -16,6 +16,8 @@ abstract class CandidatesWindow(context: Context) {
         preferences.getInt("custom_window_color", CandidateWindowColor.DEFAULT)
     protected val windowColor =
         preferences.getString("window_color", "default").let { CandidateWindowColor.of(it ?: "", customWindowColor) }
+    protected val darkMode = preferences.getString("window_color", "default")?.contains("dark") ?: false
+    protected val textAlpha = if(darkMode) CandidateWindowColor.ALPHA_DARK else CandidateWindowColor.ALPHA_LIGHT
     protected val textColor = CandidateWindowColor.textColorOf(windowColor)
     protected val extraColor = CandidateWindowColor.extraColorOf(windowColor)
 

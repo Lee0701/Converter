@@ -41,9 +41,9 @@ class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(c
             candidatesView.setBackgroundColor(windowColor)
             candidatesView.close.setOnClickListener { destroy() }
             candidatesView.close.backgroundTintList = ColorStateList.valueOf(textColor)
-            candidatesView.close.alpha = CandidateWindowColor.ALPHA
+            candidatesView.close.alpha = textAlpha
             candidatesView.count.setTextColor(textColor)
-            candidatesView.count.alpha = CandidateWindowColor.ALPHA
+            candidatesView.count.alpha = textAlpha
             candidatesView.list.layoutManager = GridLayoutManager(context, columnCount)
             candidatesView.list.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 @SuppressLint("SetTextI18n")
@@ -78,7 +78,7 @@ class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(c
         val layout = if(showExtra) R.layout.candidate_item_vertical else R.layout.candidate_item_vertical_without_extra
         val view = candidatesView ?: return
         view.list.adapter =
-            CandidateListAdapter(layout, textColor, extraColor,
+            CandidateListAdapter(layout, textColor, extraColor, textAlpha,
                 candidates.toTypedArray(), onItemClick)
         view.list.scrollToPosition(0)
         windowShown = true
