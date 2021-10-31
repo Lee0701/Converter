@@ -11,6 +11,8 @@ import androidx.preference.PreferenceManager
 import io.github.lee0701.converter.candidates.CandidatesWindow
 import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.VerticalCandidatesWindow
+import io.github.lee0701.converter.engine.HanjaConverter
+import io.github.lee0701.converter.engine.Predictor
 import kotlin.math.abs
 
 class ConverterService: AccessibilityService() {
@@ -19,9 +21,10 @@ class ConverterService: AccessibilityService() {
     private lateinit var source: AccessibilityNodeInfo
 
     private var outputFormat: OutputFormat? = null
-    val rect = Rect()
+    private val rect = Rect()
 
     private lateinit var hanjaConverter: HanjaConverter
+    private var predictor: Predictor? = null
     private lateinit var candidatesWindow: CandidatesWindow
 
     private var text: String = ""
@@ -54,6 +57,7 @@ class ConverterService: AccessibilityService() {
         outputFormat =
             preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
         hanjaConverter = HanjaConverter(this, outputFormat)
+        if(BuildConfig.IS_DONATION) predictor = Predictor(this)
         candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
             "horizontal" -> HorizontalCandidatesWindow(this)
             else -> VerticalCandidatesWindow(this)
@@ -111,7 +115,12 @@ class ConverterService: AccessibilityService() {
         handler.removeCallbacksAndMessages(null)
         val word = getCurrentWord()
         val targetWord = hanjaConverter.preProcessWord(word)
-        if(targetWord.isEmpty()) candidatesWindow.destroy()
+        if(text.isEmpty()) candidatesWindow.destroy()
+        else if(targetWord.isEmpty()) {
+            val candidates = predictor?.let { it.predict(it.tokenize(getTextBeforeCursor())) } ?: emptyList()
+            if(candidates.isEmpty()) candidatesWindow.destroy()
+            else showPrediction(candidates)
+        }
         else showCandidates(word, targetWord, hanjaConverter.convert(word))
     }
 
@@ -122,7 +131,12 @@ class ConverterService: AccessibilityService() {
             val formatted = (outputFormat?.let { it(hanja, hangul) } ?: hanja)
             onReplacement(formatted, lengthDiff, hanja.length)
         }
+    }
 
+    private fun showPrediction(candidates: List<CandidatesWindow.Candidate>) {
+        candidatesWindow.show(candidates, rect) { prediction ->
+            onPrediction(prediction)
+        }
     }
 
     private fun onReplacement(replacement: String, index: Int, length: Int) {
@@ -141,8 +155,28 @@ class ConverterService: AccessibilityService() {
         handler.post { onInput() }
     }
 
+    private fun onPrediction(prediction: String) {
+        val pasteText = getTextBeforeCursor() + prediction + getTextAfterCursor()
+        pasteFullText(pasteText)
+        // For some apps that trigger cursor change event already
+        text = pasteText
+        cursor += prediction.length
+        setTextCursor(cursor)
+        startIndex += prediction.length
+        cursorMovedByConversion = true
+        handler.post { onInput() }
+    }
+
+    private fun getTextBeforeCursor(): String {
+        return text.take(cursor)
+    }
+
+    private fun getTextAfterCursor(): String {
+        return text.drop(cursor)
+    }
+
     private fun getCurrentWord(): String {
-        return text.take(cursor).drop(startIndex).split("\\s".toRegex()).lastOrNull() ?: ""
+        return getTextBeforeCursor().drop(startIndex).split("\\s".toRegex()).lastOrNull() ?: ""
     }
 
     private fun pasteFullText(fullText: String) {

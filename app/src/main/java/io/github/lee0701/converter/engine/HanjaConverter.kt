@@ -1,6 +1,8 @@
-package io.github.lee0701.converter
+package io.github.lee0701.converter.engine
 
 import android.content.Context
+import io.github.lee0701.converter.HanjaDictionary
+import io.github.lee0701.converter.OutputFormat
 import io.github.lee0701.converter.candidates.CandidatesWindow
 import io.github.lee0701.converter.dictionary.DiskDictionary
 import io.github.lee0701.converter.dictionary.ListDictionary
