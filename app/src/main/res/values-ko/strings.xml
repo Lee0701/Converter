@@ -14,6 +14,9 @@
     <string name="smaller">작게</string>
 
 
+    <string name="overlay_permission_required">漢字變換器를 使用하시려면 設定 앱에서 오버레이 權限을 許容해 주세요.</string>
+
+
     <!-- Settings Activity -->
     <string name="title_activity_settings">漢字變換器 設定</string>
 

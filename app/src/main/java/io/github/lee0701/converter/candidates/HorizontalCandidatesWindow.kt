@@ -11,6 +11,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.R
@@ -56,7 +57,11 @@ class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow
                 type, flags, PixelFormat.TRANSLUCENT
             )
             params.gravity = Gravity.TOP or Gravity.START
-            windowManager.addView(candidatesView, params)
+            try {
+                windowManager.addView(candidatesView, params)
+            } catch(ex: WindowManager.BadTokenException) {
+                Toast.makeText(context, R.string.overlay_permission_required, Toast.LENGTH_LONG).show()
+            }
             this.candidatesView = candidatesView
         }
         val layout = if(showExtra) R.layout.candidate_item_horizontal else R.layout.candidate_item_horizontal_without_extra

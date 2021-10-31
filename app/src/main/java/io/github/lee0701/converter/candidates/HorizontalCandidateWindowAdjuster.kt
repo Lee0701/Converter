@@ -96,7 +96,11 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
             windowManager.updateViewLayout(window, layoutParams)
         }
 
-        windowManager.addView(window, layoutParams)
+        try {
+            windowManager.addView(window, layoutParams)
+        } catch(ex: WindowManager.BadTokenException) {
+            Toast.makeText(context, R.string.overlay_permission_required, Toast.LENGTH_LONG).show()
+        }
     }
 
 }
