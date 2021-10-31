@@ -37,16 +37,7 @@ class ConverterService: AccessibilityService() {
     override fun onCreate() {
         super.onCreate()
         PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
-        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-
-        outputFormat =
-            preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
-
-        hanjaConverter = HanjaConverter(this, outputFormat)
-        candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
-            "horizontal" -> HorizontalCandidatesWindow(this)
-            else -> VerticalCandidatesWindow(this)
-        }
+        restartService()
         INSTANCE = this
     }
 
@@ -58,8 +49,15 @@ class ConverterService: AccessibilityService() {
     override fun onInterrupt() {
     }
 
-    fun restartHanjaConverter() {
+    fun restartService() {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        outputFormat =
+            preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
         hanjaConverter = HanjaConverter(this, outputFormat)
+        candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
+            "horizontal" -> HorizontalCandidatesWindow(this)
+            else -> VerticalCandidatesWindow(this)
+        }
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {

@@ -87,7 +87,7 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
             editor.putInt(keyWindowHeight, windowHeight)
             editor.apply()
             Toast.makeText(context, R.string.settings_saved, Toast.LENGTH_SHORT).show()
-            ConverterService.INSTANCE?.restartHanjaConverter()
+            ConverterService.INSTANCE?.restartService()
         }
 
         window.discard.setOnClickListener {
