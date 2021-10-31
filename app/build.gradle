@@ -40,6 +40,9 @@ android {
                     appIcon: "@mipmap/ic_launcher",
                     appIconRound: "@mipmap/ic_launcher_round"
             ]
+            aaptOptions {
+                ignoreAssetsPattern 'model.tflite:wordlist.txt' //use : as delimiter
+            }
         }
         donation {
             dimension "version"
