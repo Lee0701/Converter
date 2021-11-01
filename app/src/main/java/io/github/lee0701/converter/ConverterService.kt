@@ -121,7 +121,7 @@ class ConverterService: AccessibilityService() {
             if(candidates.isEmpty()) candidatesWindow.destroy()
             else showPrediction(candidates)
         }
-        else showCandidates(word, targetWord, hanjaConverter.convert(word))
+        else showCandidates(word, targetWord, hanjaConverter.convert(targetWord))
     }
 
     private fun showCandidates(word: String, targetWord: String, candidates: List<CandidatesWindow.Candidate>) {
