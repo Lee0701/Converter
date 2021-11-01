@@ -71,9 +71,15 @@ class ConverterService: AccessibilityService() {
         }
 
         source = event.source ?: return
-        text = event.text?.firstOrNull()?.toString() ?: ""
-        cursor = source.textSelectionStart
-        if(cursor == -1) cursor = 0
+        if(cursorMovedByConversion) {
+            setTextCursor(cursor)
+            cursorMovedByConversion = false
+        } else {
+            text = event.text?.firstOrNull()?.toString() ?: ""
+            cursor = source.textSelectionStart
+            if(cursor == -1) cursor = 0
+        }
+
 
         if(cursorManuallyMoved && !backSpaced) {
             resetInput()
