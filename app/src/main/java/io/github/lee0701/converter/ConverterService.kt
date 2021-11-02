@@ -8,6 +8,7 @@ import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.preference.PreferenceManager
+import io.github.lee0701.converter.CharacterSet.isHangul
 import io.github.lee0701.converter.candidates.CandidatesWindow
 import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.VerticalCandidatesWindow
@@ -123,9 +124,13 @@ class ConverterService: AccessibilityService() {
         val targetWord = hanjaConverter.preProcessWord(word)
         if(text.isEmpty()) candidatesWindow.destroy()
         else if(targetWord.isEmpty()) {
-            val candidates = predictor?.let { it.predict(it.tokenize(getTextBeforeCursor())) } ?: emptyList()
-            if(candidates.isEmpty()) candidatesWindow.destroy()
-            else showPrediction(candidates)
+            val textBeforeCursor = getTextBeforeCursor()
+            if(!textBeforeCursor.any { isHangul(it) }) candidatesWindow.destroy()
+            else {
+                val candidates = predictor?.let { it.predict(it.tokenize(textBeforeCursor)) } ?: emptyList()
+                if(candidates.isNotEmpty()) showPrediction(candidates)
+                else candidatesWindow.destroy()
+            }
         }
         else showCandidates(word, targetWord, hanjaConverter.convert(targetWord))
     }
