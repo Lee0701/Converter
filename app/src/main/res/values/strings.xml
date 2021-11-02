@@ -23,6 +23,7 @@
     <!-- Preference Titles -->
     <string name="service_header">Service</string>
     <string name="conversion_header">Conversion</string>
+    <string name="prediction_header">Prediction</string>
     <string name="visuals_header">Visuals</string>
     <string name="about_header">About</string>
 
@@ -38,6 +39,10 @@
     <string name="hanjahangul">HanjaHangul</string>
     <string name="hanja_hangul">Hanja(Hangul)</string>
     <string name="hangul_hanja">Hangul(Hanja)</string>
+
+    <!-- Prediction Preferences -->
+    <string name="use_prediction_title">Use Prediction</string>
+    <string name="use_prediction_summary">Enable next word prediction</string>
 
     <!-- Visuals Preferences -->
     <string name="window_type_title">Conversion Window Type</string>

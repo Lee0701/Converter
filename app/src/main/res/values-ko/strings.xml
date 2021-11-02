@@ -23,6 +23,7 @@
     <!-- Preference Titles -->
     <string name="service_header">서비스</string>
     <string name="conversion_header">變換</string>
+    <string name="prediction_header">豫測</string>
     <string name="visuals_header">視覺</string>
     <string name="about_header">情報</string>
 
@@ -38,6 +39,10 @@
     <string name="hanjahangul">漢字한글</string>
     <string name="hanja_hangul">漢字(한글)</string>
     <string name="hangul_hanja">한글(漢字)</string>
+
+    <!-- Prediction Preferences -->
+    <string name="use_prediction_title">豫測 機能 使用</string>
+    <string name="use_prediction_summary">入力 中에 다음 單語를 豫測합니다.</string>
 
     <!-- Visuals Preferences -->
     <string name="window_type_title">變換 結果窓 種類</string>

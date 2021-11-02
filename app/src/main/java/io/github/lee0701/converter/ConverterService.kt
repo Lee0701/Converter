@@ -58,7 +58,9 @@ class ConverterService: AccessibilityService() {
         outputFormat =
             preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
         hanjaConverter = HanjaConverter(this, outputFormat)
-        if(BuildConfig.IS_DONATION) predictor = Predictor(this)
+        if(BuildConfig.IS_DONATION
+            && preferences.getBoolean("use_prediction", false)) predictor = Predictor(this)
+        else predictor = null
         candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
             "horizontal" -> HorizontalCandidatesWindow(this)
             else -> VerticalCandidatesWindow(this)
