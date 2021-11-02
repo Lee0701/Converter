@@ -30,7 +30,7 @@ class ConverterService: AccessibilityService() {
     private var predictor: Predictor? = null
     private lateinit var candidatesWindow: CandidatesWindow
 
-    private var composingText: ComposingText? = null
+    private var composingText = ComposingText("", 0)
 
     override fun onCreate() {
         super.onCreate()
@@ -75,23 +75,19 @@ class ConverterService: AccessibilityService() {
                 val addedCount = event.addedCount
                 val removedCount = event.removedCount
 
-                val currentComposingText = composingText
-
                 val addedText = text.drop(fromIndex).take(addedCount)
                 val toIndex = fromIndex + addedCount
 
                 if(addedText.isNotEmpty() && addedText.all { isHangul(it) }) {
-                    if(currentComposingText == null) {
+                    if(composingText.composing.isEmpty()) {
                         // Create composing text if not exists
-                        val newComposingText = ComposingText(text, toIndex, fromIndex, toIndex)
-                        composingText = newComposingText
+                        composingText = ComposingText(text, toIndex, fromIndex, toIndex)
                     } else {
-                        val newComposingText = currentComposingText.copy(text = text, cursor = toIndex, to = toIndex)
-                        composingText = newComposingText
+                        composingText = composingText.copy(text = text, cursor = toIndex, to = toIndex)
                     }
                 } else {
                     // Reset composing if non-hangul
-                    composingText = null
+                    composingText = ComposingText(text, toIndex)
                     candidatesWindow.destroy()
                 }
                 convert()
@@ -100,11 +96,10 @@ class ConverterService: AccessibilityService() {
                 val source = event.source
                 val start = source.textSelectionStart
                 val end = source.textSelectionEnd
-                val currentComposingText = composingText
-                if(currentComposingText != null) {
-                    if(start == end && abs(start - currentComposingText.to) > 1) {
-                        composingText = null
-                    }
+                if(start == -1 || end == -1) return
+                if(start == end && abs(start - composingText.to) > 1) {
+                    composingText = ComposingText(composingText.text, start)
+                    convert()
                 }
             }
         }
@@ -112,22 +107,20 @@ class ConverterService: AccessibilityService() {
 
     private fun convert() {
         val composingText = this.composingText
-        if(composingText != null) {
-            if(composingText.composing.isNotEmpty()) {
-                val candidates = hanjaConverter.convert(composingText.composing)
-                candidatesWindow.show(candidates, rect) { hanja ->
-                    val hangul = composingText.composing.take(hanja.length)
-                    val formatted = outputFormat?.getOutput(hanja, hangul) ?: hanja
-                    val replaced = composingText.replaced(formatted, hanja.length)
-                    ignoreText = replaced.text
-                    pasteFullText(replaced.text)
-                    handler.post { setSelection(replaced.to) }
-                    this.composingText = replaced
-                    convert()
-                }
-            } else {
-                candidatesWindow.destroy()
+        if(composingText.composing.isNotEmpty()) {
+            val candidates = hanjaConverter.convert(composingText.composing)
+            candidatesWindow.show(candidates, rect) { hanja ->
+                val hangul = composingText.composing.take(hanja.length)
+                val formatted = outputFormat?.getOutput(hanja, hangul) ?: hanja
+                val replaced = composingText.replaced(formatted, hanja.length)
+                ignoreText = replaced.text
+                pasteFullText(replaced.text)
+                handler.post { setSelection(replaced.to) }
+                this.composingText = replaced
+                convert()
             }
+        } else {
+            candidatesWindow.destroy()
         }
     }
 
