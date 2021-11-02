@@ -23,12 +23,10 @@ class HanjaConverter(
             .flatten().distinct().map { CandidatesWindow.Candidate(it.result, it.extra ?: "") }
     }
 
-    fun preProcessWord(word: String): String {
-        if(word.isEmpty()) return word
-        if(isHangul(word[0])) return word
-        val hangulIndex = word.indexOfFirst { c -> isHangul(c) }
-        if(hangulIndex == -1 || hangulIndex >= word.length) return ""
-        else return word.substring(hangulIndex)
+    fun convertExact(word: String): List<CandidatesWindow.Candidate> {
+        val result = dictionary.searchExact(word) ?: return emptyList()
+        return result.sortedByDescending { it.frequency }
+            .map { CandidatesWindow.Candidate(it.result, it.extra ?: "") }
     }
 
     private fun getExtraCandidates(conversionTarget: String): List<String> {

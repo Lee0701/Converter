@@ -123,7 +123,12 @@ class ConverterService: AccessibilityService() {
             val predictor = this.predictor
             if(predictor != null && composingText.textBeforeCursor.any { isHangul(it) }) {
                 val candidates = predictor.predict(predictor.tokenize(composingText.textBeforeCursor))
-                candidatesWindow.show(candidates, rect) { prediction ->
+                val convertedCandidates = candidates.flatMap { candidate ->
+                    if(candidate.text.length > 1 && candidate.text.all { isHangul(it) }) {
+                        listOf(candidate) + hanjaConverter.convertExact(candidate.text)
+                    } else listOf(candidate)
+                }
+                candidatesWindow.show(convertedCandidates, rect) { prediction ->
                     val inserted = composingText.inserted(prediction)
                     ignoreText = inserted.text
                     pasteFullText(inserted.text)
