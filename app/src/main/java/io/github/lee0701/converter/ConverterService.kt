@@ -81,14 +81,13 @@ class ConverterService: AccessibilityService() {
                 if(addedText.isNotEmpty() && addedText.all { isHangul(it) }) {
                     if(composingText.composing.isEmpty()) {
                         // Create composing text if not exists
-                        composingText = ComposingText(text, toIndex, fromIndex, toIndex)
+                        composingText = ComposingText(text, fromIndex, toIndex)
                     } else {
-                        composingText = composingText.copy(text = text, cursor = toIndex, to = toIndex)
+                        composingText = composingText.copy(text = text, to = toIndex)
                     }
                 } else {
                     // Reset composing if non-hangul
                     composingText = ComposingText(text, toIndex)
-                    candidatesWindow.destroy()
                 }
                 convert()
             }
@@ -106,7 +105,6 @@ class ConverterService: AccessibilityService() {
     }
 
     private fun convert() {
-        val composingText = this.composingText
         if(composingText.composing.isNotEmpty()) {
             val candidates = hanjaConverter.convert(composingText.composing)
             candidatesWindow.show(candidates, rect) { hanja ->
@@ -116,29 +114,26 @@ class ConverterService: AccessibilityService() {
                 ignoreText = replaced.text
                 pasteFullText(replaced.text)
                 handler.post { setSelection(replaced.to) }
-                this.composingText = replaced
+                composingText = replaced
                 convert()
             }
         } else {
-            candidatesWindow.destroy()
+            val predictor = this.predictor
+            if(predictor != null && composingText.textBeforeCursor.any { isHangul(it) }) {
+                val candidates = predictor.predict(predictor.tokenize(composingText.textBeforeCursor))
+                candidatesWindow.show(candidates, rect) { prediction ->
+                    val inserted = composingText.inserted(prediction)
+                    ignoreText = inserted.text
+                    pasteFullText(inserted.text)
+                    handler.post { setSelection(inserted.to) }
+                    composingText = inserted
+                    convert()
+                }
+            } else {
+                candidatesWindow.destroy()
+            }
         }
     }
-
-    private fun showCandidates(word: String, targetWord: String, candidates: List<CandidatesWindow.Candidate>) {
-        val lengthDiff = word.length - targetWord.length
-        candidatesWindow.show(candidates, rect) { hanja ->
-            val hangul = word.drop(lengthDiff).take(hanja.length)
-            val formatted = (outputFormat?.let { it(hanja, hangul) } ?: hanja)
-//            onReplacement(formatted, lengthDiff, hanja.length)
-        }
-    }
-
-    private fun showPrediction(candidates: List<CandidatesWindow.Candidate>) {
-        candidatesWindow.show(candidates, rect) { prediction ->
-//            onPrediction(prediction)
-        }
-    }
-
 
     private fun pasteFullText(fullText: String) {
         val arguments = Bundle()
