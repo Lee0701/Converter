@@ -14,7 +14,7 @@ import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.VerticalCandidatesWindow
 import io.github.lee0701.converter.engine.HanjaConverter
 import io.github.lee0701.converter.engine.Predictor
-import kotlin.math.abs
+import kotlin.math.min
 
 class ConverterService: AccessibilityService() {
 
@@ -23,20 +23,13 @@ class ConverterService: AccessibilityService() {
 
     private var outputFormat: OutputFormat? = null
     private val rect = Rect()
+    private var ignoreText: String? = null
 
     private lateinit var hanjaConverter: HanjaConverter
     private var predictor: Predictor? = null
     private lateinit var candidatesWindow: CandidatesWindow
 
-    private var text: String = ""
-    private var cursor = 0
-    private var lastCursor = 0
-    private var startIndex = 0
-    private var endIndex = Integer.MAX_VALUE
-    private var cursorMovedByConversion = false
-
-    private val backSpaced get() = cursor - lastCursor < 0
-    private val cursorManuallyMoved get() = !cursorMovedByConversion && (cursor < startIndex || cursor > endIndex || abs(cursor - lastCursor) > 1)
+    private var composingText: ComposingText? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -66,73 +59,72 @@ class ConverterService: AccessibilityService() {
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
-        if(event.eventType != AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED
-            && event.eventType != AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED) {
-                return
-        }
-
-        source = event.source ?: return
-        if(cursorMovedByConversion) {
-            setTextCursor(cursor)
-            cursorMovedByConversion = false
-        } else {
-            text = event.text?.firstOrNull()?.toString() ?: ""
-            cursor = source.textSelectionStart
-            if(cursor == -1) cursor = 0
-        }
-
-
-        if(cursorManuallyMoved && !backSpaced) {
-            resetInput()
-            if(startIndex > 0) startIndex -= 1
-        }
-
         when(event.eventType) {
             AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> {
+                source = event.source ?: return
                 source.getBoundsInScreen(rect)
 
-                // Word break inserted
-                if(getCurrentWord().isEmpty()) {
-                    resetInput()
-                }
-                cursorMovedByConversion = false
+                val ignoreText = this.ignoreText
+                this.ignoreText = null
+                val text = event.text.firstOrNull()?.toString() ?: ""
+                if(text == ignoreText) return
 
-                onInput()
+                val beforeText = event.beforeText.toString()
+                val fromIndex = event.fromIndex.let { if(it == -1) firstDifference(beforeText, text) else it }
+                val addedCount = event.addedCount
+                val removedCount = event.removedCount
+
+                println("text=$text, before=$beforeText, from=$fromIndex, added=$addedCount, removed=$removedCount")
+
+                val currentComposingText = composingText
+
+                val addedText = text.drop(fromIndex).take(addedCount)
+                val toIndex = fromIndex + addedCount
+
+                if(addedText.isNotEmpty() && addedText.all { isHangul(it) }) {
+                    if(currentComposingText == null) {
+                        // Create composing text if not exists
+                        val newComposingText = ComposingText(text, toIndex, fromIndex, toIndex)
+                        composingText = newComposingText
+                    } else {
+                        val newComposingText = currentComposingText.copy(text = text, cursor = toIndex, to = toIndex)
+                        composingText = newComposingText
+                    }
+                    println("$currentComposingText => $composingText")
+                    println("${currentComposingText?.composing} => ${composingText?.composing}")
+                } else {
+                    // Reset composing if non-hangul
+                    composingText = null
+                    candidatesWindow.destroy()
+                }
+                convert()
             }
             AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
-                source.getBoundsInScreen(rect)
+                val source = event.source
+                val start = source.textSelectionStart
+                val end = source.textSelectionEnd
+                println("$start .. $end")
+            }
+        }
+    }
 
-                // backspace or manual movement
-                if(backSpaced || cursorManuallyMoved) {
-                    resetInput()
+    private fun convert() {
+        val composingText = this.composingText
+        if(composingText != null) {
+            if(composingText.composing.isNotEmpty()) {
+                val candidates = hanjaConverter.convert(composingText.composing)
+                candidatesWindow.show(candidates, rect) { hanja ->
+                    val replaced = composingText.replaced(hanja)
+                    ignoreText = replaced.text
+                    pasteFullText(replaced.text)
+                    handler.post { setSelection(replaced.to) }
+                    this.composingText = replaced
+                    convert()
                 }
-
-            }
-            else -> { }
-        }
-        lastCursor = cursor
-    }
-
-    private fun resetInput() {
-        startIndex = cursor
-        endIndex = Integer.MAX_VALUE
-    }
-
-    private fun onInput() {
-        handler.removeCallbacksAndMessages(null)
-        val word = getCurrentWord()
-        val targetWord = hanjaConverter.preProcessWord(word)
-        if(text.isEmpty()) candidatesWindow.destroy()
-        else if(targetWord.isEmpty()) {
-            val textBeforeCursor = getTextBeforeCursor()
-            if(!textBeforeCursor.any { isHangul(it) }) candidatesWindow.destroy()
-            else {
-                val candidates = predictor?.let { it.predict(it.tokenize(textBeforeCursor)) } ?: emptyList()
-                if(candidates.isNotEmpty()) showPrediction(candidates)
-                else candidatesWindow.destroy()
+            } else {
+                candidatesWindow.destroy()
             }
         }
-        else showCandidates(word, targetWord, hanjaConverter.convert(targetWord))
     }
 
     private fun showCandidates(word: String, targetWord: String, candidates: List<CandidatesWindow.Candidate>) {
@@ -140,55 +132,16 @@ class ConverterService: AccessibilityService() {
         candidatesWindow.show(candidates, rect) { hanja ->
             val hangul = word.drop(lengthDiff).take(hanja.length)
             val formatted = (outputFormat?.let { it(hanja, hangul) } ?: hanja)
-            onReplacement(formatted, lengthDiff, hanja.length)
+//            onReplacement(formatted, lengthDiff, hanja.length)
         }
     }
 
     private fun showPrediction(candidates: List<CandidatesWindow.Candidate>) {
         candidatesWindow.show(candidates, rect) { prediction ->
-            onPrediction(prediction)
+//            onPrediction(prediction)
         }
     }
 
-    private fun onReplacement(replacement: String, index: Int, length: Int) {
-        val word = getCurrentWord()
-        val diff = replacement.length - length
-        endIndex = cursor
-        val pasteText = text.take(startIndex) + word.take(index) + replacement + word.drop(index + length) + text.drop(endIndex)
-        pasteFullText(pasteText)
-        // For some apps that trigger cursor change event already
-        text = pasteText
-        cursor += diff
-        endIndex = cursor
-        setTextCursor(cursor)
-        startIndex += replacement.length + index
-        cursorMovedByConversion = true
-        handler.post { onInput() }
-    }
-
-    private fun onPrediction(prediction: String) {
-        val pasteText = getTextBeforeCursor() + prediction + getTextAfterCursor()
-        pasteFullText(pasteText)
-        // For some apps that trigger cursor change event already
-        text = pasteText
-        cursor += prediction.length
-        setTextCursor(cursor)
-        startIndex += prediction.length
-        cursorMovedByConversion = true
-        handler.post { onInput() }
-    }
-
-    private fun getTextBeforeCursor(): String {
-        return text.take(cursor)
-    }
-
-    private fun getTextAfterCursor(): String {
-        return text.drop(cursor)
-    }
-
-    private fun getCurrentWord(): String {
-        return getTextBeforeCursor().drop(startIndex).split("\\s".toRegex()).lastOrNull() ?: ""
-    }
 
     private fun pasteFullText(fullText: String) {
         val arguments = Bundle()
@@ -196,11 +149,19 @@ class ConverterService: AccessibilityService() {
         source.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
     }
 
-    private fun setTextCursor(cursor: Int) {
+    private fun setSelection(start: Int, end: Int = start) {
         val arguments = Bundle()
-        arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, cursor)
-        arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, cursor)
+        arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, start)
+        arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, end)
         source.performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, arguments)
+    }
+
+    private fun firstDifference(a: String, b: String): Int {
+        val len = min(a.length, b.length)
+        for(i in 0 until len) {
+            if(a[i] != b[i]) return i
+        }
+        return len
     }
 
     companion object {
