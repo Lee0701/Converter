@@ -14,6 +14,7 @@ import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.VerticalCandidatesWindow
 import io.github.lee0701.converter.engine.HanjaConverter
 import io.github.lee0701.converter.engine.Predictor
+import kotlin.math.abs
 import kotlin.math.min
 
 class ConverterService: AccessibilityService() {
@@ -74,8 +75,6 @@ class ConverterService: AccessibilityService() {
                 val addedCount = event.addedCount
                 val removedCount = event.removedCount
 
-                println("text=$text, before=$beforeText, from=$fromIndex, added=$addedCount, removed=$removedCount")
-
                 val currentComposingText = composingText
 
                 val addedText = text.drop(fromIndex).take(addedCount)
@@ -90,8 +89,6 @@ class ConverterService: AccessibilityService() {
                         val newComposingText = currentComposingText.copy(text = text, cursor = toIndex, to = toIndex)
                         composingText = newComposingText
                     }
-                    println("$currentComposingText => $composingText")
-                    println("${currentComposingText?.composing} => ${composingText?.composing}")
                 } else {
                     // Reset composing if non-hangul
                     composingText = null
@@ -103,7 +100,12 @@ class ConverterService: AccessibilityService() {
                 val source = event.source
                 val start = source.textSelectionStart
                 val end = source.textSelectionEnd
-                println("$start .. $end")
+                val currentComposingText = composingText
+                if(currentComposingText != null) {
+                    if(start == end && abs(start - currentComposingText.to) > 1) {
+                        composingText = null
+                    }
+                }
             }
         }
     }
@@ -114,7 +116,9 @@ class ConverterService: AccessibilityService() {
             if(composingText.composing.isNotEmpty()) {
                 val candidates = hanjaConverter.convert(composingText.composing)
                 candidatesWindow.show(candidates, rect) { hanja ->
-                    val replaced = composingText.replaced(hanja)
+                    val hangul = composingText.composing.take(hanja.length)
+                    val formatted = outputFormat?.getOutput(hanja, hangul) ?: hanja
+                    val replaced = composingText.replaced(formatted, hanja.length)
                     ignoreText = replaced.text
                     pasteFullText(replaced.text)
                     handler.post { setSelection(replaced.to) }
