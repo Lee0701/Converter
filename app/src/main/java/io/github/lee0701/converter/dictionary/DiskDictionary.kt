@@ -1,6 +1,5 @@
 package io.github.lee0701.converter.dictionary
 
-import io.github.lee0701.converter.HanjaDictionary
 import java.io.InputStream
 import java.lang.StringBuilder
 import java.nio.ByteBuffer
