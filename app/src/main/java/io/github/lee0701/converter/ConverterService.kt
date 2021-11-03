@@ -125,17 +125,20 @@ class ConverterService: AccessibilityService() {
                 withContext(Dispatchers.Main) {
                     candidatesWindow.show(candidates, rect) { hanja ->
                         val hangul = composingText.composing.take(hanja.length)
-                        val formatted = outputFormat?.getOutput(hanja, hangul) ?: hanja
-                        val replaced = composingText.replaced(formatted, hanja.length)
+                        val replaced = composingText.replaced(hanja, outputFormat)
                         ignoreText = replaced.text
                         pasteFullText(source, replaced.text)
                         handler.post { setSelection(source, replaced.to) }
                         composingText = replaced
                         convert(source)
-                        if(hanja.all { isHanja(it) }) hanjaConverter.learnAsync(hangul, hanja)
+                        if(hanja.all { isHanja(it) }) learn(hangul, hanja)
                     }
                 }
             } else {
+                if(composingText.unconverted.isNotEmpty() && composingText.converted.isNotEmpty()) {
+                    learn(composingText.unconverted, composingText.converted)
+                }
+
                 val predictor = predictor
                 if(predictor != null && composingText.textBeforeCursor.any { isHangul(it) }) {
                     val candidates = predictor.predict(predictor.tokenize(composingText.textBeforeCursor))
@@ -169,6 +172,10 @@ class ConverterService: AccessibilityService() {
         arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, start)
         arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, end)
         source.performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, arguments)
+    }
+
+    private fun learn(input: String, result: String) {
+        hanjaConverter.learnAsync(input, result)
     }
 
     private fun firstDifference(a: String, b: String): Int {
