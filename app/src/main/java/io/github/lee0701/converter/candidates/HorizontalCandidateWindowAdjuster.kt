@@ -7,16 +7,14 @@ import android.content.res.Configuration
 import android.graphics.PixelFormat
 import android.os.Build
 import android.util.TypedValue
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.WindowManager
+import android.view.*
 import android.widget.Toast
 import androidx.preference.PreferenceManager
 import io.github.lee0701.converter.ConverterService
 import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow.Key
 import io.github.lee0701.converter.R
 import kotlinx.android.synthetic.main.adjust_candidates_view_horizontal.view.*
+import java.lang.IllegalArgumentException
 
 class HorizontalCandidateWindowAdjuster(private val context: Context) {
 
@@ -40,11 +38,13 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
 
     private val windowMoveAmount = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1f, context.resources.displayMetrics).toInt()
 
+    private var window: View? = null
+
     @SuppressLint("InflateParams")
     fun show() {
         val window = LayoutInflater.from(context).inflate(R.layout.adjust_candidates_view_horizontal, null)
         window.close.setOnClickListener {
-            windowManager.removeView(window)
+            close()
         }
 
         var offset = 0
@@ -100,6 +100,16 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
             windowManager.addView(window, layoutParams)
         } catch(ex: WindowManager.BadTokenException) {
             Toast.makeText(context, R.string.overlay_permission_required, Toast.LENGTH_LONG).show()
+        }
+        this.window = window
+    }
+
+    fun close() {
+        val window = this.window
+        try {
+            if(window != null) windowManager.removeView(window)
+        } catch(ex: IllegalArgumentException) {
+            // Window is already removed, do nothing
         }
     }
 
