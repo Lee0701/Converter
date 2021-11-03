@@ -135,7 +135,7 @@ class ConverterService: AccessibilityService() {
                     }
                 }
             } else {
-                if(composingText.unconverted.isNotEmpty() && composingText.converted.isNotEmpty()) {
+                if(composingText.converted.isNotEmpty() && !composingText.converted.all { isHangul(it) }) {
                     learn(composingText.unconverted, composingText.converted)
                 }
 
