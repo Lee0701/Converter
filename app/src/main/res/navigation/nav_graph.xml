@@ -9,6 +9,6 @@
         android:id="@+id/FirstFragment"
         android:name="io.github.lee0701.converter.information.FirstFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        tools:layout="@layout/information_fragment_first">
     </fragment>
 </navigation>

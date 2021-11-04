@@ -6,9 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
-import io.github.lee0701.converter.R
-import io.github.lee0701.converter.databinding.FragmentFirstBinding
+import androidx.preference.PreferenceManager
+import io.github.lee0701.converter.databinding.InformationFragmentFirstBinding
 import io.github.lee0701.converter.settings.SettingsActivity
 
 /**
@@ -16,7 +15,7 @@ import io.github.lee0701.converter.settings.SettingsActivity
  */
 class FirstFragment : Fragment() {
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: InformationFragmentFirstBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -27,7 +26,7 @@ class FirstFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = InformationFragmentFirstBinding.inflate(inflater, container, false)
         return binding.root
 
     }
@@ -35,11 +34,14 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonFirst.setOnClickListener {
+        binding.buttonAgree.setOnClickListener {
+            val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
+            editor.putBoolean("accessibility_service_agreed", true)
+            editor.apply()
             startActivity(Intent(context, SettingsActivity::class.java))
             activity?.finish()
         }
-        binding.buttonSecond.setOnClickListener {
+        binding.buttonDisagree.setOnClickListener {
             activity?.finish()
         }
     }
