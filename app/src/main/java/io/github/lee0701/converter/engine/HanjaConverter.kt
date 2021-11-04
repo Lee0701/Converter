@@ -15,6 +15,15 @@ class HanjaConverter(
     private val database: HistoryDatabase?,
 ) {
 
+    init {
+        database?.let { db ->
+            GlobalScope.launch {
+                val oldWords = db.wordDao().searchWordsOlderThan(System.currentTimeMillis() - 1000*60*60*24*7)
+                db.wordDao().deleteWords(*oldWords)
+            }
+        }
+    }
+
     fun convertAsync(word: String): Deferred<List<CandidatesWindow.Candidate>> {
         return GlobalScope.async {
             val dictionaryResult = dictionary.search(word) ?: emptyList()
