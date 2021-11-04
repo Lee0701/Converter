@@ -10,7 +10,7 @@
         android:id="@+id/textview_first"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
+        android:layout_marginHorizontal="100dp"
         android:text="@string/hello_first_fragment"
         android:textSize="20sp"
         android:textAlignment="center"
