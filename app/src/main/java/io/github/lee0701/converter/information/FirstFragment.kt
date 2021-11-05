@@ -2,13 +2,13 @@ package io.github.lee0701.converter.information
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import io.github.lee0701.converter.databinding.InformationFragmentFirstBinding
-import io.github.lee0701.converter.settings.SettingsActivity
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -38,7 +38,14 @@ class FirstFragment : Fragment() {
             val editor = PreferenceManager.getDefaultSharedPreferences(context).edit()
             editor.putBoolean("accessibility_service_agreed", true)
             editor.apply()
-            startActivity(Intent(context, SettingsActivity::class.java))
+            // Open accessibility service settings
+            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+            intent.addFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK
+                        or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        or Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+            )
+            startActivity(intent)
             activity?.finish()
         }
         binding.buttonDisagree.setOnClickListener {

@@ -84,9 +84,9 @@
     <string name="first_fragment_label">Important Information</string>
 
     <string name="hello_first_fragment">
-        Hanja Converter uses accessibility service for its main functionality.
+        Accessibility Service is used for the main functionality of Hanja Converter.
         \n\n
-        The text content entered by the user is used for Hanja conversion, and is not collected or used for other purposes.
+        An access to Accessibility Service is required to convert the text typed by user to Hanja, working independently with keyboard service. The content entered by the user in any app is used by the Hanja Converter and is never used or collected for any other purpose.
         \n\n
         Do you agree to use the accessibility service?
     </string>
