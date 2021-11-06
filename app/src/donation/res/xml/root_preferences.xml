@@ -45,6 +45,7 @@
             app:defaultValue="horizontal" />
 
         <io.github.lee0701.converter.settings.ShowCandidateWindowAdjusterPreference
+            app:key="adjust_window"
             app:title="@string/adjust_window_title"
             app:summary="@string/adjust_window_summary" />
 

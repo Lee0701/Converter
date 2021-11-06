@@ -12,6 +12,8 @@
     <string name="down">아래</string>
     <string name="larger">크게</string>
     <string name="smaller">작게</string>
+    <string name="agree">同意</string>
+    <string name="disagree">同意 안함</string>
 
 
     <string name="overlay_permission_required">漢字變換器를 使用하시려면 設定 앱에서 오버레이 權限을 許容해 주세요.</string>
@@ -74,4 +76,18 @@
     <string name="about_oss_licenses_title">오픈소스 라이선스</string>
     <string name="about_app_info_title">漢字變換器</string>
     <string name="about_app_info_summary">開發者 連絡處: hgl1002@naver.com</string>
+
+
+    <!-- Information Activity -->
+    <string name="title_activity_information">漢字變換器 情報</string>
+
+    <string name="first_fragment_label">案內</string>
+
+    <string name="hello_first_fragment">
+        漢字變換器의 主要 機能을 쓰려면 接近性 서비스를 使用해야 합니다.
+        \n\n
+        키보드 앱과 別個로 動作하여 使用者가 入力한 內容을 漢字로 變換하기 爲해 接近性 서비스 權限이 必要합니다. 모든 앱에서 使用者가 入力한 內容이 漢字變換器에서 使用되며, 다른 目的으로 活用되거나 收集되지는 않습니다.
+        \n\n
+        接近性 서비스 使用에 同意하십니까?
+    </string>
 </resources>

@@ -20,7 +20,6 @@ import kotlin.math.min
 class ConverterService: AccessibilityService() {
 
     private val handler = Handler(Looper.getMainLooper())
-    private lateinit var source: AccessibilityNodeInfo
 
     private var outputFormat: OutputFormat? = null
     private val rect = Rect()
@@ -64,7 +63,7 @@ class ConverterService: AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         when(event.eventType) {
             AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> {
-                source = event.source ?: return
+                val source = event.source ?: return
                 source.getBoundsInScreen(rect)
 
                 val ignoreText = this.ignoreText
@@ -91,22 +90,22 @@ class ConverterService: AccessibilityService() {
                     // Reset composing if non-hangul
                     composingText = ComposingText(text, toIndex)
                 }
-                convert()
+                convert(source)
             }
             AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
-                val source = event.source
+                val source = event.source ?: return
                 val start = source.textSelectionStart
                 val end = source.textSelectionEnd
                 if(start == -1 || end == -1) return
                 if(start == end && abs(start - composingText.to) > 1) {
                     composingText = ComposingText(composingText.text, start)
-                    convert()
+                    convert(source)
                 }
             }
         }
     }
 
-    private fun convert() {
+    private fun convert(source: AccessibilityNodeInfo) {
         if(composingText.composing.isNotEmpty()) {
             val candidates = hanjaConverter.convert(composingText.composing)
             candidatesWindow.show(candidates, rect) { hanja ->
@@ -114,10 +113,10 @@ class ConverterService: AccessibilityService() {
                 val formatted = outputFormat?.getOutput(hanja, hangul) ?: hanja
                 val replaced = composingText.replaced(formatted, hanja.length)
                 ignoreText = replaced.text
-                pasteFullText(replaced.text)
-                handler.post { setSelection(replaced.to) }
+                pasteFullText(source, replaced.text)
+                handler.post { setSelection(source, replaced.to) }
                 composingText = replaced
-                convert()
+                convert(source)
             }
         } else {
             val predictor = this.predictor
@@ -131,10 +130,10 @@ class ConverterService: AccessibilityService() {
                 candidatesWindow.show(convertedCandidates, rect) { prediction ->
                     val inserted = composingText.inserted(prediction)
                     ignoreText = inserted.text
-                    pasteFullText(inserted.text)
-                    handler.post { setSelection(inserted.to) }
+                    pasteFullText(source, inserted.text)
+                    handler.post { setSelection(source, inserted.to) }
                     composingText = inserted
-                    convert()
+                    convert(source)
                 }
             } else {
                 candidatesWindow.destroy()
@@ -142,13 +141,13 @@ class ConverterService: AccessibilityService() {
         }
     }
 
-    private fun pasteFullText(fullText: String) {
+    private fun pasteFullText(source: AccessibilityNodeInfo, fullText: String) {
         val arguments = Bundle()
         arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, fullText)
         source.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
     }
 
-    private fun setSelection(start: Int, end: Int = start) {
+    private fun setSelection(source: AccessibilityNodeInfo, start: Int, end: Int = start) {
         val arguments = Bundle()
         arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, start)
         arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, end)

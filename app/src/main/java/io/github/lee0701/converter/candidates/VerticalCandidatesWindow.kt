@@ -9,13 +9,12 @@ import android.os.Build
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.R
-import kotlinx.android.synthetic.main.candidates_view_vertical.view.*
+import io.github.lee0701.converter.databinding.CandidatesViewVerticalBinding
 
 class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(context) {
 
@@ -31,14 +30,14 @@ class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(c
     private val windowWidth = getWindowSize(preferences.getInt("window_width", 5))
     private val windowHeight = getWindowSize(preferences.getInt("window_height", 4))
 
-    private var candidatesView: View? = null
+    private var candidatesView: CandidatesViewVerticalBinding? = null
     private var windowShown = false
 
     @SuppressLint("InflateParams")
     override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (String) -> Unit) {
         if(candidatesView == null) {
-            val candidatesView = LayoutInflater.from(context).inflate(R.layout.candidates_view_vertical, null)
-            candidatesView.setBackgroundColor(windowColor)
+            val candidatesView = CandidatesViewVerticalBinding.inflate(LayoutInflater.from(context))
+            candidatesView.root.setBackgroundColor(windowColor)
             candidatesView.close.setOnClickListener { destroy() }
             candidatesView.close.backgroundTintList = ColorStateList.valueOf(textColor)
             candidatesView.close.alpha = textAlpha
@@ -69,23 +68,22 @@ class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(c
             )
             params.gravity = Gravity.TOP or Gravity.START
             try {
-                windowManager.addView(candidatesView, params)
+                windowManager.addView(candidatesView.root, params)
             } catch(ex: WindowManager.BadTokenException) {
                 Toast.makeText(context, R.string.overlay_permission_required, Toast.LENGTH_LONG).show()
             }
             this.candidatesView = candidatesView
         }
-        val layout = if(showExtra) R.layout.candidate_item_vertical else R.layout.candidate_item_vertical_without_extra
         val view = candidatesView ?: return
         view.list.adapter =
-            CandidateListAdapter(layout, textColor, extraColor, textAlpha,
+            HorizontalCandidateListAdapter(showExtra, textColor, extraColor, textAlpha,
                 candidates.toTypedArray(), onItemClick)
         view.list.scrollToPosition(0)
         windowShown = true
     }
 
     override fun destroy() {
-        if(candidatesView != null) windowManager.removeView(candidatesView)
+        candidatesView?.root?.let { windowManager.removeView(it) }
         candidatesView = null
         windowShown = false
     }

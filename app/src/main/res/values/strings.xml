@@ -12,6 +12,8 @@
     <string name="down">Down</string>
     <string name="larger">Larger</string>
     <string name="smaller">Smaller</string>
+    <string name="agree">Agree</string>
+    <string name="disagree">Disagree</string>
 
 
     <string name="overlay_permission_required">Please allow the overlay permission in settings app to use HanjaConverter.</string>
@@ -74,4 +76,18 @@
     <string name="about_oss_licenses_title">Open source Licenses</string>
     <string name="about_app_info_title">Hanja Converter</string>
     <string name="about_app_info_summary">Developer contact: hgl1002@naver.com</string>
+
+
+    <!-- Information Activity -->
+    <string name="title_activity_information">Hanja Converter Information</string>
+
+    <string name="first_fragment_label">Important Information</string>
+
+    <string name="hello_first_fragment">
+        Accessibility Service is used for the main functionality of Hanja Converter.
+        \n\n
+        An access to Accessibility Service is required to convert the text typed by user to Hanja, working independently with keyboard service. The content entered by the user in any app is used by the Hanja Converter and is never used or collected for any other purpose.
+        \n\n
+        Do you agree to use the accessibility service?
+    </string>
 </resources>

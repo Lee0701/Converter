@@ -7,16 +7,14 @@ import android.content.res.Configuration
 import android.graphics.PixelFormat
 import android.os.Build
 import android.util.TypedValue
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.WindowManager
+import android.view.*
 import android.widget.Toast
 import androidx.preference.PreferenceManager
 import io.github.lee0701.converter.ConverterService
 import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow.Key
 import io.github.lee0701.converter.R
-import kotlinx.android.synthetic.main.adjust_candidates_view_horizontal.view.*
+import io.github.lee0701.converter.databinding.AdjustCandidatesViewHorizontalBinding
+import java.lang.IllegalArgumentException
 
 class HorizontalCandidateWindowAdjuster(private val context: Context) {
 
@@ -40,11 +38,13 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
 
     private val windowMoveAmount = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1f, context.resources.displayMetrics).toInt()
 
+    private var window: AdjustCandidatesViewHorizontalBinding? = null
+
     @SuppressLint("InflateParams")
     fun show() {
-        val window = LayoutInflater.from(context).inflate(R.layout.adjust_candidates_view_horizontal, null)
+        val window = AdjustCandidatesViewHorizontalBinding.inflate(LayoutInflater.from(context))
         window.close.setOnClickListener {
-            windowManager.removeView(window)
+            close()
         }
 
         var offset = 0
@@ -56,7 +56,7 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
                 }
                 MotionEvent.ACTION_MOVE -> {
                     windowY = motionEvent.rawY.toInt() - offset
-                    windowManager.updateViewLayout(window, layoutParams)
+                    windowManager.updateViewLayout(window.root, layoutParams)
                 }
                 else -> return@setOnTouchListener false
             }
@@ -65,20 +65,20 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
 
         window.up.setOnClickListener {
             windowY -= windowMoveAmount
-            windowManager.updateViewLayout(window, layoutParams)
+            windowManager.updateViewLayout(window.root, layoutParams)
         }
         window.down.setOnClickListener {
             windowY += windowMoveAmount
-            windowManager.updateViewLayout(window, layoutParams)
+            windowManager.updateViewLayout(window.root, layoutParams)
         }
 
         window.larger.setOnClickListener {
             windowHeight += windowMoveAmount
-            windowManager.updateViewLayout(window, layoutParams)
+            windowManager.updateViewLayout(window.root, layoutParams)
         }
         window.smaller.setOnClickListener {
             windowHeight -= windowMoveAmount
-            windowManager.updateViewLayout(window, layoutParams)
+            windowManager.updateViewLayout(window.root, layoutParams)
         }
 
         window.save.setOnClickListener {
@@ -93,13 +93,23 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
         window.discard.setOnClickListener {
             windowY = preferences.getInt(keyWindowY, windowY)
             windowHeight = preferences.getInt(keyWindowHeight, windowHeight)
-            windowManager.updateViewLayout(window, layoutParams)
+            windowManager.updateViewLayout(window.root, layoutParams)
         }
 
         try {
-            windowManager.addView(window, layoutParams)
+            windowManager.addView(window.root, layoutParams)
         } catch(ex: WindowManager.BadTokenException) {
             Toast.makeText(context, R.string.overlay_permission_required, Toast.LENGTH_LONG).show()
+        }
+        this.window = window
+    }
+
+    fun close() {
+        val window = this.window
+        try {
+            window?.root?.let { windowManager.removeView(it) }
+        } catch(ex: IllegalArgumentException) {
+            // Window is already removed, do nothing
         }
     }
 
