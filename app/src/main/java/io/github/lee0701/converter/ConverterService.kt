@@ -121,10 +121,15 @@ class ConverterService: AccessibilityService() {
         } else {
             val predictor = this.predictor
             if(predictor != null && composingText.textBeforeCursor.any { isHangul(it) }) {
-                val candidates = predictor.predict(predictor.tokenize(composingText.textBeforeCursor))
+                val prediction = predictor.predict(predictor.tokenize(composingText.textBeforeCursor))
+                val candidates = predictor.output(prediction, 10)
                 val convertedCandidates = candidates.flatMap { candidate ->
                     if(candidate.text.length > 1 && candidate.text.all { isHangul(it) }) {
-                        listOf(candidate) + hanjaConverter.convertExact(candidate.text)
+                        val converted = hanjaConverter.convertExact(candidate.text)
+                            .mapNotNull { cand -> predictor.getConfidence(prediction, cand.text)?.let { cand to it } }
+                            .maxByOrNull { it.second }
+                            ?.let { listOf(it.first) } ?: emptyList()
+                        return@flatMap listOf(candidate) + converted
                     } else listOf(candidate)
                 }
                 candidatesWindow.show(convertedCandidates, rect) { prediction ->
