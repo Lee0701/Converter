@@ -8,6 +8,7 @@ data class ComposingText(
     val composing: String = text.slice(from until to)
     val textBeforeCursor = text.take(to)
     val textAfterCursor = text.drop(to)
+    val textBeforeComposing = text.take(from)
 
     fun replaced(with: String, length: Int): ComposingText {
         val lengthDiff = with.length - length

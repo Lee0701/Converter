@@ -107,7 +107,17 @@ class ConverterService: AccessibilityService() {
 
     private fun convert(source: AccessibilityNodeInfo) {
         if(composingText.composing.isNotEmpty()) {
-            val candidates = hanjaConverter.convert(composingText.composing)
+            val candidates = hanjaConverter.convert(composingText.composing).let { list ->
+                val predictor = this.predictor
+                if(predictor != null) {
+                    val prediction = predictor.predict(predictor.tokenize(composingText.textBeforeComposing))
+                    return@let list.sortedWith(
+                        compareByDescending<CandidatesWindow.Candidate> { if(it.text.all { c -> isHangul(c) }) 1 else 0 }
+                            .thenByDescending { it.text.length }
+                            .thenByDescending { predictor.getConfidence(prediction, it.text) }
+                    )
+                } else return@let list
+            }
             candidatesWindow.show(candidates, rect) { hanja ->
                 val hangul = composingText.composing.take(hanja.length)
                 val formatted = outputFormat?.getOutput(hanja, hangul) ?: hanja
