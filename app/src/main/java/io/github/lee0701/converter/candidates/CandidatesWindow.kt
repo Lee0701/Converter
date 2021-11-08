@@ -28,7 +28,7 @@ abstract class CandidatesWindow(context: Context) {
 
     data class Candidate(
         val text: String,
-        val extra: String
+        val extra: String = "",
     )
 
 }
