@@ -84,7 +84,9 @@ class ConverterService: AccessibilityService() {
                         // Create composing text if not exists
                         composingText = ComposingText(text, fromIndex, toIndex)
                     } else {
-                        composingText = composingText.copy(text = text, to = toIndex)
+                        val spaceIndex = composingText.composing.lastIndexOf(' ')
+                        val from = composingText.from + if(spaceIndex > -1) spaceIndex + 1 else 0
+                        composingText = composingText.copy(text = text, from = from, to = toIndex)
                     }
                 } else {
                     // Reset composing if non-hangul
