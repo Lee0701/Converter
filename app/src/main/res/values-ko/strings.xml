@@ -73,9 +73,10 @@
     <string name="color_custom">使用者</string>
 
     <!-- About Preferences -->
-    <string name="about_oss_licenses_title">오픈소스 라이선스</string>
     <string name="about_app_info_title">漢字變換器</string>
     <string name="about_app_info_summary">開發者 連絡處: hgl1002@naver.com</string>
+    <string name="about_oss_licenses_title">오픈소스 라이선스</string>
+    <string name="about_dictionary_license_title">漢字辭典 라이선스</string>
 
 
     <!-- Information Activity -->
@@ -90,4 +91,9 @@
         \n\n
         接近性 서비스 使用에 同意하십니까?
     </string>
+
+
+    <!-- Dictionary License Activity -->
+    <string name="title_activity_dictionary_license">漢字辭典 라이선스</string>
+
 </resources>

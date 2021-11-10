@@ -8,7 +8,7 @@ import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 
 class OssLicensesMenuPreference(context: Context, attrs: AttributeSet): Preference(context, attrs) {
     override fun onClick() {
-            context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
+        context.startActivity(Intent(context, OssLicensesMenuActivity::class.java))
         super.onClick()
     }
 }

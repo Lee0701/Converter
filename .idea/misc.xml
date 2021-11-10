@@ -8,6 +8,7 @@
         <entry key="app/src/donation/res/xml/root_preferences.xml" value="0.1503623188405797" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.33125" />
         <entry key="app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.33125" />
+        <entry key="app/src/main/res/layout/activity_dictionary_license.xml" value="0.19739583333333333" />
         <entry key="app/src/main/res/layout/adjust_candidates_view_horizontal.xml" value="0.11979166666666667" />
         <entry key="app/src/main/res/layout/candidate_item_horizontal.xml" value="0.11979166666666667" />
         <entry key="app/src/main/res/layout/candidate_item_horizontal_without_extra.xml" value="0.11979166666666667" />

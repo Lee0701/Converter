@@ -9,6 +9,8 @@
             android:summary="@string/about_app_info_summary" />
         <io.github.lee0701.converter.settings.OssLicensesMenuPreference
             android:title="@string/about_oss_licenses_title" />
+        <io.github.lee0701.converter.settings.DictionaryLicensePreference
+            android:title="@string/about_dictionary_license_title" />
 
     </PreferenceCategory>
 

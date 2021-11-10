@@ -73,9 +73,10 @@
     <string name="color_custom">Custom</string>
 
     <!-- About Preferences -->
-    <string name="about_oss_licenses_title">Open source Licenses</string>
     <string name="about_app_info_title">Hanja Converter</string>
     <string name="about_app_info_summary">Developer contact: hgl1002@naver.com</string>
+    <string name="about_oss_licenses_title">Open source Licenses</string>
+    <string name="about_dictionary_license_title">Hanja Dictionary License</string>
 
 
     <!-- Information Activity -->
@@ -90,4 +91,9 @@
         \n\n
         Do you agree to use the accessibility service?
     </string>
+
+
+    <!-- Dictionary License Activity -->
+    <string name="title_activity_dictionary_license">Hanja Dictionary License</string>
+
 </resources>
