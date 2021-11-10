@@ -2,40 +2,40 @@
 <resources>
     <string name="app_name">漢字變換器</string>
 
-    <string name="settings_saved">設定을 貯藏했습니다.</string>
+    <string name="settings_saved">설정을 저장했습니다.</string>
 
     <string name="close">닫기</string>
-    <string name="save">貯藏</string>
-    <string name="discard">取消</string>
-    <string name="move">移動</string>
+    <string name="save">저장</string>
+    <string name="discard">취소</string>
+    <string name="move">이동</string>
     <string name="up">위</string>
     <string name="down">아래</string>
     <string name="larger">크게</string>
     <string name="smaller">작게</string>
-    <string name="agree">同意</string>
-    <string name="disagree">同意 안함</string>
+    <string name="agree">동의</string>
+    <string name="disagree">동의 안함</string>
 
 
-    <string name="overlay_permission_required">漢字變換器를 使用하시려면 設定 앱에서 오버레이 權限을 許容해 주세요.</string>
+    <string name="overlay_permission_required">漢字變換器를 사용하시려면 설정 앱에서 오버레이 권한을 허용해 주세요.</string>
 
 
     <!-- Settings Activity -->
-    <string name="title_activity_settings">漢字變換器 設定</string>
+    <string name="title_activity_settings">漢字變換器 설정</string>
 
     <!-- Preference Titles -->
     <string name="service_header">서비스</string>
-    <string name="conversion_header">變換</string>
-    <string name="prediction_header">豫測</string>
-    <string name="visuals_header">視覺</string>
-    <string name="about_header">情報</string>
+    <string name="conversion_header">변환</string>
+    <string name="prediction_header">예측</string>
+    <string name="visuals_header">시각</string>
+    <string name="about_header">정보</string>
 
     <!-- Service Preferences -->
-    <string name="enable_service_title">接近性 서비스 活性化</string>
+    <string name="enable_service_title">접근성 서비스 활성화</string>
     <string name="enable_service_summary">\'漢字變換器\'를 켜 주세요.</string>
-    <string name="enable_overlay_permission_title">오버레이 權限 活性化</string>
+    <string name="enable_overlay_permission_title">오버레이 권한 활성화</string>
 
     <!-- Conversion Preferences -->
-    <string name="output_format_title">變換 出力 포맷</string>
+    <string name="output_format_title">변환 출력 포맷</string>
 
     <string name="hanja_only">漢字</string>
     <string name="hanjahangul">漢字한글</string>
@@ -43,57 +43,57 @@
     <string name="hangul_hanja">한글(漢字)</string>
 
     <!-- Prediction Preferences -->
-    <string name="use_prediction_title">豫測 機能 使用</string>
-    <string name="use_prediction_summary">入力 中에 다음 單語를 豫測합니다.</string>
+    <string name="use_prediction_title">예측 기능 사용</string>
+    <string name="use_prediction_summary">입력 중에 다음 단어를 예측합니다.</string>
 
     <!-- Visuals Preferences -->
-    <string name="window_type_title">變換 結果窓 種類</string>
-    <string name="adjust_window_title">變換 結果窓 (가로) 調整</string>
-    <string name="adjust_window_summary">키보드의 單語 推薦欄에 맞게 調整해 주세요. (現在 畵面方向 基準)</string>
-    <string name="window_width_title">變換 結果窓 (세로) 너비</string>
-    <string name="window_height_title">變換 (세로) 結果窓 높이</string>
-    <string name="column_count_title">變換 結果窓 (세로) 列 數</string>
-    <string name="window_color_title">變換 結果窓 色相</string>
-    <string name="show_extra_title">追加情報 表示</string>
-    <string name="show_extra_summary">變換 候補別로 追加情報 (訓 等)을 表示합니다.</string>
-    <string name="custom_window_color_title">使用者 色相</string>
-    <string name="custom_window_color_summary">變換 結果窓의 \'使用者\' 色相을 變更합니다.</string>
-    <string name="custom_window_color_text_title">使用者 色相 (直接入力)</string>
+    <string name="window_type_title">변환 결과창 종류</string>
+    <string name="adjust_window_title">변환 결과창 (가로) 조정</string>
+    <string name="adjust_window_summary">키보드의 단어 추천란에 맞게 調整해 주세요. (현재 화면 방향 기준)</string>
+    <string name="window_width_title">변환 결과창 (세로) 너비</string>
+    <string name="window_height_title">변환 결과창 (세로) 높이</string>
+    <string name="column_count_title">변환 결과창 (세로) 열 수</string>
+    <string name="window_color_title">변환 결과창 색상</string>
+    <string name="show_extra_title">추가정보 표시</string>
+    <string name="show_extra_summary">변환 후보별로 추가정보 (훈 등)을 표시합니다.</string>
+    <string name="custom_window_color_title">사용자 색상</string>
+    <string name="custom_window_color_summary">변환 결과창의 \'사용자\' 색상을 변경합니다.</string>
+    <string name="custom_window_color_text_title">사용자 색상 (직접 입력)</string>
 
-    <string name="horizontal_list">가로 目錄</string>
-    <string name="vertical_list">세로 目錄</string>
+    <string name="horizontal_list">가로 목록</string>
+    <string name="vertical_list">세로 목록</string>
 
-    <string name="color_default">基本</string>
+    <string name="color_default">기본</string>
     <string name="color_gboard_light_flat">Gboard 라이트 플랫</string>
     <string name="color_gboard_dark_flat">Gboard 다크 플랫</string>
     <string name="color_gboard_light_border">Gboard 라이트 테두리</string>
     <string name="color_gboard_dark_border">Gboard 다크 테두리</string>
-    <string name="color_samsung_light">三星 라이트</string>
-    <string name="color_samsung_dark">三星 다크</string>
-    <string name="color_custom">使用者</string>
+    <string name="color_samsung_light">삼성 라이트</string>
+    <string name="color_samsung_dark">삼성 다크</string>
+    <string name="color_custom">사용자</string>
 
     <!-- About Preferences -->
     <string name="about_app_info_title">漢字變換器</string>
-    <string name="about_app_info_summary">開發者 連絡處: hgl1002@naver.com</string>
+    <string name="about_app_info_summary">개발자 연락처: hgl1002@naver.com</string>
     <string name="about_oss_licenses_title">오픈소스 라이선스</string>
-    <string name="about_dictionary_license_title">漢字辭典 라이선스</string>
+    <string name="about_dictionary_license_title">한자 사전 라이선스</string>
 
 
     <!-- Information Activity -->
-    <string name="title_activity_information">漢字變換器 情報</string>
+    <string name="title_activity_information">漢字變換器 정보</string>
 
-    <string name="first_fragment_label">案內</string>
+    <string name="first_fragment_label">안내</string>
 
     <string name="hello_first_fragment">
-        漢字變換器의 主要 機能을 쓰려면 接近性 서비스를 使用해야 합니다.
+        漢字變換器의 주요 기능을 쓰려면 접근성 서비스를 사용해야 합니다.
         \n\n
-        키보드 앱과 別個로 動作하여 使用者가 入力한 內容을 漢字로 變換하기 爲해 接近性 서비스 權限이 必要합니다. 모든 앱에서 使用者가 入力한 內容이 漢字變換器에서 使用되며, 다른 目的으로 活用되거나 收集되지는 않습니다.
+        키보드 앱과 별개로 동작하여 사용자가 입력한 내용을 한자로 변환하기 위해 접근성 서비스 권한이 필요합니다. 모든 앱에서 사용자가 입력한 내용이 漢字變換器에서 사용되며, 다른 목적으로 활용되거나 수집되지는 않습니다.
         \n\n
-        接近性 서비스 使用에 同意하십니까?
+        접근성 서비스 사용에 동의하십니까?
     </string>
 
 
     <!-- Dictionary License Activity -->
-    <string name="title_activity_dictionary_license">漢字辭典 라이선스</string>
+    <string name="title_activity_dictionary_license">한자 사전 라이선스</string>
 
 </resources>
