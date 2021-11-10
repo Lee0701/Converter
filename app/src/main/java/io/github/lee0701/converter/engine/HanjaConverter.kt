@@ -23,14 +23,6 @@ class HanjaConverter(
             .flatten().distinct().map { CandidatesWindow.Candidate(it.result, it.extra ?: "") }
     }
 
-    fun preProcessWord(word: String): String {
-        if(word.isEmpty()) return word
-        if(isHangul(word[0])) return word
-        val hangulIndex = word.indexOfFirst { c -> isHangul(c) }
-        if(hangulIndex == -1 || hangulIndex >= word.length) return ""
-        else return word.substring(hangulIndex)
-    }
-
     private fun getExtraCandidates(conversionTarget: String): List<String> {
         val list = mutableListOf<String>()
         val nonHangulIndex = conversionTarget.indexOfFirst { c -> !isHangul(c) }

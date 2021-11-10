@@ -24,7 +24,7 @@ class ConverterService: AccessibilityService() {
 
     private var outputFormat: OutputFormat? = null
     private val rect = Rect()
-    private var ignoreText: String? = null
+    private var ignoreText: CharSequence? = null
 
     private lateinit var hanjaConverter: HanjaConverter
     private var predictor: Predictor? = null
@@ -71,10 +71,10 @@ class ConverterService: AccessibilityService() {
 
                 val ignoreText = this.ignoreText
                 this.ignoreText = null
-                val text = event.text.firstOrNull()?.toString() ?: ""
+                val text = event.text.firstOrNull() ?: ""
                 if(text == ignoreText) return
 
-                val beforeText = event.beforeText.toString()
+                val beforeText = event.beforeText
                 val fromIndex = event.fromIndex.let { if(it == -1) firstDifference(beforeText, text) else it }
                 val addedCount = event.addedCount
                 val removedCount = event.removedCount
@@ -112,9 +112,9 @@ class ConverterService: AccessibilityService() {
 
     private fun convert(source: AccessibilityNodeInfo) {
         if(composingText.composing.isNotEmpty()) {
-            val candidates = hanjaConverter.convert(composingText.composing)
+            val candidates = hanjaConverter.convert(composingText.composing.toString())
             candidatesWindow.show(candidates, rect) { hanja ->
-                val hangul = composingText.composing.take(hanja.length)
+                val hangul = composingText.composing.take(hanja.length).toString()
                 val formatted = outputFormat?.getOutput(hanja, hangul) ?: hanja
                 val replaced = composingText.replaced(formatted, hanja.length)
                 ignoreText = replaced.text
@@ -126,7 +126,7 @@ class ConverterService: AccessibilityService() {
         } else {
             val predictor = this.predictor
             if(predictor != null && composingText.textBeforeCursor.any { isHangul(it) }) {
-                val candidates = predictor.predict(predictor.tokenize(composingText.textBeforeCursor))
+                val candidates = predictor.predict(predictor.tokenize(composingText.textBeforeCursor.toString()))
                 candidatesWindow.show(candidates, rect) { prediction ->
                     val inserted = composingText.inserted(prediction)
                     ignoreText = inserted.text
@@ -141,7 +141,7 @@ class ConverterService: AccessibilityService() {
         }
     }
 
-    private fun pasteFullText(source: AccessibilityNodeInfo, fullText: String) {
+    private fun pasteFullText(source: AccessibilityNodeInfo, fullText: CharSequence) {
         val arguments = Bundle()
         arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, fullText)
         source.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
@@ -154,7 +154,7 @@ class ConverterService: AccessibilityService() {
         source.performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, arguments)
     }
 
-    private fun firstDifference(a: String, b: String): Int {
+    private fun firstDifference(a: CharSequence, b: CharSequence): Int {
         val len = min(a.length, b.length)
         for(i in 0 until len) {
             if(a[i] != b[i]) return i
