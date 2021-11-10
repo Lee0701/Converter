@@ -1,5 +1,5 @@
 app/src/main/ml/model.tflite
-app/src/main/assets/wordlist.txt
+app/src/main/ml/wordlist.txt
 
 *.apk
 *.aab
