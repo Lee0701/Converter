@@ -84,7 +84,7 @@ class ConverterService: AccessibilityService() {
                         // Create composing text if not exists
                         composingText = ComposingText(text, fromIndex, toIndex)
                     } else {
-                        val spaceIndex = composingText.composing.lastIndexOf(' ')
+                        val spaceIndex = composingText.composing.lastIndexOfAny(charArrayOf(' ', '\t', '\r', '\n'))
                         val from = composingText.from + if(spaceIndex > -1) spaceIndex + 1 else 0
                         composingText = composingText.copy(text = text, from = from, to = toIndex)
                     }
