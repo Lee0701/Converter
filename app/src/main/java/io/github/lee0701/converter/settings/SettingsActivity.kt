@@ -38,7 +38,7 @@ class SettingsActivity : AppCompatActivity() {
 
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.root_preferences, rootKey)
+            PREFERENCE_LIST.forEach { addPreferencesFromResource(it) }
         }
 
         override fun onPause() {
@@ -46,5 +46,15 @@ class SettingsActivity : AppCompatActivity() {
             val preference = preferenceScreen.findPreference<ShowCandidateWindowAdjusterPreference>("adjust_window")
             preference?.closeAdjuster()
         }
+    }
+
+    companion object {
+        val PREFERENCE_LIST = listOf(
+            R.xml.pref_service,
+            R.xml.pref_conversion,
+            R.xml.pref_prediction,
+            R.xml.pref_visuals,
+            R.xml.pref_about,
+        )
     }
 }

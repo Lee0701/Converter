@@ -14,6 +14,7 @@ import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.VerticalCandidatesWindow
 import io.github.lee0701.converter.engine.HanjaConverter
 import io.github.lee0701.converter.engine.Predictor
+import io.github.lee0701.converter.settings.SettingsActivity
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -33,7 +34,9 @@ class ConverterService: AccessibilityService() {
 
     override fun onCreate() {
         super.onCreate()
-        PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
+        SettingsActivity.PREFERENCE_LIST.forEach {
+            PreferenceManager.setDefaultValues(this, it, false)
+        }
         restartService()
         INSTANCE = this
     }
