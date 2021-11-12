@@ -10,6 +10,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.preference.PreferenceManager
 import io.github.lee0701.converter.CharacterSet.isHangul
 import io.github.lee0701.converter.candidates.CandidatesWindow
+import io.github.lee0701.converter.candidates.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.VerticalCandidatesWindow
 import io.github.lee0701.converter.engine.HanjaConverter
@@ -65,6 +66,12 @@ class ConverterService: AccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         when(event.eventType) {
+            AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
+                val isHideEvent = CandidatesWindowHider.of(event.packageName.toString())?.isHideEvent(event)
+                if(isHideEvent == true) {
+                    candidatesWindow.destroy()
+                }
+            }
             AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> {
                 val source = event.source ?: return
                 source.getBoundsInScreen(rect)
@@ -107,6 +114,7 @@ class ConverterService: AccessibilityService() {
                     convert(source)
                 }
             }
+            else -> {}
         }
     }
 
