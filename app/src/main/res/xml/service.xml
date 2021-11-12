@@ -6,5 +6,5 @@
     android:accessibilityFlags="flagDefault"
     android:canRequestEnhancedWebAccessibility="true"
     android:canRetrieveWindowContent="true"
-    android:description="@string/app_name"
+    android:description="@string/information_details"
     android:notificationTimeout="100"/>
