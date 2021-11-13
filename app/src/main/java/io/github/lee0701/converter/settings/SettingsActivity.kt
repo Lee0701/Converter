@@ -1,11 +1,16 @@
 package io.github.lee0701.converter.settings
 
+import android.accessibilityservice.AccessibilityServiceInfo
+import android.content.Context
 import android.os.Bundle
+import android.view.accessibility.AccessibilityManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
+import com.google.android.material.snackbar.Snackbar
 import io.github.lee0701.converter.ConverterService
 import io.github.lee0701.converter.R
+import io.github.lee0701.converter.databinding.SettingsActivityBinding
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -14,7 +19,8 @@ class SettingsActivity : AppCompatActivity() {
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
 
-        setContentView(R.layout.settings_activity)
+        val binding = SettingsActivityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         if (savedInstanceState == null) {
             supportFragmentManager
                 .beginTransaction()
@@ -22,6 +28,13 @@ class SettingsActivity : AppCompatActivity() {
                 .commit()
         }
         supportActionBar?.setDisplayShowHomeEnabled(false)
+
+        val manager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+        val list = manager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
+        if(!list.any { it.id.startsWith(packageName) }) {
+            Snackbar.make(binding.root, R.string.accessibility_service_not_enabled, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.enable) { OpenAccessibilitySettingsPreference.openAccessibilitySettings(this) }.show()
+        }
 
         preferences.registerOnSharedPreferenceChangeListener { pref, key ->
             when(key) {
