@@ -23,6 +23,7 @@
     <!-- Settings Activity -->
     <string name="title_activity_settings">Hanja Converter Settings</string>
 
+    <string name="system_overlay_not_enabled">System Overlay is not enabled</string>
     <string name="accessibility_service_not_enabled">Accessibility Service not enabled</string>
 
     <!-- Preference Titles -->

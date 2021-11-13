@@ -2,7 +2,9 @@ package io.github.lee0701.converter.settings
 
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.accessibility.AccessibilityManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
@@ -14,12 +16,14 @@ import io.github.lee0701.converter.databinding.SettingsActivityBinding
 
 class SettingsActivity : AppCompatActivity() {
 
+    private lateinit var binding: SettingsActivityBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
 
-        val binding = SettingsActivityBinding.inflate(layoutInflater)
+        binding = SettingsActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         if (savedInstanceState == null) {
             supportFragmentManager
@@ -28,13 +32,6 @@ class SettingsActivity : AppCompatActivity() {
                 .commit()
         }
         supportActionBar?.setDisplayShowHomeEnabled(false)
-
-        val manager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-        val list = manager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
-        if(!list.any { it.id.startsWith(packageName) }) {
-            Snackbar.make(binding.root, R.string.accessibility_service_not_enabled, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.enable) { OpenAccessibilitySettingsPreference.openAccessibilitySettings(this) }.show()
-        }
 
         preferences.registerOnSharedPreferenceChangeListener { pref, key ->
             when(key) {
@@ -46,6 +43,22 @@ class SettingsActivity : AppCompatActivity() {
                 }
             }
             ConverterService.INSTANCE?.restartService()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        val manager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+        val list = manager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            Snackbar.make(binding.root, R.string.system_overlay_not_enabled, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.enable) { EnableOverlayPermissionsPreference.openOverlayPermissionSettings(this) }
+                .show()
+        } else if(!list.any { it.id.startsWith(packageName) }) {
+            Snackbar.make(binding.root, R.string.accessibility_service_not_enabled, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.enable) { OpenAccessibilitySettingsPreference.openAccessibilitySettings(this) }
+                .show()
         }
     }
 

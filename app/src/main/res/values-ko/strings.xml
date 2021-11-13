@@ -23,6 +23,7 @@
     <!-- Settings Activity -->
     <string name="title_activity_settings">漢字變換器 設定</string>
 
+    <string name="system_overlay_not_enabled">시스템 오버레이가 非活性 狀態입니다</string>
     <string name="accessibility_service_not_enabled">接近性 서비스가 非活性 狀態입니다</string>
 
     <!-- Preference Titles -->
