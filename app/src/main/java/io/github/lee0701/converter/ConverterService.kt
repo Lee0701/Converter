@@ -8,6 +8,12 @@ import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.preference.PreferenceManager
+import com.google.android.play.core.assetpacks.AssetPackManagerFactory
+import com.google.android.play.core.assetpacks.AssetPackStates
+import com.google.android.play.core.assetpacks.model.AssetPackStatus
+import com.google.android.play.core.ktx.assetsPath
+import com.google.android.play.core.ktx.status
+import com.google.android.play.core.tasks.Task
 import io.github.lee0701.converter.CharacterSet.isHangul
 import io.github.lee0701.converter.candidates.CandidatesWindow
 import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow
@@ -15,6 +21,7 @@ import io.github.lee0701.converter.candidates.VerticalCandidatesWindow
 import io.github.lee0701.converter.engine.HanjaConverter
 import io.github.lee0701.converter.engine.Predictor
 import io.github.lee0701.converter.settings.SettingsActivity
+import java.io.File
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -22,6 +29,7 @@ class ConverterService: AccessibilityService() {
 
     private val handler = Handler(Looper.getMainLooper())
 
+    private val assetPackName = "prediction"
     private var outputFormat: OutputFormat? = null
     private val rect = Rect()
     private var ignoreText: CharSequence? = null
@@ -54,8 +62,25 @@ class ConverterService: AccessibilityService() {
         outputFormat =
             preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
         hanjaConverter = HanjaConverter(this, outputFormat)
-        if(BuildConfig.IS_DONATION
-            && preferences.getBoolean("use_prediction", false)) predictor = Predictor(this)
+
+        if(BuildConfig.IS_DONATION && preferences.getBoolean("use_prediction", false)) {
+            val assetPackManager = AssetPackManagerFactory.getInstance(applicationContext)
+            val onCompleteListener = { states: Task<AssetPackStates?> ->
+                val status = states.result.packStates()?.get(assetPackName)?.status
+                when(status) {
+                    AssetPackStatus.COMPLETED -> {
+                        val assetPackPath = assetPackManager.packLocations[assetPackName]
+                        if(assetPackPath != null) {
+                            val path = File(assetPackPath.assetsPath, "model.tflite").path
+                            predictor = Predictor(this, path)
+                        }
+                    }
+                }
+            }
+            assetPackManager
+                .getPackStates(listOf(assetPackName))
+                .addOnCompleteListener(onCompleteListener)
+        }
         else predictor = null
         candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
             "horizontal" -> HorizontalCandidatesWindow(this)

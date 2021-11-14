@@ -1,0 +1,9 @@
+apply plugin: 'com.android.asset-pack'
+
+assetPack {
+    packName = "prediction"
+
+    dynamicDelivery {
+        deliveryType = "fast-follow"
+    }
+}

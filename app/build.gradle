@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 
+def playcoreDir = file('../play-core-native-sdk')
+
 android {
     compileSdkVersion 31
     buildToolsVersion "30.0.3"
@@ -18,16 +20,22 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFile "$playcoreDir/proguard/common.pgcfg"
+            proguardFile "$playcoreDir/proguard/per-feature-proguard-files"
         }
         debug {
             minifyEnabled false
             debuggable true
         }
     }
+
     buildFeatures {
         mlModelBinding true
         viewBinding true
     }
+
+    assetPacks = [":prediction"]
+
     flavorDimensions "version"
     productFlavors {
         common {
@@ -74,7 +82,7 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.preference:preference-ktx:1.1.1'
@@ -86,6 +94,8 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
+    implementation 'com.google.android.play:core:1.10.2'
+    implementation 'com.google.android.play:core-ktx:1.8.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
