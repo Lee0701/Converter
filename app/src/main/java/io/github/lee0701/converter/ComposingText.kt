@@ -1,23 +1,25 @@
 package io.github.lee0701.converter
 
+import android.text.TextUtils
+
 data class ComposingText(
-    val text: String,
+    val text: CharSequence,
     val from: Int,
     val to: Int = from,
 ) {
-    val composing: String = text.slice(from until to)
-    val textBeforeCursor = text.take(to)
-    val textAfterCursor = text.drop(to)
-    val textBeforeComposing = text.take(from)
+    val composing: CharSequence = text.slice(from until to)
+    val textBeforeCursor: CharSequence = text.take(to)
+    val textAfterCursor: CharSequence = text.drop(to)
+    val textBeforeComposing: CharSequence = text.take(from)
 
-    fun replaced(with: String, length: Int): ComposingText {
+    fun replaced(with: CharSequence, length: Int): ComposingText {
         val lengthDiff = with.length - length
-        val fullText = text.take(from) + with + composing.drop(length) + text.drop(to)
+        val fullText = TextUtils.concat(text.take(from), with, composing.drop(length), text.drop(to))
         return this.copy(text = fullText, from = from + with.length, to = to + lengthDiff)
     }
 
-    fun inserted(with: String): ComposingText {
-        val fullText = textBeforeCursor + with + textAfterCursor
+    fun inserted(with: CharSequence): ComposingText {
+        val fullText = TextUtils.concat(textBeforeCursor, with, textAfterCursor)
         return ComposingText(fullText, to + with.length)
     }
 

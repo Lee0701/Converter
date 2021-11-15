@@ -13,13 +13,13 @@ abstract class CandidatesWindow(context: Context) {
     protected val windowManager = context.getSystemService(AccessibilityService.WINDOW_SERVICE) as WindowManager
 
     protected val customWindowColor =
-        preferences.getInt("custom_window_color", CandidateWindowColor.DEFAULT)
+        preferences.getInt("custom_window_color", CandidatesWindowColor.DEFAULT)
     protected val windowColor =
-        preferences.getString("window_color", "default").let { CandidateWindowColor.of(it ?: "", customWindowColor) }
+        preferences.getString("window_color", "default").let { CandidatesWindowColor.of(it ?: "", customWindowColor) }
     protected val darkMode = preferences.getString("window_color", "default")?.contains("dark") ?: false
-    protected val textAlpha = if(darkMode) CandidateWindowColor.ALPHA_DARK else CandidateWindowColor.ALPHA_LIGHT
-    protected val textColor = CandidateWindowColor.textColorOf(windowColor)
-    protected val extraColor = CandidateWindowColor.extraColorOf(windowColor)
+    protected val textAlpha = if(darkMode) CandidatesWindowColor.ALPHA_DARK else CandidatesWindowColor.ALPHA_LIGHT
+    protected val textColor = CandidatesWindowColor.textColorOf(windowColor)
+    protected val extraColor = CandidatesWindowColor.extraColorOf(windowColor)
 
     protected val showExtra = preferences.getBoolean("show_extra", true)
 
