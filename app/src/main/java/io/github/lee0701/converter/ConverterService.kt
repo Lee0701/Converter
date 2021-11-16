@@ -23,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import io.github.lee0701.converter.settings.SettingsActivity
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -32,7 +33,7 @@ class ConverterService: AccessibilityService() {
 
     private var outputFormat: OutputFormat? = null
     private val rect = Rect()
-    private var ignoreText: String? = null
+    private var ignoreText: CharSequence? = null
 
     private lateinit var hanjaConverter: HanjaConverter
     private var predictor: Predictor? = null
@@ -42,7 +43,9 @@ class ConverterService: AccessibilityService() {
 
     override fun onCreate() {
         super.onCreate()
-        PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
+        SettingsActivity.PREFERENCE_LIST.forEach {
+            PreferenceManager.setDefaultValues(this, it, false)
+        }
         restartService()
         INSTANCE = this
     }
@@ -81,10 +84,10 @@ class ConverterService: AccessibilityService() {
 
                 val ignoreText = this.ignoreText
                 this.ignoreText = null
-                val text = event.text.firstOrNull()?.toString() ?: ""
+                val text = event.text.firstOrNull() ?: ""
                 if(text == ignoreText) return
 
-                val beforeText = event.beforeText.toString()
+                val beforeText = event.beforeText
                 val fromIndex = event.fromIndex.let { if(it == -1) firstDifference(beforeText, text) else it }
                 val addedCount = event.addedCount
                 val removedCount = event.removedCount
@@ -97,7 +100,9 @@ class ConverterService: AccessibilityService() {
                         // Create composing text if not exists
                         composingText = ComposingText(text, fromIndex, toIndex)
                     } else {
-                        composingText = composingText.copy(text = text, to = toIndex)
+                        val spaceIndex = composingText.composing.lastIndexOfAny(charArrayOf(' ', '\t', '\r', '\n'))
+                        val from = composingText.from + if(spaceIndex > -1) spaceIndex + 1 else 0
+                        composingText = composingText.copy(text = text, from = from, to = toIndex)
                     }
                 } else {
                     // Reset composing if non-hangul
@@ -121,14 +126,14 @@ class ConverterService: AccessibilityService() {
     private fun convert(source: AccessibilityNodeInfo) {
         GlobalScope.launch {
             if(composingText.composing.isNotEmpty()) {
-                val candidates = hanjaConverter.convertAsync(composingText.composing).await()
+                val candidates = hanjaConverter.convertAsync(composingText.composing.toString()).await()
                 withContext(Dispatchers.Main) {
                     candidatesWindow.show(candidates, rect) { hanja ->
-                        val hangul = composingText.composing.take(hanja.length)
+                        val hangul = composingText.composing.take(hanja.length).toString()
                         val replaced = composingText.replaced(hanja, outputFormat)
                         ignoreText = replaced.text
                         pasteFullText(source, replaced.text)
-                        handler.post { setSelection(source, replaced.to) }
+                        setSelection(source, replaced.to)
                         composingText = replaced
                         convert(source)
                         if(hanja.all { isHanja(it) }) learn(hangul, hanja)
@@ -141,7 +146,7 @@ class ConverterService: AccessibilityService() {
 
                 val predictor = predictor
                 if(predictor != null && composingText.textBeforeCursor.any { isHangul(it) }) {
-                    val candidates = predictor.predict(predictor.tokenize(composingText.textBeforeCursor))
+                    val candidates = predictor.predict(predictor.tokenize(composingText.textBeforeCursor.toString()))
                     withContext(Dispatchers.Main) {
                         candidatesWindow.show(candidates, rect) { prediction ->
                             val inserted = composingText.inserted(prediction)
@@ -161,7 +166,7 @@ class ConverterService: AccessibilityService() {
         }
     }
 
-    private fun pasteFullText(source: AccessibilityNodeInfo, fullText: String) {
+    private fun pasteFullText(source: AccessibilityNodeInfo, fullText: CharSequence) {
         val arguments = Bundle()
         arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, fullText)
         source.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
@@ -178,7 +183,7 @@ class ConverterService: AccessibilityService() {
         hanjaConverter.learnAsync(input, result)
     }
 
-    private fun firstDifference(a: String, b: String): Int {
+    private fun firstDifference(a: CharSequence, b: CharSequence): Int {
         val len = min(a.length, b.length)
         for(i in 0 until len) {
             if(a[i] != b[i]) return i

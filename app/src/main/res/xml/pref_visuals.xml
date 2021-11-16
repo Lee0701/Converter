@@ -1,38 +1,6 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <PreferenceCategory app:title="@string/service_header">
-
-        <io.github.lee0701.converter.settings.OpenAccessibilitySettingsPreference
-            app:title="@string/enable_service_title"
-            android:summary="@string/enable_service_summary" />
-
-        <io.github.lee0701.converter.settings.EnableOverlayPermissionsPreference
-            app:title="@string/enable_overlay_permission_title" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory app:title="@string/conversion_header">
-
-        <ListPreference
-            app:key="output_format"
-            app:title="@string/output_format_title"
-            app:useSimpleSummaryProvider="true"
-            app:entries="@array/output_format_entries"
-            app:entryValues="@array/output_format_values"
-            app:defaultValue="hanja_only" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory app:title="@string/prediction_header">
-
-        <CheckBoxPreference
-            app:key="use_prediction"
-            app:title="@string/use_prediction_title"
-            app:summary="@string/use_prediction_summary"
-            app:defaultValue="true" />
-
-    </PreferenceCategory>
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory app:title="@string/visuals_header">
 
@@ -99,13 +67,7 @@
             android:key="custom_window_color_text"
             android:title="@string/custom_window_color_text_title"
             android:defaultValue="0" />
+
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/about_header">
-        <Preference
-            android:title="@string/about_app_info_title"
-            android:summary="@string/about_app_info_summary" />
-        <io.github.lee0701.converter.settings.OssLicensesMenuPreference
-            android:title="@string/about_oss_licenses_title" />
-    </PreferenceCategory>
 </PreferenceScreen>

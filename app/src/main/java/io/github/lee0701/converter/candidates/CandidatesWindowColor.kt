@@ -3,7 +3,7 @@ package io.github.lee0701.converter.candidates
 import android.graphics.Color
 import androidx.core.graphics.ColorUtils
 
-object CandidateWindowColor {
+object CandidatesWindowColor {
     const val ALPHA_LIGHT = 0.54f
     const val ALPHA_DARK = 0.84f
 

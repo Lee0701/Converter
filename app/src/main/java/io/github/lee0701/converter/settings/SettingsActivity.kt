@@ -11,6 +11,9 @@ class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+
         setContentView(R.layout.settings_activity)
         if (savedInstanceState == null) {
             supportFragmentManager
@@ -20,23 +23,22 @@ class SettingsActivity : AppCompatActivity() {
         }
         supportActionBar?.setDisplayShowHomeEnabled(false)
 
-        PreferenceManager.getDefaultSharedPreferences(this)
-            .registerOnSharedPreferenceChangeListener { preferences, key ->
-                when(key) {
-                    "custom_window_color" -> {
-                        preferences.edit().putInt("custom_window_color_text", preferences.getInt(key, 0)).apply()
-                    }
-                    "custom_window_color_text" -> {
-                        preferences.edit().putInt("custom_window_color", preferences.getInt(key, 0)).apply()
-                    }
+        preferences.registerOnSharedPreferenceChangeListener { pref, key ->
+            when(key) {
+                "custom_window_color" -> {
+                    pref.edit().putInt("custom_window_color_text", pref.getInt(key, 0)).apply()
                 }
-                ConverterService.INSTANCE?.restartService()
+                "custom_window_color_text" -> {
+                    pref.edit().putInt("custom_window_color", pref.getInt(key, 0)).apply()
+                }
             }
+            ConverterService.INSTANCE?.restartService()
+        }
     }
 
     class SettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.root_preferences, rootKey)
+            PREFERENCE_LIST.forEach { addPreferencesFromResource(it) }
         }
 
         override fun onPause() {
@@ -44,5 +46,15 @@ class SettingsActivity : AppCompatActivity() {
             val preference = preferenceScreen.findPreference<ShowCandidateWindowAdjusterPreference>("adjust_window")
             preference?.closeAdjuster()
         }
+    }
+
+    companion object {
+        val PREFERENCE_LIST = listOf(
+            R.xml.pref_service,
+            R.xml.pref_conversion,
+            R.xml.pref_prediction,
+            R.xml.pref_visuals,
+            R.xml.pref_about,
+        )
     }
 }
