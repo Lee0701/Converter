@@ -63,10 +63,10 @@ class ConverterService: AccessibilityService() {
         outputFormat =
             preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
         val dictionary = PrefixSearchHanjaDictionary(DiskDictionary(assets.open("dict.bin")))
-        val database = if(BuildConfig.IS_DONATION && preferences.getBoolean("use_learning", false)) {
+        val database = if(BuildConfig.IS_DONATION && preferences.getBoolean("use_learned_word", false)) {
             Room.databaseBuilder(applicationContext, HistoryDatabase::class.java, "history").build()
         } else null
-        hanjaConverter = HanjaConverter(dictionary, database)
+        hanjaConverter = HanjaConverter(dictionary, database, preferences.getBoolean("freeze_learning", false))
         predictor = if(BuildConfig.IS_DONATION && preferences.getBoolean("use_prediction", false)) {
             Predictor(this)
         } else null

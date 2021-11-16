@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 class HanjaConverter(
     private val dictionary: PrefixSearchHanjaDictionary,
     private val database: HistoryDatabase?,
+    private val freezeLearning: Boolean,
 ) {
 
     init {
@@ -39,7 +40,7 @@ class HanjaConverter(
     }
 
     fun learnAsync(input: String, result: String) {
-        GlobalScope.launch {
+        if(!freezeLearning) GlobalScope.launch {
             val database = database ?: return@launch
             val word = database.wordDao().searchWords(input, result).firstOrNull() ?: Word(input, result, 0, 0L)
             val newWord = word.usedOnce()

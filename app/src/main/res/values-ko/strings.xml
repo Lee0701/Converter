@@ -46,8 +46,11 @@
     <string name="use_prediction_title">豫測 機能 使用</string>
     <string name="use_prediction_summary">入力 中에 다음 單語를 豫測합니다.</string>
 
-    <string name="use_learning_title">學習 機能 使用</string>
-    <string name="use_learning_summary">새로운 漢字語를 學習합니다.</string>
+    <string name="use_learned_word_title">學習 機能 使用</string>
+    <string name="use_learned_word_summary">學習된 單語를 變換 候補로 表示합니다.</string>
+
+    <string name="freeze_learning_title">學習 停止</string>
+    <string name="freeze_learning_summary">새로운 漢字語를 學習하지 않습니다.</string>
 
     <!-- Visuals Preferences -->
     <string name="window_type_title">變換 結果窓 種類</string>

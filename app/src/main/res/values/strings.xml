@@ -46,8 +46,11 @@
     <string name="use_prediction_title">Use Prediction</string>
     <string name="use_prediction_summary">Enable next word prediction</string>
 
-    <string name="use_learning_title">Use Learning</string>
-    <string name="use_learning_summary">Learn new word sequences</string>
+    <string name="use_learned_word_title">Use Learned Word</string>
+    <string name="use_learned_word_summary">Display learned word sequences for conversion</string>
+
+    <string name="freeze_learning_title">Freeze Learning</string>
+    <string name="freeze_learning_summary">Stop learning new word sequences</string>
 
     <!-- Visuals Preferences -->
     <string name="window_type_title">Conversion Window Type</string>

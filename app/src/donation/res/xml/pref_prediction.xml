@@ -11,10 +11,16 @@
             app:defaultValue="true" />
 
         <CheckBoxPreference
-            app:key="use_learning"
-            app:title="@string/use_learning_title"
-            app:summary="@string/use_learning_summary"
+            app:key="use_learned_word"
+            app:title="@string/use_learned_word_title"
+            app:summary="@string/use_learned_word_summary"
             android:defaultValue="true" />
+
+        <CheckBoxPreference
+            app:key="freeze_learning"
+            app:title="@string/freeze_learning_title"
+            app:summary="@string/freeze_learning_summary"
+            android:defaultValue="false" />
 
     </PreferenceCategory>
 
