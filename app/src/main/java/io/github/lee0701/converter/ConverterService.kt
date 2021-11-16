@@ -40,6 +40,8 @@ class ConverterService: AccessibilityService() {
 
     private var composingText = ComposingText("", 0)
 
+    private var sortByContext = false
+
     override fun onCreate() {
         super.onCreate()
         SettingsActivity.PREFERENCE_LIST.forEach {
@@ -69,6 +71,7 @@ class ConverterService: AccessibilityService() {
         predictor = if(BuildConfig.IS_DONATION && preferences.getBoolean("use_prediction", false)) {
             Predictor(this)
         } else null
+        sortByContext = preferences.getBoolean("sort_by_context", false)
         candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
             "horizontal" -> HorizontalCandidatesWindow(this)
             else -> VerticalCandidatesWindow(this)
@@ -127,7 +130,7 @@ class ConverterService: AccessibilityService() {
             if(composingText.composing.isNotEmpty()) {
                 var converted = hanjaConverter.convertPrefixAsync(composingText.composing.toString()).await()
                 val predictor = this@ConverterService.predictor
-                if(predictor != null) {
+                if(predictor != null && sortByContext) {
                     val prediction = predictor.predict(predictor.tokenize(composingText.textBeforeComposing.toString()))
                     converted = converted.map { list ->
                         list.sortedByDescending { predictor.getConfidence(prediction, it.text) }

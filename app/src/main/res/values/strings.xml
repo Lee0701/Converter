@@ -46,6 +46,9 @@
     <string name="use_prediction_title">Use Prediction</string>
     <string name="use_prediction_summary">Enable next word prediction</string>
 
+    <string name="sort_by_context_title">Context Aware Conversion</string>
+    <string name="sort_by_context_summary">Sort candidates according to the context</string>
+
     <string name="use_learned_word_title">Use Learned Word</string>
     <string name="use_learned_word_summary">Display learned word sequences for conversion</string>
 
