@@ -17,12 +17,24 @@ class Predictor(context: Context) {
 
     fun predict(input: List<Int>, topn: Int = 10): List<CandidatesWindow.Candidate> {
         if(topn <= 0) return emptyList()
+        return output(predict(input), topn)
+    }
+
+    fun predict(input: List<Int>): FloatArray {
         val inputArray = ((0 until seqLength).map { indexToWord.size } + input).takeLast(seqLength).toIntArray()
         val inputBuffer = TensorBuffer.createFixedSize(intArrayOf(1, seqLength), DataType.FLOAT32)
         inputBuffer.loadArray(inputArray)
-        val result = model.process(inputBuffer).outputFeature0AsTensorBuffer.floatArray
-        return result.mapIndexed { i, value -> i to value }.sortedByDescending { it.second }.take(topn)
+        return model.process(inputBuffer).outputFeature0AsTensorBuffer.floatArray
+    }
+
+    fun output(prediction: FloatArray, topn: Int = 10): List<CandidatesWindow.Candidate> {
+        if(topn <= 0) return emptyList()
+        return prediction.mapIndexed { i, value -> i to value }.sortedByDescending { it.second }.take(topn)
             .map { (index, _) -> CandidatesWindow.Candidate(indexToWord[index], "") }
+    }
+
+    fun getConfidence(prediction: FloatArray, word: String): Float? {
+        return wordToIndex[word]?.let { prediction[it] }
     }
 
     fun tokenize(text: String): List<Int> {

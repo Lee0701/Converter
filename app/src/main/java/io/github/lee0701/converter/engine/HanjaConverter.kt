@@ -5,34 +5,25 @@ import io.github.lee0701.converter.CharacterSet.isHangul
 import io.github.lee0701.converter.HanjaDictionary
 import io.github.lee0701.converter.OutputFormat
 import io.github.lee0701.converter.candidates.CandidatesWindow
+import io.github.lee0701.converter.dictionary.Dictionary
 import io.github.lee0701.converter.dictionary.DiskDictionary
 import io.github.lee0701.converter.dictionary.ListDictionary
 import io.github.lee0701.converter.dictionary.PrefixSearchDictionary
 
-class HanjaConverter(
-    context: Context,
-    private val outputFormat: OutputFormat?,
-) {
-
-    private val dictionary = PrefixSearchHanjaDictionary(DiskDictionary(context.assets.open("dict.bin")))
+class HanjaConverter(private val dictionary: ListDictionary<HanjaDictionary.Entry>) {
 
     fun convert(word: String): List<CandidatesWindow.Candidate> {
-        val result = dictionary.search(word) ?: return emptyList()
-        val extra = getExtraCandidates(word).map { CandidatesWindow.Candidate(it, "") }
-        return extra + result.map { list -> list.sortedByDescending { it.frequency } }
-            .flatten().distinct().map { CandidatesWindow.Candidate(it.result, it.extra ?: "") }
+        val result = dictionary.search(word)
+        return result?.sortedByDescending { it.frequency }
+            ?.map { CandidatesWindow.Candidate(it.result, it.extra ?: "") } ?: emptyList()
     }
 
-    private fun getExtraCandidates(conversionTarget: String): List<String> {
-        val list = mutableListOf<String>()
-        val nonHangulIndex = conversionTarget.indexOfFirst { c -> !isHangul(c) }
-        if(nonHangulIndex > 0) list += conversionTarget.substring(0 until nonHangulIndex)
-        else list += conversionTarget
-        if(isHangul(conversionTarget[0])) list.add(0, conversionTarget[0].toString())
-        return list.toList()
+    fun convertPrefix(word: String): List<List<CandidatesWindow.Candidate>> {
+        return word.indices.reversed().map { i ->
+            dictionary.search(word.slice(0 .. i))
+                ?.sortedByDescending { it.frequency }
+                ?.map { CandidatesWindow.Candidate(it.result, it.extra ?: "") } ?: emptyList()
+        }
     }
-
-    class PrefixSearchHanjaDictionary(dictionary: ListDictionary<HanjaDictionary.Entry>)
-        : PrefixSearchDictionary<List<HanjaDictionary.Entry>>(dictionary)
 
 }

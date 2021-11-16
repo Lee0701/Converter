@@ -10,6 +10,7 @@ data class ComposingText(
     val composing: CharSequence = text.slice(from until to)
     val textBeforeCursor: CharSequence = text.take(to)
     val textAfterCursor: CharSequence = text.drop(to)
+    val textBeforeComposing: CharSequence = text.take(from)
 
     fun replaced(with: CharSequence, length: Int): ComposingText {
         val lengthDiff = with.length - length

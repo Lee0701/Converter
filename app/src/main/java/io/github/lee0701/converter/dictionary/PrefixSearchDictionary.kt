@@ -9,4 +9,7 @@ open class PrefixSearchDictionary<T>(private val dictionary: Dictionary<T>): Lis
         }
         return results.toList()
     }
+    fun searchExact(key: String): T? {
+        return dictionary.search(key)
+    }
 }

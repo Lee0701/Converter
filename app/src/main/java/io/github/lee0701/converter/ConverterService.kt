@@ -12,6 +12,7 @@ import io.github.lee0701.converter.CharacterSet.isHangul
 import io.github.lee0701.converter.candidates.CandidatesWindow
 import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.VerticalCandidatesWindow
+import io.github.lee0701.converter.dictionary.DiskDictionary
 import io.github.lee0701.converter.engine.HanjaConverter
 import io.github.lee0701.converter.engine.Predictor
 import io.github.lee0701.converter.settings.SettingsActivity
@@ -53,7 +54,8 @@ class ConverterService: AccessibilityService() {
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         outputFormat =
             preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
-        hanjaConverter = HanjaConverter(this, outputFormat)
+        val dictionary = DiskDictionary(assets.open("dict.bin"))
+        hanjaConverter = HanjaConverter(dictionary)
         if(BuildConfig.IS_DONATION
             && preferences.getBoolean("use_prediction", false)) predictor = Predictor(this)
         else predictor = null
@@ -111,8 +113,17 @@ class ConverterService: AccessibilityService() {
     }
 
     private fun convert(source: AccessibilityNodeInfo) {
+        val composingText = this.composingText
         if(composingText.composing.isNotEmpty()) {
-            val candidates = hanjaConverter.convert(composingText.composing.toString())
+            var converted = hanjaConverter.convertPrefix(composingText.composing.toString())
+            val predictor = this.predictor
+            if(predictor != null) {
+                val prediction = predictor.predict(predictor.tokenize(composingText.textBeforeComposing.toString()))
+                converted = converted.map { list ->
+                    list.sortedByDescending { predictor.getConfidence(prediction, it.text) }
+                }
+            }
+            val candidates = getExtraCandidates(composingText.composing) + converted.flatten()
             candidatesWindow.show(candidates, rect) { hanja ->
                 val hangul = composingText.composing.take(hanja.length).toString()
                 val formatted = outputFormat?.getOutput(hanja, hangul) ?: hanja
@@ -120,19 +131,29 @@ class ConverterService: AccessibilityService() {
                 ignoreText = replaced.text
                 pasteFullText(source, replaced.text)
                 handler.post { setSelection(source, replaced.to) }
-                composingText = replaced
+                this.composingText = replaced
                 convert(source)
             }
         } else {
             val predictor = this.predictor
             if(predictor != null && composingText.textBeforeCursor.any { isHangul(it) }) {
-                val candidates = predictor.predict(predictor.tokenize(composingText.textBeforeCursor.toString()))
-                candidatesWindow.show(candidates, rect) { prediction ->
-                    val inserted = composingText.inserted(prediction)
+                val prediction = predictor.predict(predictor.tokenize(composingText.textBeforeCursor.toString()))
+                val candidates = predictor.output(prediction, 10)
+                val convertedCandidates = candidates.flatMap { candidate ->
+                    if(candidate.text.length > 1 && candidate.text.all { isHangul(it) }) {
+                        val converted = hanjaConverter.convert(candidate.text)
+                            .mapNotNull { cand -> predictor.getConfidence(prediction, cand.text)?.let { cand to it } }
+                            .maxByOrNull { it.second }
+                            ?.let { listOf(it.first) } ?: emptyList()
+                        return@flatMap listOf(candidate) + converted
+                    } else listOf(candidate)
+                }
+                candidatesWindow.show(convertedCandidates, rect) { selected ->
+                    val inserted = composingText.inserted(selected)
                     ignoreText = inserted.text
                     pasteFullText(source, inserted.text)
                     handler.post { setSelection(source, inserted.to) }
-                    composingText = inserted
+                    this.composingText = inserted
                     convert(source)
                 }
             } else {
@@ -160,6 +181,14 @@ class ConverterService: AccessibilityService() {
             if(a[i] != b[i]) return i
         }
         return len
+    }
+
+    private fun getExtraCandidates(hangul: CharSequence): List<CandidatesWindow.Candidate> {
+        val list = mutableListOf<CharSequence>()
+        val nonHangulIndex = hangul.indexOfFirst { c -> !isHangul(c) }
+        list += if(nonHangulIndex > 0) hangul.slice(0 until nonHangulIndex) else hangul
+        if(isHangul(hangul[0])) list.add(0, hangul[0].toString())
+        return list.map { CandidatesWindow.Candidate(it.toString()) }
     }
 
     companion object {
