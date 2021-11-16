@@ -13,6 +13,9 @@ interface WordDao {
     @Delete
     fun deleteWords(vararg words: Word)
 
+    @Query("SELECT * FROM word")
+    fun getAllWords(): Array<Word>
+
     @Query("SELECT * FROM word WHERE input = :input AND result = :result")
     fun searchWords(input: String, result: String): Array<Word>
 

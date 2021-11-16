@@ -52,6 +52,9 @@
     <string name="freeze_learning_title">Freeze Learning</string>
     <string name="freeze_learning_summary">Stop learning new word sequences</string>
 
+    <string name="reset_learning_title">Clear Learned Words</string>
+    <string name="confirm_reset_learning">Are you sure you want to clear learned word sequences?</string>
+
     <!-- Visuals Preferences -->
     <string name="window_type_title">Conversion Window Type</string>
     <string name="adjust_window_title">Adjust Horizontal Conversion Window</string>
