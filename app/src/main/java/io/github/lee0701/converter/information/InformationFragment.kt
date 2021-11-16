@@ -10,14 +10,14 @@ import androidx.core.os.ConfigurationCompat
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import io.github.lee0701.converter.R
-import io.github.lee0701.converter.databinding.InformationFragmentHanjaMixedBinding
+import io.github.lee0701.converter.databinding.InformationFragmentBinding
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 class InformationFragment : Fragment() {
 
-    private var _binding: InformationFragmentHanjaMixedBinding? = null
+    private var _binding: InformationFragmentBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -27,7 +27,7 @@ class InformationFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = InformationFragmentHanjaMixedBinding.inflate(inflater, container, false)
+        _binding = InformationFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
