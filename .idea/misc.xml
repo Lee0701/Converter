@@ -12,6 +12,7 @@
         <entry key="app/src/main/res/layout/candidate_item_horizontal.xml" value="0.11979166666666667" />
         <entry key="app/src/main/res/layout/candidate_item_horizontal_without_extra.xml" value="0.11979166666666667" />
         <entry key="app/src/main/res/layout/content_information.xml" value="0.1157548125633232" />
+        <entry key="app/src/main/res/layout/information_fragment.xml" value="0.21354166666666666" />
         <entry key="app/src/main/res/layout/information_fragment_first.xml" value="0.1" />
         <entry key="app/src/main/res/layout/information_fragment_hangul_only.xml" value="0.22644927536231885" />
         <entry key="app/src/main/res/layout/information_fragment_hanja_mixed.xml" value="0.1" />

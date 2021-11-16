@@ -104,7 +104,9 @@
     <string name="information_details_hangul_only" translatable="false">
         漢字變換器의 주요 기능을 쓰려면 접근성 서비스를 사용해야 합니다.
         \n\n
-        키보드 앱과 별개로 동작하여 사용자가 입력한 내용을 한자로 변환하기 위해 접근성 서비스 권한이 필요합니다. 모든 앱에서 사용자가 입력한 내용이 漢字變換器에서 사용되며, 다른 목적으로 활용되거나 수집되지는 않습니다.
+        키보드 앱과 별개로 동작하여 사용자가 입력한 내용을 한자로 변환하기 위해 접근성 서비스 권한이 필요합니다.
+        \n\n
+        모든 앱에서 사용자가 입력한 내용이 漢字變換器에서 사용되며, 다른 목적으로 활용되거나 수집되지는 않습니다.
     </string>
     <string name="information_question_hangul_only" translatable="false">접근성 서비스 사용에 동의하십니까?</string>
 
