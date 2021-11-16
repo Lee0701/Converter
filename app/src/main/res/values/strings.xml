@@ -46,6 +46,9 @@
     <string name="use_prediction_title">Use Prediction</string>
     <string name="use_prediction_summary">Enable next word prediction</string>
 
+    <string name="use_learning_title">Use Learning</string>
+    <string name="use_learning_summary">Learn new word sequences</string>
+
     <!-- Visuals Preferences -->
     <string name="window_type_title">Conversion Window Type</string>
     <string name="adjust_window_title">Adjust Horizontal Conversion Window</string>

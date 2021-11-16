@@ -10,6 +10,12 @@
             app:summary="@string/use_prediction_summary"
             app:defaultValue="true" />
 
+        <CheckBoxPreference
+            app:key="use_learning"
+            app:title="@string/use_learning_title"
+            app:summary="@string/use_learning_summary"
+            android:defaultValue="true" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

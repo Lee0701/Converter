@@ -63,13 +63,13 @@ class ConverterService: AccessibilityService() {
         outputFormat =
             preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
         val dictionary = PrefixSearchHanjaDictionary(DiskDictionary(assets.open("dict.bin")))
-        val database =
-            if(BuildConfig.IS_DONATION) Room.databaseBuilder(applicationContext, HistoryDatabase::class.java, "history").build()
-            else null
+        val database = if(BuildConfig.IS_DONATION && preferences.getBoolean("use_learning", false)) {
+            Room.databaseBuilder(applicationContext, HistoryDatabase::class.java, "history").build()
+        } else null
         hanjaConverter = HanjaConverter(dictionary, database)
-        if(BuildConfig.IS_DONATION
-            && preferences.getBoolean("use_prediction", false)) predictor = Predictor(this)
-        else predictor = null
+        predictor = if(BuildConfig.IS_DONATION && preferences.getBoolean("use_prediction", false)) {
+            Predictor(this)
+        } else null
         candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
             "horizontal" -> HorizontalCandidatesWindow(this)
             else -> VerticalCandidatesWindow(this)
