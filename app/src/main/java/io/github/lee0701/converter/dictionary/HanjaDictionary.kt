@@ -1,6 +1,4 @@
-package io.github.lee0701.converter
-
-import io.github.lee0701.converter.dictionary.ListDictionary
+package io.github.lee0701.converter.dictionary
 
 interface HanjaDictionary: ListDictionary<HanjaDictionary.Entry> {
     data class Entry(

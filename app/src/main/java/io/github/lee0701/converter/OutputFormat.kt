@@ -2,8 +2,8 @@ package io.github.lee0701.converter
 
 sealed class OutputFormat {
 
-    abstract fun getOutput(hanja: String, hangul: String): String
-    operator fun invoke(hanja: String, hangul: String): String = getOutput(hanja, hangul)
+    abstract fun getOutput(hanja: CharSequence, hangul: CharSequence): CharSequence
+    operator fun invoke(hanja: CharSequence, hangul: CharSequence): CharSequence = getOutput(hanja, hangul)
 
     companion object {
         fun of(name: String): OutputFormat? {
@@ -19,25 +19,25 @@ sealed class OutputFormat {
     }
 
     class HanjaOnly: OutputFormat() {
-        override fun getOutput(hanja: String, hangul: String): String {
+        override fun getOutput(hanja: CharSequence, hangul: CharSequence): CharSequence {
             return hanja
         }
     }
 
     class HanjaWithHangul: OutputFormat() {
-        override fun getOutput(hanja: String, hangul: String): String {
+        override fun getOutput(hanja: CharSequence, hangul: CharSequence): CharSequence {
             return if(hanja == hangul) hanja else "$hanja$hangul"
         }
     }
 
     class HanjaWithParenthesisedHangul: OutputFormat() {
-        override fun getOutput(hanja: String, hangul: String): String {
+        override fun getOutput(hanja: CharSequence, hangul: CharSequence): CharSequence {
             return if(hanja == hangul) hanja else "$hanja($hangul)"
         }
     }
 
     class HangulWithParenthesisedHanja: OutputFormat() {
-        override fun getOutput(hanja: String, hangul: String): String {
+        override fun getOutput(hanja: CharSequence, hangul: CharSequence): CharSequence {
             return if(hanja == hangul) hanja else "$hangul($hanja)"
         }
     }

@@ -10,6 +10,21 @@
             app:summary="@string/use_prediction_summary"
             app:defaultValue="true" />
 
+        <CheckBoxPreference
+            app:key="use_learned_word"
+            app:title="@string/use_learned_word_title"
+            app:summary="@string/use_learned_word_summary"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            app:key="freeze_learning"
+            app:title="@string/freeze_learning_title"
+            app:summary="@string/freeze_learning_summary"
+            android:defaultValue="false" />
+
+        <io.github.lee0701.converter.settings.ResetLearningPreference
+            app:title="@string/reset_learning_title" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>
