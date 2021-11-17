@@ -33,6 +33,8 @@ class ConverterService: AccessibilityService() {
 
     private var composingText = ComposingText("", 0)
 
+    private var enableAutoHiding = false
+
     override fun onCreate() {
         super.onCreate()
         SettingsActivity.PREFERENCE_LIST.forEach {
@@ -62,13 +64,14 @@ class ConverterService: AccessibilityService() {
             "horizontal" -> HorizontalCandidatesWindow(this)
             else -> VerticalCandidatesWindow(this)
         }
+        enableAutoHiding = preferences.getBoolean("enable_auto_hiding", false)
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         when(event.eventType) {
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
                 val isHideEvent = CandidatesWindowHider.of(event.packageName.toString())?.isHideEvent(event)
-                if(isHideEvent == true) {
+                if(enableAutoHiding && isHideEvent == true) {
                     candidatesWindow.destroy()
                 }
             }
