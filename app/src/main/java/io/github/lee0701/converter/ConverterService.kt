@@ -215,6 +215,7 @@ class ConverterService: AccessibilityService() {
     }
 
     private fun getExtraCandidates(hangul: CharSequence): List<CandidatesWindow.Candidate> {
+        if(hangul.isEmpty()) return emptyList()
         val list = mutableListOf<CharSequence>()
         val nonHangulIndex = hangul.indexOfFirst { c -> !isHangul(c) }
         list += if(nonHangulIndex > 0) hangul.slice(0 until nonHangulIndex) else hangul
