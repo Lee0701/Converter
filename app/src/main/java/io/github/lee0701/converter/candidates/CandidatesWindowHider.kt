@@ -13,7 +13,7 @@ sealed interface CandidatesWindowHider {
         )
         override fun isHideEvent(event: AccessibilityEvent): Boolean {
             return event.packageName == PACKAGE_NAME &&
-                    MATCH_DESCRIPTIONS.any { event.contentDescription.contains(it) }
+                    MATCH_DESCRIPTIONS.any { event.contentDescription?.contains(it) == true }
         }
     }
 
