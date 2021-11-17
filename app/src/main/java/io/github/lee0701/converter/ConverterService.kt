@@ -191,7 +191,6 @@ class ConverterService: AccessibilityService() {
     }
 
     private fun learn(input: String, result: String) {
-        println("$input $result")
         hanjaConverter.learnAsync(input, result)
     }
 

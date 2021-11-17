@@ -41,7 +41,7 @@ class HanjaConverter(
             val historyResult = database?.wordDao()?.searchWords(word) ?: arrayOf()
             val historyCandidates = historyResult.sortedByDescending { it.count }.map { CandidatesWindow.Candidate(it.result, "") }
             val dictionaryCandidates = word.indices.reversed().map { i ->
-                dictionary.search(word.slice(0 .. i)).apply { println("$i $this") }
+                dictionary.search(word.slice(0 .. i))
                     ?.sortedByDescending { it.frequency }
                     ?.map { CandidatesWindow.Candidate(it.result, it.extra ?: "") } ?: emptyList()
             }
