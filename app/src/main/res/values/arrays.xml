@@ -2,6 +2,7 @@
     <string-array name="output_format_entries">
         <item>@string/hanja_only</item>
         <item>@string/hanjahangul</item>
+        <item>@string/hangulhanja</item>
         <item>@string/hanja_hangul</item>
         <item>@string/hangul_hanja</item>
     </string-array>
@@ -9,6 +10,7 @@
     <string-array name="output_format_values">
         <item>hanja_only</item>
         <item>hanjahangul</item>
+        <item>hangulhanja</item>
         <item>hanja_hangul</item>
         <item>hangul_hanja</item>
     </string-array>

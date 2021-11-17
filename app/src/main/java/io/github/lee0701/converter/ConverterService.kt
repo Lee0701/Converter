@@ -16,7 +16,9 @@ import io.github.lee0701.converter.candidates.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.VerticalCandidatesWindow
 import io.github.lee0701.converter.dictionary.DiskDictionary
+import io.github.lee0701.converter.engine.ComposingText
 import io.github.lee0701.converter.engine.HanjaConverter
+import io.github.lee0701.converter.engine.OutputFormat
 import io.github.lee0701.converter.engine.Predictor
 import io.github.lee0701.converter.history.HistoryDatabase
 import kotlinx.coroutines.Dispatchers

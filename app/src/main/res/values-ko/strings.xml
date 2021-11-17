@@ -42,11 +42,6 @@
     <!-- Conversion Preferences -->
     <string name="output_format_title">變換 出力 포맷</string>
 
-    <string name="hanja_only">漢字</string>
-    <string name="hanjahangul">漢字한글</string>
-    <string name="hanja_hangul">漢字(한글)</string>
-    <string name="hangul_hanja">한글(漢字)</string>
-
     <!-- Prediction Preferences -->
     <string name="use_prediction_title">豫測 機能 使用</string>
     <string name="use_prediction_summary">入力 中에 다음 單語를 豫測합니다.</string>

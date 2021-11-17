@@ -1,4 +1,4 @@
-package io.github.lee0701.converter
+package io.github.lee0701.converter.engine
 
 sealed class OutputFormat {
 
@@ -13,6 +13,7 @@ sealed class OutputFormat {
         private val FORMATS = mapOf<String, OutputFormat>(
             "hanja_only" to HanjaOnly(),
             "hanjahangul" to HanjaWithHangul(),
+            "hangulhanja" to HangulWithHanja(),
             "hanja_hangul" to HanjaWithParenthesisedHangul(),
             "hangul_hanja" to HangulWithParenthesisedHanja(),
         )
@@ -27,6 +28,12 @@ sealed class OutputFormat {
     class HanjaWithHangul: OutputFormat() {
         override fun getOutput(hanja: CharSequence, hangul: CharSequence): CharSequence {
             return if(hanja == hangul) hanja else "$hanja$hangul"
+        }
+    }
+
+    class HangulWithHanja: OutputFormat() {
+        override fun getOutput(hanja: CharSequence, hangul: CharSequence): CharSequence {
+            return if(hanja == hangul) hanja else "$hangul$hanja"
         }
     }
 
