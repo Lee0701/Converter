@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.PixelFormat
 import android.graphics.Rect
-import android.os.Build
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -76,7 +75,7 @@ class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(c
         }
         val view = candidatesView ?: return
         view.list.adapter =
-            HorizontalCandidateListAdapter(showExtra, textColor, extraColor, textAlpha,
+            VerticalCandidateListAdapter(showExtra, textColor, extraColor, textAlpha,
                 candidates.toTypedArray(), onItemClick)
         view.list.scrollToPosition(0)
         windowShown = true
