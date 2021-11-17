@@ -31,6 +31,7 @@
     <string name="conversion_header">Conversion</string>
     <string name="prediction_header">Prediction</string>
     <string name="visuals_header">Visuals</string>
+    <string name="behavior_header">Behavior</string>
     <string name="about_header">About</string>
 
     <!-- Service Preferences -->
@@ -87,6 +88,10 @@
     <string name="color_samsung_light">Samsung Light</string>
     <string name="color_samsung_dark">Samsung Dark</string>
     <string name="color_custom">Custom</string>
+
+    <!-- Behavior Preferences -->
+    <string name="enable_auto_hiding_title">Auto-Hide Conversion Window</string>
+    <string name="enable_auto_hiding_summary">Automatically hide conversion window on keyboard close if supported</string>
 
     <!-- About Preferences -->
     <string name="about_app_info_title">Hanja Converter</string>

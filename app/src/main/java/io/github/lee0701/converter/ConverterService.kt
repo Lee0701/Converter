@@ -12,6 +12,7 @@ import androidx.room.Room
 import io.github.lee0701.converter.CharacterSet.isHangul
 import io.github.lee0701.converter.CharacterSet.isHanja
 import io.github.lee0701.converter.candidates.CandidatesWindow
+import io.github.lee0701.converter.candidates.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.VerticalCandidatesWindow
 import io.github.lee0701.converter.dictionary.DiskDictionary
@@ -41,6 +42,7 @@ class ConverterService: AccessibilityService() {
     private var composingText = ComposingText("", 0)
 
     private var sortByContext = false
+    private var enableAutoHiding = false
 
     override fun onCreate() {
         super.onCreate()
@@ -76,10 +78,17 @@ class ConverterService: AccessibilityService() {
             "horizontal" -> HorizontalCandidatesWindow(this)
             else -> VerticalCandidatesWindow(this)
         }
+        enableAutoHiding = preferences.getBoolean("enable_auto_hiding", false)
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         when(event.eventType) {
+            AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
+                val isHideEvent = CandidatesWindowHider.of(event.packageName.toString())?.isHideEvent(event)
+                if(enableAutoHiding && isHideEvent == true) {
+                    candidatesWindow.destroy()
+                }
+            }
             AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> {
                 val source = event.source ?: return
                 source.getBoundsInScreen(rect)
@@ -122,6 +131,7 @@ class ConverterService: AccessibilityService() {
                     convert(source)
                 }
             }
+            else -> {}
         }
     }
 

@@ -80,6 +80,7 @@ class SettingsActivity : AppCompatActivity() {
             R.xml.pref_conversion,
             R.xml.pref_prediction,
             R.xml.pref_visuals,
+            R.xml.pref_behavior,
             R.xml.pref_about,
         )
     }

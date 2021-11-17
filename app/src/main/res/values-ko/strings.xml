@@ -31,6 +31,7 @@
     <string name="conversion_header">變換</string>
     <string name="prediction_header">豫測</string>
     <string name="visuals_header">視覺</string>
+    <string name="behavior_header">動作</string>
     <string name="about_header">情報</string>
 
     <!-- Service Preferences -->
@@ -87,6 +88,10 @@
     <string name="color_samsung_light">三星 라이트</string>
     <string name="color_samsung_dark">三星 다크</string>
     <string name="color_custom">使用者</string>
+
+    <!-- Behavior Preferences -->
+    <string name="enable_auto_hiding_title">變換 結果窓 自動 닫기</string>
+    <string name="enable_auto_hiding_summary">支援될 境遇, 키보드가 닫힐 때 變換 結果窓을 함께 닫습니다.</string>
 
     <!-- About Preferences -->
     <string name="about_app_info_title">漢字變換器</string>
