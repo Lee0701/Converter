@@ -40,7 +40,7 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
 
     private var window: AdjustCandidatesViewHorizontalBinding? = null
 
-    @SuppressLint("InflateParams")
+    @SuppressLint("InflateParams", "ClickableViewAccessibility")
     fun show() {
         val window = AdjustCandidatesViewHorizontalBinding.inflate(LayoutInflater.from(context))
         window.close.setOnClickListener {

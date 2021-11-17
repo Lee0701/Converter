@@ -2,22 +2,26 @@ package io.github.lee0701.converter.settings
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.inputmethod.InputMethodManager
-import androidx.preference.Preference
+import androidx.preference.EditTextPreference
+import io.github.lee0701.converter.R
 import io.github.lee0701.converter.candidates.HorizontalCandidateWindowAdjuster
 
-class ShowCandidateWindowAdjusterPreference(context: Context?, attrs: AttributeSet?): Preference(context, attrs) {
+class ShowCandidateWindowAdjusterPreference(context: Context?, attrs: AttributeSet?): EditTextPreference(context, attrs) {
 
     private var adjuster: HorizontalCandidateWindowAdjuster? = null
 
     override fun onClick() {
+        super.onClick()
         closeAdjuster()
         adjuster = HorizontalCandidateWindowAdjuster(context).apply { show() }
-        val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
     }
     fun closeAdjuster() {
         adjuster?.close()
         adjuster = null
     }
+
+    override fun getText(): String {
+        return context.resources.getString(R.string.adjust_window_information)
+    }
+
 }

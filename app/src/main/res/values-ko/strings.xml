@@ -67,6 +67,7 @@
     <string name="window_type_title">變換 結果窓 種類</string>
     <string name="adjust_window_title">變換 結果窓 (가로) 調整</string>
     <string name="adjust_window_summary">키보드의 單語 推薦欄에 맞게 調整해 주세요. (現在 畵面方向 基準)</string>
+    <string name="adjust_window_information">調整을 貯藏하고 이 窓은 닫아주세요.</string>
     <string name="window_width_title">變換 結果窓 (세로) 너비</string>
     <string name="window_height_title">變換 (세로) 結果窓 높이</string>
     <string name="column_count_title">變換 結果窓 (세로) 列 數</string>

@@ -67,6 +67,7 @@
     <string name="window_type_title">Conversion Window Type</string>
     <string name="adjust_window_title">Adjust Horizontal Conversion Window</string>
     <string name="adjust_window_summary">Please adjust it to fit in keyboard candidate window (for current screen orientation)</string>
+    <string name="adjust_window_information">You can close this window after saving settings on the adjuster.</string>
     <string name="window_width_title">Vertical Conversion Window Width</string>
     <string name="window_height_title">Vertical Conversion Window Height</string>
     <string name="column_count_title">Vertical Conversion Window Results Column Count</string>

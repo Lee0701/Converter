@@ -44,7 +44,7 @@ class DiskDictionary(input: InputStream): HanjaDictionary {
         var i = 0
         while(true) {
             val c = bb.getChar(idx + i)
-            if(c.toInt() == 0) break
+            if(c.code == 0) break
             sb.append(c)
             i += 2
         }
