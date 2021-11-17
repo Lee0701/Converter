@@ -87,9 +87,11 @@
     <string name="information_details">
         Accessibility Service is used for the main functionality of Hanja Converter.
         \n\n
-        An access to Accessibility Service is required to convert the text typed by user to Hanja, working independently with keyboard service.
-        \n
-        The content entered by the user in any app is used by the Hanja Converter and is never used or collected for any other purpose.
+        Accessibility Service is only used for the following purposes:\n
+        - Extract content to convert to Hanja from the text entered by the user\n
+        - Replasce the text entered by the user with content converted to Hanja
+        \n\n
+        Hanja Converter never collects or uses the content entered by the user for any other purposes.
     </string>
 
     <string name="information_question">Do you agree to use the accessibility service?</string>
