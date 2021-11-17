@@ -5,7 +5,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.PixelFormat
-import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.TypedValue
 import android.view.*
 import android.widget.Toast
@@ -20,6 +21,8 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
 
     private val windowManager = context.getSystemService(AccessibilityService.WINDOW_SERVICE) as WindowManager
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+    private val handler = Handler(Looper.getMainLooper())
 
     private val landscape get() = context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -76,9 +79,33 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
             windowHeight += windowMoveAmount
             windowManager.updateViewLayout(window.root, layoutParams)
         }
+        window.larger.setOnClickListener {
+            handler.removeCallbacksAndMessages(null)
+            windowHeight += windowMoveAmount
+            windowManager.updateViewLayout(window.root, layoutParams)
+        }
+        window.larger.setOnLongClickListener {
+            fun larger() {
+                windowHeight += windowMoveAmount
+                windowManager.updateViewLayout(window.root, layoutParams)
+                handler.postDelayed({ larger() }, 50)
+            }
+            larger()
+            return@setOnLongClickListener false
+        }
         window.smaller.setOnClickListener {
+            handler.removeCallbacksAndMessages(null)
             windowHeight -= windowMoveAmount
             windowManager.updateViewLayout(window.root, layoutParams)
+        }
+        window.smaller.setOnLongClickListener {
+            fun smaller() {
+                windowHeight -= windowMoveAmount
+                windowManager.updateViewLayout(window.root, layoutParams)
+                handler.postDelayed({ smaller() }, 50)
+            }
+            smaller()
+            return@setOnLongClickListener false
         }
 
         window.save.setOnClickListener {
