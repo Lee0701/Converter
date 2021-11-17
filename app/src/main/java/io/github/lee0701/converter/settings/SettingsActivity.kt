@@ -51,11 +51,7 @@ class SettingsActivity : AppCompatActivity() {
 
         val manager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
         val list = manager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-            Snackbar.make(binding.root, R.string.system_overlay_not_enabled, Snackbar.LENGTH_INDEFINITE)
-                .setAction(R.string.enable) { EnableOverlayPermissionsPreference.openOverlayPermissionSettings(this) }
-                .show()
-        } else if(!list.any { it.id.startsWith(packageName) }) {
+        if(!list.any { it.id.startsWith(packageName) }) {
             Snackbar.make(binding.root, R.string.accessibility_service_not_enabled, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.enable) { OpenAccessibilitySettingsPreference.openAccessibilitySettings(this) }
                 .show()

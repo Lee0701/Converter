@@ -28,7 +28,7 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
     private var windowY = preferences.getInt(keyWindowY, 500)
     private var windowHeight = preferences.getInt(keyWindowHeight, 200)
 
-    private val type = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
+    val type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
     private val flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
     private val layoutParams get() = WindowManager.LayoutParams(
         WindowManager.LayoutParams.MATCH_PARENT, windowHeight,

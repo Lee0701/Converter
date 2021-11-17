@@ -17,6 +17,7 @@
     <string name="enable">活性化</string>
 
 
+    <string name="accessibility_service_required">漢字變換器를 使用하시려면 接近性 서비스를 活性化해 주세요.</string>
     <string name="overlay_permission_required">漢字變換器를 使用하시려면 設定 앱에서 오버레이 權限을 許容해 주세요.</string>
 
 
