@@ -41,6 +41,9 @@ android {
                     appIcon: "@mipmap/ic_launcher",
                     appIconRound: "@mipmap/ic_launcher_round"
             ]
+            packagingOptions {
+                exclude 'lib/*/libtensorflowlite_jni.so'
+            }
         }
         donation {
             dimension "version"
