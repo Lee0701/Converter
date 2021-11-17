@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.PixelFormat
 import android.graphics.Rect
+import android.os.Build
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -32,7 +33,6 @@ class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(c
     private var candidatesView: CandidatesViewVerticalBinding? = null
     private var windowShown = false
 
-    @SuppressLint("InflateParams")
     override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (String) -> Unit) {
         if(candidatesView == null) {
             val candidatesView = CandidatesViewVerticalBinding.inflate(LayoutInflater.from(context))

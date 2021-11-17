@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.PixelFormat
 import android.graphics.Rect
+import android.os.Build
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
@@ -25,7 +26,6 @@ class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow
     private var candidatesView: CandidatesViewHorizontalBinding? = null
     private var windowShown = false
 
-    @SuppressLint("InflateParams")
     override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (String) -> Unit) {
         if(candidatesView == null) {
             val candidatesView = CandidatesViewHorizontalBinding.inflate(LayoutInflater.from(context))
