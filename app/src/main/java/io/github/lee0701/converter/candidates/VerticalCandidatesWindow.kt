@@ -54,7 +54,7 @@ class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(c
                 }
             })
 
-            val type = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
+            val type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
             val flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
 
             val xPos = rect.left
