@@ -14,6 +14,7 @@
     <string name="smaller">작게</string>
     <string name="agree">同意</string>
     <string name="disagree">同意 안함</string>
+    <string name="enable">活性化</string>
 
 
     <string name="overlay_permission_required">漢字變換器를 使用하시려면 設定 앱에서 오버레이 權限을 許容해 주세요.</string>
@@ -21,6 +22,9 @@
 
     <!-- Settings Activity -->
     <string name="title_activity_settings">漢字變換器 設定</string>
+
+    <string name="system_overlay_not_enabled">시스템 오버레이가 非活性 狀態입니다</string>
+    <string name="accessibility_service_not_enabled">接近性 서비스가 非活性 狀態입니다</string>
 
     <!-- Preference Titles -->
     <string name="service_header">서비스</string>
