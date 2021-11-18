@@ -43,6 +43,7 @@ class ConverterService: AccessibilityService() {
 
     private var composingText = ComposingText("", 0)
 
+    private var usePrediction = false
     private var sortByContext = false
     private var enableAutoHiding = false
 
@@ -67,15 +68,16 @@ class ConverterService: AccessibilityService() {
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         outputFormat =
             preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
+        usePrediction = preferences.getBoolean("use_prediction", false)
+        sortByContext = preferences.getBoolean("sort_by_context", false)
         val dictionary = DiskDictionary(assets.open("dict.bin"))
         val database = if(BuildConfig.IS_DONATION && preferences.getBoolean("use_learned_word", false)) {
             Room.databaseBuilder(applicationContext, HistoryDatabase::class.java, DB_HISTORY).build()
         } else null
         hanjaConverter = HanjaConverter(dictionary, database, preferences.getBoolean("freeze_learning", false))
-        predictor = if(BuildConfig.IS_DONATION && preferences.getBoolean("use_prediction", false)) {
+        predictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
             Predictor(this)
         } else null
-        sortByContext = preferences.getBoolean("sort_by_context", false)
         candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
             "horizontal" -> HorizontalCandidatesWindow(this)
             else -> VerticalCandidatesWindow(this)
@@ -139,9 +141,9 @@ class ConverterService: AccessibilityService() {
 
     private fun convert(source: AccessibilityNodeInfo) {
         GlobalScope.launch {
+            val predictor = predictor
             if(composingText.composing.isNotEmpty()) {
                 var converted = hanjaConverter.convertPrefixAsync(composingText.composing.toString()).await()
-                val predictor = this@ConverterService.predictor
                 if(predictor != null && sortByContext) {
                     val prediction = predictor.predict(predictor.tokenize(composingText.textBeforeComposing.toString()))
                     converted = converted.map { list ->
@@ -166,8 +168,7 @@ class ConverterService: AccessibilityService() {
                     learn(composingText.unconverted, composingText.converted)
                 }
 
-                val predictor = predictor
-                if(predictor != null && composingText.textBeforeCursor.any { isHangul(it) }) {
+                if(predictor != null && usePrediction && composingText.textBeforeCursor.any { isHangul(it) }) {
                     val prediction = predictor.predict(predictor.tokenize(composingText.textBeforeCursor.toString()))
                     val candidates = predictor.output(prediction, 10)
                     withContext(Dispatchers.Main) {
