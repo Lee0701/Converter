@@ -26,6 +26,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import io.github.lee0701.converter.settings.SettingsActivity
+import java.lang.IllegalArgumentException
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -42,6 +43,8 @@ class ConverterService: AccessibilityService() {
     private lateinit var candidatesWindow: CandidatesWindow
 
     private var composingText = ComposingText("", 0)
+    private var predictionContext: String = ""
+    private var prediction: FloatArray = floatArrayOf()
 
     private var usePrediction = false
     private var sortByContext = false
@@ -144,10 +147,19 @@ class ConverterService: AccessibilityService() {
             val predictor = predictor
             if(composingText.composing.isNotEmpty()) {
                 var converted = hanjaConverter.convertPrefixAsync(composingText.composing.toString()).await()
-                if(predictor != null && sortByContext) {
-                    val prediction = predictor.predict(predictor.tokenize(composingText.textBeforeComposing.toString()))
-                    converted = converted.map { list ->
-                        list.sortedByDescending { predictor.getConfidence(prediction, it.text) }
+                if(predictor != null && sortByContext && !converted.all { it.isEmpty() }) {
+                    if(predictionContext != composingText.textBeforeComposing.toString()) {
+                        predictionContext = composingText.textBeforeComposing.toString()
+                        try {
+                            prediction = predictor.predict(predictor.tokenize(predictionContext))
+                        } catch(ex: IllegalArgumentException) {
+                            ex.printStackTrace()
+                        }
+                    }
+                    if(prediction.isNotEmpty()) {
+                        converted = converted.map { list ->
+                            list.sortedByDescending { predictor.getConfidence(prediction, it.text) }
+                        }
                     }
                 }
                 val candidates = getExtraCandidates(composingText.composing) + converted.flatten()
