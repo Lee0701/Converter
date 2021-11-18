@@ -75,14 +75,16 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
             windowManager.updateViewLayout(window.root, layoutParams)
         }
 
-        window.larger.setOnClickListener {
-            windowHeight += windowMoveAmount
-            windowManager.updateViewLayout(window.root, layoutParams)
-        }
-        window.larger.setOnClickListener {
-            handler.removeCallbacksAndMessages(null)
-            windowHeight += windowMoveAmount
-            windowManager.updateViewLayout(window.root, layoutParams)
+        window.larger.setOnTouchListener { view, event ->
+            when(event.action) {
+                MotionEvent.ACTION_UP -> {
+                    handler.removeCallbacksAndMessages(null)
+                    windowHeight += windowMoveAmount
+                    windowManager.updateViewLayout(window.root, layoutParams)
+                    false
+                }
+                else -> false
+            }
         }
         window.larger.setOnLongClickListener {
             fun larger() {
@@ -93,10 +95,16 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
             larger()
             return@setOnLongClickListener false
         }
-        window.smaller.setOnClickListener {
-            handler.removeCallbacksAndMessages(null)
-            windowHeight -= windowMoveAmount
-            windowManager.updateViewLayout(window.root, layoutParams)
+        window.smaller.setOnTouchListener { view, event ->
+            when(event.action) {
+                MotionEvent.ACTION_UP -> {
+                    handler.removeCallbacksAndMessages(null)
+                    windowHeight -= windowMoveAmount
+                    windowManager.updateViewLayout(window.root, layoutParams)
+                    false
+                }
+                else -> false
+            }
         }
         window.smaller.setOnLongClickListener {
             fun smaller() {
