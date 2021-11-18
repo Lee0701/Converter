@@ -5,6 +5,7 @@ import io.github.lee0701.converter.candidates.CandidatesWindow
 import io.github.lee0701.converter.ml.Model
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import java.lang.IllegalArgumentException
 
 class Predictor(context: Context) {
 
@@ -21,10 +22,14 @@ class Predictor(context: Context) {
     }
 
     fun predict(input: List<Int>): FloatArray {
-        val inputArray = ((0 until seqLength).map { indexToWord.size } + input).takeLast(seqLength).toIntArray()
-        val inputBuffer = TensorBuffer.createFixedSize(intArrayOf(1, seqLength), DataType.FLOAT32)
-        inputBuffer.loadArray(inputArray)
-        return model.process(inputBuffer).outputFeature0AsTensorBuffer.floatArray
+        try {
+            val inputArray = ((0 until seqLength).map { indexToWord.size } + input).takeLast(seqLength).toIntArray()
+            val inputBuffer = TensorBuffer.createFixedSize(intArrayOf(1, seqLength), DataType.FLOAT32)
+            inputBuffer.loadArray(inputArray)
+            return model.process(inputBuffer).outputFeature0AsTensorBuffer.floatArray
+        } catch(ex: IllegalArgumentException) {
+            return floatArrayOf()
+        }
     }
 
     fun output(prediction: FloatArray, topn: Int = 10): List<CandidatesWindow.Candidate> {

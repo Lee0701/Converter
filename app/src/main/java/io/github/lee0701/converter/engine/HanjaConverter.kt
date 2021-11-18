@@ -4,20 +4,18 @@ import io.github.lee0701.converter.candidates.CandidatesWindow
 import io.github.lee0701.converter.dictionary.HanjaDictionary
 import io.github.lee0701.converter.history.HistoryDatabase
 import io.github.lee0701.converter.history.Word
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class HanjaConverter(
     private val dictionary: HanjaDictionary,
     private val database: HistoryDatabase?,
+    private val scope: CoroutineScope,
     private val freezeLearning: Boolean,
 ) {
 
     init {
         database?.let { db ->
-            GlobalScope.launch {
+            scope.launch {
                 val oldWords = db.wordDao().searchWordsOlderThan(System.currentTimeMillis() - 1000*60*60*24*7)
                 db.wordDao().deleteWords(*oldWords)
             }
@@ -25,7 +23,7 @@ class HanjaConverter(
     }
 
     fun convertAsync(word: String): Deferred<List<CandidatesWindow.Candidate>> {
-        return GlobalScope.async {
+        return scope.async {
             val dictionaryResult = dictionary.search(word) ?: emptyList()
             val historyResult = database?.wordDao()?.searchWords(word) ?: arrayOf()
 
@@ -37,7 +35,7 @@ class HanjaConverter(
     }
 
     fun convertPrefixAsync(word: String): Deferred<List<List<CandidatesWindow.Candidate>>> {
-        return GlobalScope.async {
+        return scope.async {
             val historyResult = database?.wordDao()?.searchWords(word) ?: arrayOf()
             val historyCandidates = historyResult.sortedByDescending { it.count }.map { CandidatesWindow.Candidate(it.result, "") }
             val dictionaryCandidates = word.indices.reversed().map { i ->
@@ -54,7 +52,7 @@ class HanjaConverter(
     }
 
     fun learnAsync(input: String, result: String) {
-        if(!freezeLearning) GlobalScope.launch {
+        if(!freezeLearning) scope.launch {
             val database = database ?: return@launch
             val word = database.wordDao().searchWords(input, result).firstOrNull() ?: Word(input, result, 0, 0L)
             val newWord = word.usedOnce()

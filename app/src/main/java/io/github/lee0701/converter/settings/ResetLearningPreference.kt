@@ -8,8 +8,7 @@ import androidx.room.Room
 import io.github.lee0701.converter.ConverterService
 import io.github.lee0701.converter.R
 import io.github.lee0701.converter.history.HistoryDatabase
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class ResetLearningPreference(context: Context?, attrs: AttributeSet?): Preference(context, attrs) {
     override fun onClick() {
@@ -18,7 +17,7 @@ class ResetLearningPreference(context: Context?, attrs: AttributeSet?): Preferen
             .setIcon(android.R.drawable.ic_dialog_alert)
             .setPositiveButton(android.R.string.ok) { _, _ ->
                 val database = Room.databaseBuilder(context, HistoryDatabase::class.java, ConverterService.DB_HISTORY).build()
-                GlobalScope.launch {
+                CoroutineScope(Dispatchers.IO).launch {
                     database.wordDao().deleteWords(*database.wordDao().getAllWords())
                     ConverterService.INSTANCE?.restartService()
                 }

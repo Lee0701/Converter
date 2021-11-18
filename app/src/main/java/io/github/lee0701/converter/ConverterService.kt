@@ -21,12 +21,8 @@ import io.github.lee0701.converter.engine.HanjaConverter
 import io.github.lee0701.converter.engine.OutputFormat
 import io.github.lee0701.converter.engine.Predictor
 import io.github.lee0701.converter.history.HistoryDatabase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import io.github.lee0701.converter.settings.SettingsActivity
-import java.lang.IllegalArgumentException
+import kotlinx.coroutines.*
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -45,6 +41,9 @@ class ConverterService: AccessibilityService() {
     private var composingText = ComposingText("", 0)
     private var predictionContext: String = ""
     private var prediction: FloatArray = floatArrayOf()
+
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private var job: Job? = null
 
     private var usePrediction = false
     private var sortByContext = false
@@ -77,7 +76,7 @@ class ConverterService: AccessibilityService() {
         val database = if(BuildConfig.IS_DONATION && preferences.getBoolean("use_learned_word", false)) {
             Room.databaseBuilder(applicationContext, HistoryDatabase::class.java, DB_HISTORY).build()
         } else null
-        hanjaConverter = HanjaConverter(dictionary, database, preferences.getBoolean("freeze_learning", false))
+        hanjaConverter = HanjaConverter(dictionary, database, scope, preferences.getBoolean("freeze_learning", false))
         predictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
             Predictor(this)
         } else null
@@ -143,7 +142,8 @@ class ConverterService: AccessibilityService() {
     }
 
     private fun convert(source: AccessibilityNodeInfo) {
-        GlobalScope.launch {
+        job?.cancel()
+        job = scope.launch {
             val predictor = predictor
             if(composingText.composing.isNotEmpty()) {
                 var converted = hanjaConverter.convertPrefixAsync(composingText.composing.toString()).await()
