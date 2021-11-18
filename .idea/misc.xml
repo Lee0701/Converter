@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/bg_divider.xml" value="2.00625" />
         <entry key="app/src/main/res/drawable/ic_baseline_arrow_drop_down_24.xml" value="3.228125" />
         <entry key="app/src/main/res/drawable/ic_baseline_arrow_drop_up_24.xml" value="3.228125" />
         <entry key="app/src/main/res/drawable/ic_baseline_close_24.xml" value="3.228125" />

@@ -8,6 +8,7 @@ import android.graphics.Rect
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -42,6 +43,10 @@ class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow
 
             candidatesView.root.setBackgroundColor(windowColor)
 
+            val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, windowHeight)
+            candidatesView.expandWrapper.layoutParams = params
+            candidatesView.closeWrapper.layoutParams = params
+
             candidatesView.expand.setOnClickListener { toggleExpand() }
             candidatesView.expand.backgroundTintList = ColorStateList.valueOf(textColor)
             candidatesView.expand.alpha = textAlpha
@@ -61,7 +66,7 @@ class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow
         }
         val view = candidatesView ?: return
         view.list.adapter =
-            HorizontalCandidateListAdapter(showExtra, textColor, extraColor, textAlpha,
+            HorizontalCandidateListAdapter(showExtra, textColor, extraColor, textAlpha, windowHeight,
                 candidates.toTypedArray(), onItemClick)
         view.list.scrollToPosition(0)
         windowShown = true
@@ -73,16 +78,18 @@ class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow
         windowShown = false
     }
 
-    fun toggleExpand() {
+    private fun toggleExpand() {
         expanded = !expanded
         val candidatesView = candidatesView ?: return
         if(expanded) {
             val displayHeight = context.resources.displayMetrics.heightPixels
             windowManager.updateViewLayout(candidatesView.root, layoutParams.apply { height = displayHeight - y })
             candidatesView.list.layoutManager = FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
+            candidatesView.expand.setBackgroundResource(R.drawable.ic_baseline_arrow_drop_up_24)
         } else {
             windowManager.updateViewLayout(candidatesView.root, layoutParams)
             candidatesView.list.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            candidatesView.expand.setBackgroundResource(R.drawable.ic_baseline_arrow_drop_down_24)
         }
         val adapter = candidatesView.list.adapter
         candidatesView.list.adapter = null
