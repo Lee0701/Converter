@@ -5,6 +5,15 @@
     android:layout_height="wrap_content"
     android:background="?android:colorBackground">
 
+    <ImageButton
+        android:id="@+id/expand"
+        android:layout_width="32sp"
+        android:layout_height="32sp"
+        android:layout_gravity="center"
+        android:background="@drawable/ic_baseline_arrow_drop_down_24"
+        android:backgroundTint="@android:color/black"
+        android:contentDescription="@string/close" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:layout_weight="1"

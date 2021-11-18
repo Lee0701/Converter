@@ -1,18 +1,19 @@
 package io.github.lee0701.converter.candidates
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.PixelFormat
 import android.graphics.Rect
-import android.os.Build
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
 import io.github.lee0701.converter.R
 import io.github.lee0701.converter.databinding.CandidatesViewHorizontalBinding
 
@@ -25,27 +26,34 @@ class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow
 
     private var candidatesView: CandidatesViewHorizontalBinding? = null
     private var windowShown = false
+    private var expanded = false
+
+    private val type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
+    private val flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+    private val layoutParams: WindowManager.LayoutParams get() = WindowManager.LayoutParams(
+        WindowManager.LayoutParams.MATCH_PARENT, windowHeight,
+        0, windowY,
+        type, flags, PixelFormat.TRANSLUCENT
+    ).apply { gravity = Gravity.TOP or Gravity.START }
 
     override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (String) -> Unit) {
         if(candidatesView == null) {
             val candidatesView = CandidatesViewHorizontalBinding.inflate(LayoutInflater.from(context))
+
             candidatesView.root.setBackgroundColor(windowColor)
+
+            candidatesView.expand.setOnClickListener { toggleExpand() }
+            candidatesView.expand.backgroundTintList = ColorStateList.valueOf(textColor)
+            candidatesView.expand.alpha = textAlpha
+
             candidatesView.close.setOnClickListener { destroy() }
             candidatesView.close.backgroundTintList = ColorStateList.valueOf(textColor)
             candidatesView.close.alpha = textAlpha
+
             candidatesView.list.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
 
-            val type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
-            val flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-
-            val params = WindowManager.LayoutParams(
-                WindowManager.LayoutParams.MATCH_PARENT, windowHeight,
-                0, windowY,
-                type, flags, PixelFormat.TRANSLUCENT
-            )
-            params.gravity = Gravity.TOP or Gravity.START
             try {
-                windowManager.addView(candidatesView.root, params)
+                windowManager.addView(candidatesView.root, layoutParams)
             } catch(ex: WindowManager.BadTokenException) {
                 Toast.makeText(context, R.string.overlay_permission_required, Toast.LENGTH_LONG).show()
             }
@@ -63,6 +71,22 @@ class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow
         candidatesView?.root?.let { windowManager.removeView(it) }
         candidatesView = null
         windowShown = false
+    }
+
+    fun toggleExpand() {
+        expanded = !expanded
+        val candidatesView = candidatesView ?: return
+        if(expanded) {
+            val displayHeight = context.resources.displayMetrics.heightPixels
+            windowManager.updateViewLayout(candidatesView.root, layoutParams.apply { height = displayHeight - y })
+            candidatesView.list.layoutManager = FlexboxLayoutManager(context, FlexDirection.ROW, FlexWrap.WRAP)
+        } else {
+            windowManager.updateViewLayout(candidatesView.root, layoutParams)
+            candidatesView.list.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        }
+        val adapter = candidatesView.list.adapter
+        candidatesView.list.adapter = null
+        candidatesView.list.adapter = adapter
     }
 
     object Key {
