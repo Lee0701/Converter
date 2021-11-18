@@ -33,7 +33,6 @@ class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(c
     private var candidatesView: CandidatesViewVerticalBinding? = null
     private var windowShown = false
 
-    @SuppressLint("InflateParams")
     override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (String) -> Unit) {
         if(candidatesView == null) {
             val candidatesView = CandidatesViewVerticalBinding.inflate(LayoutInflater.from(context))
@@ -76,7 +75,7 @@ class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(c
         }
         val view = candidatesView ?: return
         view.list.adapter =
-            HorizontalCandidateListAdapter(showExtra, textColor, extraColor, textAlpha,
+            VerticalCandidateListAdapter(showExtra, textColor, extraColor, textAlpha,
                 candidates.toTypedArray(), onItemClick)
         view.list.scrollToPosition(0)
         windowShown = true

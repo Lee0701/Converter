@@ -26,7 +26,6 @@ class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow
     private var candidatesView: CandidatesViewHorizontalBinding? = null
     private var windowShown = false
 
-    @SuppressLint("InflateParams")
     override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (String) -> Unit) {
         if(candidatesView == null) {
             val candidatesView = CandidatesViewHorizontalBinding.inflate(LayoutInflater.from(context))

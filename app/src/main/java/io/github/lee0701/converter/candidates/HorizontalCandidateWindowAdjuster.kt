@@ -12,10 +12,10 @@ import android.view.*
 import android.widget.Toast
 import androidx.preference.PreferenceManager
 import io.github.lee0701.converter.ConverterService
-import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow.Key
 import io.github.lee0701.converter.R
+import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow.Key
 import io.github.lee0701.converter.databinding.AdjustCandidatesViewHorizontalBinding
-import java.lang.IllegalArgumentException
+import java.util.*
 
 class HorizontalCandidateWindowAdjuster(private val context: Context) {
 
@@ -43,7 +43,7 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
 
     private var window: AdjustCandidatesViewHorizontalBinding? = null
 
-    @SuppressLint("InflateParams", "ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility")
     fun show() {
         val window = AdjustCandidatesViewHorizontalBinding.inflate(LayoutInflater.from(context))
         window.close.setOnClickListener {
