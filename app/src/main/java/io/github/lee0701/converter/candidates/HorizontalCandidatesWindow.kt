@@ -70,6 +70,7 @@ class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow
                 candidates.toTypedArray(), onItemClick)
         view.list.scrollToPosition(0)
         windowShown = true
+        expanded = false
     }
 
     override fun destroy() {
