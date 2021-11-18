@@ -33,18 +33,7 @@ class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow
             candidatesView.close.setOnClickListener { destroy() }
             candidatesView.close.backgroundTintList = ColorStateList.valueOf(textColor)
             candidatesView.close.alpha = textAlpha
-            candidatesView.count.setTextColor(textColor)
-            candidatesView.count.alpha = textAlpha
             candidatesView.list.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-            candidatesView.list.addOnScrollListener(object: RecyclerView.OnScrollListener() {
-                @SuppressLint("SetTextI18n")
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    val p = (candidatesView.list.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-                    val count = candidatesView.list.adapter?.itemCount ?: 0
-                    candidatesView.count.text = "$p / $count"
-                }
-            })
 
             val type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
             val flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL

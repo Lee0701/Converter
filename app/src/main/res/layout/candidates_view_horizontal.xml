@@ -5,13 +5,6 @@
     android:layout_height="wrap_content"
     android:background="?android:colorBackground">
 
-    <TextView
-        android:id="@+id/count"
-        android:layout_width="30dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:textSize="16sp" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:layout_weight="1"
