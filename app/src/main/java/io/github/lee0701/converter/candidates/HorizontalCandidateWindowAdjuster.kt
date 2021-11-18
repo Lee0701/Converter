@@ -100,6 +100,7 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
                 MotionEvent.ACTION_UP -> {
                     handler.removeCallbacksAndMessages(null)
                     windowHeight -= windowMoveAmount
+                    if(windowHeight < MIN_WINDOW_HEIGHT) windowHeight = MIN_WINDOW_HEIGHT
                     windowManager.updateViewLayout(window.root, layoutParams)
                     false
                 }
@@ -109,6 +110,7 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
         window.smaller.setOnLongClickListener {
             fun smaller() {
                 windowHeight -= windowMoveAmount
+                if(windowHeight < MIN_WINDOW_HEIGHT) windowHeight = MIN_WINDOW_HEIGHT
                 windowManager.updateViewLayout(window.root, layoutParams)
                 handler.postDelayed({ smaller() }, 50)
             }
@@ -146,6 +148,10 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
         } catch(ex: IllegalArgumentException) {
             // Window is already removed, do nothing
         }
+    }
+
+    companion object {
+        const val MIN_WINDOW_HEIGHT = 40
     }
 
 }
