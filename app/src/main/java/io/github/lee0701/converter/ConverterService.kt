@@ -150,11 +150,7 @@ class ConverterService: AccessibilityService() {
                 if(predictor != null && sortByContext && !converted.all { it.isEmpty() }) {
                     if(predictionContext != composingText.textBeforeComposing.toString()) {
                         predictionContext = composingText.textBeforeComposing.toString()
-                        try {
-                            prediction = predictor.predict(predictor.tokenize(predictionContext))
-                        } catch(ex: IllegalArgumentException) {
-                            ex.printStackTrace()
-                        }
+                        prediction = predictor.predict(predictor.tokenize(predictionContext))
                     }
                     if(prediction.isNotEmpty()) {
                         converted = converted.map { list ->
@@ -180,17 +176,23 @@ class ConverterService: AccessibilityService() {
                     learn(composingText.unconverted, composingText.converted)
                 }
 
-                if(predictor != null && usePrediction && composingText.textBeforeCursor.any { isHangul(it) }) {
-                    val prediction = predictor.predict(predictor.tokenize(composingText.textBeforeCursor.toString()))
-                    val candidates = predictor.output(prediction, 10)
-                    withContext(Dispatchers.Main) {
-                        candidatesWindow.show(candidates, rect) { prediction ->
-                            val inserted = composingText.inserted(prediction)
-                            ignoreText = inserted.text
-                            pasteFullText(source, inserted.text)
-                            handler.post { setSelection(source, inserted.to) }
-                            composingText = inserted
-                            convert(source)
+                val textBeforeCursor = composingText.textBeforeCursor.toString()
+                if(predictor != null && usePrediction && textBeforeCursor.any { isHangul(it) }) {
+                    if(predictionContext != textBeforeCursor && textBeforeCursor.length > predictionContext.length) {
+                        predictionContext = textBeforeCursor
+                        prediction = predictor.predict(predictor.tokenize(predictionContext))
+                    }
+                    if(prediction.isNotEmpty()) {
+                        val candidates = predictor.output(prediction, 10)
+                        withContext(Dispatchers.Main) {
+                            candidatesWindow.show(candidates, rect) { prediction ->
+                                val inserted = composingText.inserted(prediction)
+                                ignoreText = inserted.text
+                                pasteFullText(source, inserted.text)
+                                handler.post { setSelection(source, inserted.to) }
+                                composingText = inserted
+                                convert(source)
+                            }
                         }
                     }
                 } else {
