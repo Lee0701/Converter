@@ -122,6 +122,7 @@ class ConverterService: AccessibilityService() {
                         composingText = composingText.copy(text = text, from = from, to = toIndex)
                     }
                 } else {
+                    learnConverted()
                     // Reset composing if non-hangul
                     composingText = ComposingText(text, toIndex)
                 }
@@ -179,9 +180,7 @@ class ConverterService: AccessibilityService() {
                     }
                 }
             } else {
-                if(composingText.converted.isNotEmpty() && !composingText.converted.all { isHangul(it) }) {
-                    learn(composingText.unconverted, composingText.converted)
-                }
+                learnConverted()
 
                 val textBeforeCursor = composingText.textBeforeCursor.toString()
                 if(predictor != null && usePrediction && textBeforeCursor.any { isHangul(it) }) {
@@ -226,6 +225,12 @@ class ConverterService: AccessibilityService() {
         arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, start)
         arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, end)
         source.performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, arguments)
+    }
+
+    private fun learnConverted() {
+        if(composingText.converted.isNotEmpty() && !composingText.converted.all { isHangul(it) }) {
+            learn(composingText.unconverted, composingText.converted)
+        }
     }
 
     private fun learn(input: String, result: String) {
