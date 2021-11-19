@@ -143,6 +143,13 @@ class ConverterService: AccessibilityService() {
 
     private fun convert(source: AccessibilityNodeInfo) {
         job?.cancel()
+        if(job?.isActive == true) {
+            scope.launch {
+                delay(100)
+                if(job?.isActive != true) convert(source)
+            }
+            return
+        }
         job = scope.launch {
             val predictor = predictor
             if(composingText.composing.isNotEmpty()) {
@@ -151,8 +158,6 @@ class ConverterService: AccessibilityService() {
                     if(predictionContext != composingText.textBeforeComposing.toString()) {
                         predictionContext = composingText.textBeforeComposing.toString()
                         prediction = predictor.predict(predictor.tokenize(predictionContext))
-                    } else {
-                        predictionContext = ""
                     }
                     if(prediction.isNotEmpty()) {
                         converted = converted.map { list ->
@@ -200,11 +205,13 @@ class ConverterService: AccessibilityService() {
                         }
                     }
                 } else {
+                    if(predictor != null) predictionContext = ""
                     withContext(Dispatchers.Main) {
                         candidatesWindow.destroy()
                     }
                 }
             }
+            job = null
         }
     }
 
