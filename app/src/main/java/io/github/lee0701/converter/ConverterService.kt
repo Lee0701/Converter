@@ -151,6 +151,8 @@ class ConverterService: AccessibilityService() {
                     if(predictionContext != composingText.textBeforeComposing.toString()) {
                         predictionContext = composingText.textBeforeComposing.toString()
                         prediction = predictor.predict(predictor.tokenize(predictionContext))
+                    } else {
+                        predictionContext = ""
                     }
                     if(prediction.isNotEmpty()) {
                         converted = converted.map { list ->
@@ -181,6 +183,8 @@ class ConverterService: AccessibilityService() {
                     if(predictionContext != textBeforeCursor && textBeforeCursor.length > predictionContext.length) {
                         predictionContext = textBeforeCursor
                         prediction = predictor.predict(predictor.tokenize(predictionContext))
+                    } else {
+                        predictionContext = ""
                     }
                     if(prediction.isNotEmpty()) {
                         val candidates = predictor.output(prediction, 10)
