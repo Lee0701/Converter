@@ -45,8 +45,8 @@ android {
         donation {
             dimension "version"
             applicationIdSuffix ".donation"
-            versionCode 6
-            versionName "0.2.1"
+            versionCode 7
+            versionName "0.2.2"
             buildConfigField 'boolean', 'IS_DONATION', 'true'
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher_donation",
