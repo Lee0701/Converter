@@ -18,5 +18,54 @@
     <string name="app_name">漢字変換器</string>
     <string name="larger">拡大</string>
     <string name="accessibility_service_required">漢字変換器を使用するためにはユーザー補助サービスをONにしてください。</string>
-    <string name="service_header"></string>
+    <string name="service_header">サービス</string>
+    <string name="freeze_learning_title">学習停止</string>
+    <string name="freeze_learning_summary">新しい漢字語の学習をやめる</string>
+    <string name="reset_learning_title">学習された単語の消去</string>
+    <string name="confirm_reset_learning">学習された単語をすべて削除しますか？</string>
+    <string name="adjust_window_summary">キーボードの候補欄に合わせて調整してください。（現在画面方向基準）</string>
+    <string name="window_type_title">変換結果ウィンドウの様式</string>
+    <string name="adjust_window_information">設定を保存してこのウィンドウを閉じてください。</string>
+    <string name="window_width_title">縦変換結果ウィンドウの幅</string>
+    <string name="window_height_title">縦変換結果ウィンドウの高さ</string>
+    <string name="column_count_title">縦変換結果ウィンドウの列数</string>
+    <string name="adjust_window_title">横変換結果ウィンドウの調整</string>
+    <string name="enable_auto_hiding_summary">サポートされている場合にのみ、キーボードが閉じる時に自動的に変換結果ウィンドウを閉じる</string>
+    <string name="conversion_header">変換</string>
+    <string name="prediction_header">予測</string>
+    <string name="visuals_header">デザイン</string>
+    <string name="behavior_header">動作</string>
+    <string name="about_header">漢字変換器について</string>
+    <string name="enable_service_title">ユーザー補助サービスの有効化</string>
+    <string name="enable_service_summary">「漢字変換器」を有効にしてください。</string>
+    <string name="enable_overlay_permission_title">重ねて表示する権限の有効化</string>
+    <string name="output_format_title">変換の出力形式</string>
+    <string name="use_prediction_title">予測機能使用</string>
+    <string name="sort_by_context_title">文脈基盤変換</string>
+    <string name="sort_by_context_summary">文脈に応じて候補を並べ替える</string>
+    <string name="use_learned_word_title">学習機能使用</string>
+    <string name="use_learned_word_summary">学習された単語を変換候補に表示する</string>
+    <string name="use_prediction_summary">入力中に次の単語を予測する</string>
+    <string name="show_extra_summary">変換候補ごとに追加情報（訓など）を表示する</string>
+    <string name="window_color_title">変換結果ウィンドウの色</string>
+    <string name="custom_window_color_summary">変換結果ウィンドウの「カスタム」の色を設定する</string>
+    <string name="custom_window_color_title">変換結果ウィンドウのカスタム色</string>
+    <string name="custom_window_color_text_title">変換結果ウィンドウのカスタム色（直接入力）</string>
+    <string name="color_gboard_light_flat">Gboardライト（外枠なし）</string>
+    <string name="color_gboard_dark_flat">Gboardダーク （外枠なし）</string>
+    <string name="color_gboard_light_border">Gboardライト （外枠あり）</string>
+    <string name="color_gboard_dark_border">Gboardダーク（外枠あり）</string>
+    <string name="color_samsung_light">Galaxyライト</string>
+    <string name="color_samsung_dark">Galaxyダーク</string>
+    <string name="color_custom">カスタム</string>
+    <string name="enable_auto_hiding_title">変換結果ウィンドウを自動的に閉じる</string>
+    <string name="first_fragment_label">案内</string>
+    <string name="information_question">ユーザー補助サービスの使用を同意しますか？</string>
+    <string name="information_details">漢字変換器の主な機能を使用するためにユーザー補助サービスを利用します。
+\n
+\n ユーザー補助サービスは以下の目的でのみ利用されます。
+\n - ユーザーが入力したテキストから漢字に変換する内容を抽出
+\n - ユーザーが入力したテキストを漢字に変換された内容に修正
+\n
+\n 漢字変換器はそれ以外の目的でユーザーが入力した内容を使用・収集することはありません。</string>
 </resources>
