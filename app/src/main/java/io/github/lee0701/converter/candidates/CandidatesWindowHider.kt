@@ -7,7 +7,7 @@ sealed interface CandidatesWindowHider {
 
     object Gboard: CandidatesWindowHider {
         const val PACKAGE_NAME = "com.google.android.inputmethod.latin"
-        val MATCH_DESCRIPTIONS = listOf(
+        private val MATCH_DESCRIPTIONS = listOf(
             "keyboard hidden",
             "키보드 숨김",
         )
@@ -18,10 +18,11 @@ sealed interface CandidatesWindowHider {
     }
 
     companion object {
+        private val HIDER_MAP = mapOf(
+            Gboard.PACKAGE_NAME to Gboard,
+        )
         fun of(packageName: String): CandidatesWindowHider? {
-            return mapOf(
-                Gboard.PACKAGE_NAME to Gboard,
-            )[packageName]
+            return HIDER_MAP[packageName]
         }
     }
 }

@@ -90,7 +90,7 @@ class ConverterService: AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         when(event.eventType) {
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
-                val isHideEvent = CandidatesWindowHider.of(event.packageName.toString())?.isHideEvent(event)
+                val isHideEvent = CandidatesWindowHider.of(event.packageName?.toString() ?: "")?.isHideEvent(event)
                 if(enableAutoHiding && isHideEvent == true) {
                     candidatesWindow.destroy()
                 }
