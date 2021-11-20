@@ -1,8 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Hanja Converter</string>
-
     <string name="settings_saved">Saved.</string>
-
     <string name="candidates_count_format" translatable="false">%1$s / %2$s</string>
     <string name="close">Close</string>
     <string name="save">Save</string>
@@ -15,18 +14,12 @@
     <string name="agree">Agree</string>
     <string name="disagree">Disagree</string>
     <string name="enable">Enable</string>
-
-
     <string name="accessibility_service_required">Please allow the accessibility service to use HanjaConverter.</string>
     <string name="overlay_permission_required">Please allow the overlay permission in settings app to use HanjaConverter.</string>
-
-
     <!-- Settings Activity -->
     <string name="title_activity_settings">Hanja Converter Settings</string>
-
     <string name="system_overlay_not_enabled">System Overlay is not enabled</string>
     <string name="accessibility_service_not_enabled">Accessibility Service not enabled</string>
-
     <!-- Preference Titles -->
     <string name="service_header">Service</string>
     <string name="conversion_header">Conversion</string>
@@ -34,55 +27,44 @@
     <string name="visuals_header">Visuals</string>
     <string name="behavior_header">Behavior</string>
     <string name="about_header">About</string>
-
     <!-- Service Preferences -->
     <string name="enable_service_title">Enable Accessibility Service</string>
     <string name="enable_service_summary">Please enable \'Hanja Converter\'.</string>
     <string name="enable_overlay_permission_title">Enable Overlay Permission</string>
-
     <!-- Conversion Preferences -->
     <string name="output_format_title">Conversion Output Format</string>
-
     <string name="hanja_only" translatable="false">漢字</string>
     <string name="hanjahangul" translatable="false">漢字한자</string>
     <string name="hangulhanja" translatable="false">한자漢字</string>
     <string name="hanja_hangul" translatable="false">漢字(한자)</string>
     <string name="hangul_hanja" translatable="false">한자(漢字)</string>
-
     <!-- Prediction Preferences -->
     <string name="use_prediction_title">Use Prediction</string>
-    <string name="use_prediction_summary">Enable next word prediction</string>
-
+    <string name="use_prediction_summary">Enable next word prediction.</string>
     <string name="sort_by_context_title">Context Aware Conversion</string>
-    <string name="sort_by_context_summary">Sort candidates according to the context</string>
-
+    <string name="sort_by_context_summary">Sort candidates according to the context.</string>
     <string name="use_learned_word_title">Use Learned Word</string>
-    <string name="use_learned_word_summary">Display learned word sequences for conversion</string>
-
+    <string name="use_learned_word_summary">Display learned word sequences for conversion.</string>
     <string name="freeze_learning_title">Freeze Learning</string>
-    <string name="freeze_learning_summary">Stop learning new word sequences</string>
-
+    <string name="freeze_learning_summary">Stop learning new word sequences.</string>
     <string name="reset_learning_title">Clear Learned Words</string>
     <string name="confirm_reset_learning">Are you sure you want to clear learned word sequences?</string>
-
     <!-- Visuals Preferences -->
     <string name="window_type_title">Conversion Window Type</string>
     <string name="adjust_window_title">Adjust Horizontal Conversion Window</string>
-    <string name="adjust_window_summary">Please adjust it to fit in keyboard candidate window (for current screen orientation)</string>
+    <string name="adjust_window_summary">Please adjust it to fit in keyboard candidate window. (for current screen orientation)</string>
     <string name="adjust_window_information">You can close this window after saving settings on the adjuster.</string>
     <string name="window_width_title">Vertical Conversion Window Width</string>
     <string name="window_height_title">Vertical Conversion Window Height</string>
     <string name="column_count_title">Vertical Conversion Window Results Column Count</string>
     <string name="show_extra_title">Show Extra Info</string>
-    <string name="show_extra_summary">Show extra info (meaning) per candidate</string>
+    <string name="show_extra_summary">Show extra info (meaning) per candidate.</string>
     <string name="window_color_title">Conversion Window Color</string>
     <string name="custom_window_color_title">Custom Conversion Window Color</string>
-    <string name="custom_window_color_summary">Set \'Custom\' color for conversion window</string>
+    <string name="custom_window_color_summary">Set \'Custom\' color for conversion window.</string>
     <string name="custom_window_color_text_title">Custom Conversion Window Color (Text)</string>
-
     <string name="horizontal_list">Horizontal List</string>
     <string name="vertical_list">Vertical List</string>
-
     <string name="color_default">Default</string>
     <string name="color_gboard_light_flat">Gboard Light Flat</string>
     <string name="color_gboard_dark_flat">Gboard Dark Flat</string>
@@ -91,23 +73,17 @@
     <string name="color_samsung_light">Samsung Light</string>
     <string name="color_samsung_dark">Samsung Dark</string>
     <string name="color_custom">Custom</string>
-
     <!-- Behavior Preferences -->
     <string name="enable_auto_hiding_title">Auto-Hide Conversion Window</string>
-    <string name="enable_auto_hiding_summary">Automatically hide conversion window on keyboard close if supported</string>
-
+    <string name="enable_auto_hiding_summary">Automatically hide conversion window on keyboard close if supported.</string>
     <!-- About Preferences -->
     <string name="about_app_info_title">Hanja Converter</string>
     <string name="about_app_info_summary">Developer contact: hgl1002@naver.com</string>
     <string name="about_oss_licenses_title">Open source Licenses</string>
     <string name="about_dictionary_license_title">Hanja Dictionary License</string>
-
-
     <!-- Information Activity -->
     <string name="title_activity_information">Hanja Converter Information</string>
-
     <string name="first_fragment_label">Important Information</string>
-
     <string name="information_details">
         Accessibility Service is used for the main functionality of Hanja Converter.
         \n\n
@@ -117,11 +93,7 @@
         \n\n
         Hanja Converter never collects or uses the content entered by the user for any other purposes.
     </string>
-
     <string name="information_question">Do you agree to use the accessibility service?</string>
-
-
     <!-- Dictionary License Activity -->
     <string name="title_activity_dictionary_license">Hanja Dictionary License</string>
-
 </resources>
