@@ -1,2 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="settings_saved">設定は保存されました。</string>
+    <string name="close">閉じる</string>
+    <string name="save">保存</string>
+    <string name="discard">破棄</string>
+    <string name="move">移動</string>
+    <string name="up">上</string>
+    <string name="down">下</string>
+    <string name="smaller">縮小</string>
+    <string name="agree">同意する</string>
+    <string name="disagree">同意しない</string>
+    <string name="enable">有効にする</string>
+    <string name="overlay_permission_required">漢字変換器を使用するためには設定で「他のアプリの上に重ねて表示する」権限を許可してください。</string>
+    <string name="title_activity_settings">漢字変換器設定</string>
+    <string name="accessibility_service_not_enabled">ユーザー補助サービスは有効になっていません</string>
+    <string name="system_overlay_not_enabled">「他のアプリの上に重ねて表示する」権限は許可されていません</string>
+    <string name="app_name">漢字変換器</string>
+    <string name="larger">拡大</string>
+    <string name="accessibility_service_required">漢字変換器を使用するためにはユーザー補助サービスをONにしてください。</string>
+</resources>
