@@ -68,4 +68,14 @@
 \n - ユーザーが入力したテキストを漢字に変換された内容に修正
 \n
 \n 漢字変換器はそれ以外の目的でユーザーが入力した内容を使用・収集することはありません。</string>
+    <string name="show_extra_title">追加情報を表示</string>
+    <string name="vertical_list">縦方向のリスト</string>
+    <string name="horizontal_list">横方向のリスト</string>
+    <string name="color_default">デフォルト</string>
+    <string name="about_app_info_title">漢字変換器</string>
+    <string name="about_app_info_summary">開発者連絡先: hgl1002@naver.com</string>
+    <string name="about_oss_licenses_title">オープンソースライセンス</string>
+    <string name="about_dictionary_license_title">漢字辞書ライセンス</string>
+    <string name="title_activity_information">漢字変換器情報</string>
+    <string name="title_activity_dictionary_license">漢字辞書ライセンス</string>
 </resources>
