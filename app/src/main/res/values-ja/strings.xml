@@ -60,7 +60,7 @@
     <string name="color_custom">カスタム</string>
     <string name="enable_auto_hiding_title">変換結果ウィンドウを自動的に閉じる</string>
     <string name="first_fragment_label">案内</string>
-    <string name="information_question">ユーザー補助サービスの使用を同意しますか？</string>
+    <string name="information_question">アクセシビリティサービスの使用に同意しますか？</string>
     <string name="information_details">漢字変換器の主な機能を使用するためにユーザー補助サービスを利用します。
 \n
 \n ユーザー補助サービスは以下の目的でのみ利用されます。
