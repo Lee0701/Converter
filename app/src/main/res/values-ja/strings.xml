@@ -18,4 +18,5 @@
     <string name="app_name">漢字変換器</string>
     <string name="larger">拡大</string>
     <string name="accessibility_service_required">漢字変換器を使用するためにはユーザー補助サービスをONにしてください。</string>
+    <string name="service_header"></string>
 </resources>
