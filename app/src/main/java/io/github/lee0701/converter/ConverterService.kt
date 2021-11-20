@@ -30,6 +30,7 @@ import io.github.lee0701.converter.history.HistoryDatabase
 import io.github.lee0701.converter.settings.SettingsActivity
 import java.io.File
 import kotlinx.coroutines.*
+import java.io.FileInputStream
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -86,17 +87,24 @@ class ConverterService: AccessibilityService() {
 
         if(BuildConfig.IS_DONATION && preferences.getBoolean("use_prediction", false)) {
             val assetPackManager = AssetPackManagerFactory.getInstance(applicationContext)
+            val assetManager = createPackageContext(packageName, 0).assets
             val onCompleteListener = { states: Task<AssetPackStates?> ->
                 val status = states.result.packStates()?.get(assetPackName)?.status
                 when(status) {
+                    AssetPackStatus.NOT_INSTALLED -> {
+                        assetPackManager.fetch(listOf(assetPackName))
+                    }
                     AssetPackStatus.COMPLETED -> {
                         val assetPackPath = assetPackManager.packLocations[assetPackName]
                         if(assetPackPath != null) {
-                            val path = File(assetPackPath.assetsPath, "model.tflite").path
-                            predictor = Predictor(this, path)
+                            val wordListPath = File(assetPackPath.assetsPath, "wordlist.txt").path
+                            val modelPath = File(assetPackPath.assetsPath, "model.tflite").path
+                            predictor = Predictor(this, FileInputStream(wordListPath), FileInputStream(modelPath))
                         }
                     }
+                    else -> {}
                 }
+                Unit
             }
             assetPackManager
                 .getPackStates(listOf(assetPackName))

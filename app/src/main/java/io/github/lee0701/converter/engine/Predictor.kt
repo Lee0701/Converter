@@ -2,23 +2,21 @@ package io.github.lee0701.converter.engine
 
 import android.content.Context
 import io.github.lee0701.converter.candidates.CandidatesWindow
-import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
-import org.tensorflow.lite.support.model.Model
-import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import java.io.FileInputStream
+import java.io.InputStream
 import java.nio.ByteBuffer
-import java.lang.IllegalArgumentException
+import java.nio.MappedByteBuffer
+import java.nio.channels.FileChannel
 
-class Predictor(context: Context, modelPath: String) {
+class Predictor(context: Context, wordList: InputStream, model: FileInputStream) {
 
-    private val indexToWord = context.assets.open("wordlist.txt").bufferedReader().readLines()
+    private val indexToWord = wordList.bufferedReader().readLines()
         .map { it.split("\t") }.map { (_, word, _) -> word }
     private val wordToIndex = indexToWord.mapIndexed { i, w -> w to i }.toMap()
 
     private val seqLength = 99
-    private val interpreter = Interpreter(ByteBuffer.wrap(context.assets.open(modelPath).readBytes())).apply {
-        allocateTensors()
-    }
+    private val interpreter = Interpreter(loadModel(model))
 
     fun predict(input: List<Int>, topn: Int = 10): List<CandidatesWindow.Candidate> {
         if(topn <= 0) return emptyList()
@@ -27,11 +25,12 @@ class Predictor(context: Context, modelPath: String) {
 
     fun predict(input: List<Int>): FloatArray {
         try {
-            val inputArray = ((0 until seqLength).map { indexToWord.size } + input).takeLast(seqLength).toIntArray()
-            val inputBuffer = TensorBuffer.createFixedSize(intArrayOf(1, seqLength), DataType.FLOAT32)
-            inputBuffer.loadArray(inputArray)
-            return model.process(inputBuffer).outputFeature0AsTensorBuffer.floatArray
+            val inputArray = ((0 until seqLength).map { indexToWord.size } + input).takeLast(seqLength).map { it.toFloat() }.toFloatArray()
+            val outputArray = arrayOf((0 until indexToWord.size + 1).map { 0f }.toFloatArray())
+            interpreter.run(arrayOf(inputArray), outputArray)
+            return outputArray[0]
         } catch(ex: IllegalArgumentException) {
+            ex.printStackTrace()
             return floatArrayOf()
         }
     }
@@ -65,4 +64,9 @@ class Predictor(context: Context, modelPath: String) {
         return result.filter { it != -1 }
     }
 
+    companion object {
+        fun loadModel(stream: FileInputStream): MappedByteBuffer {
+            return stream.channel.map(FileChannel.MapMode.READ_ONLY, 0, stream.channel.size())
+        }
+    }
 }
