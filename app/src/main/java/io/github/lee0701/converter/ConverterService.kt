@@ -38,7 +38,6 @@ class ConverterService: AccessibilityService() {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private val assetPackName = "prediction"
     private var outputFormat: OutputFormat? = null
     private val rect = Rect()
     private var ignoreText: CharSequence? = null
@@ -77,38 +76,20 @@ class ConverterService: AccessibilityService() {
 
     fun restartService() {
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        outputFormat =
-            preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
+
+        outputFormat = preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
+        usePrediction = preferences.getBoolean("use_prediction", false)
+        sortByContext = preferences.getBoolean("sort_by_context", false)
+        enableAutoHiding = preferences.getBoolean("enable_auto_hiding", false)
+
         val dictionary = DiskDictionary(assets.open("dict.bin"))
         val database = if(BuildConfig.IS_DONATION && preferences.getBoolean("use_learned_word", false)) {
             Room.databaseBuilder(applicationContext, HistoryDatabase::class.java, DB_HISTORY).build()
         } else null
         hanjaConverter = HanjaConverter(dictionary, database, scope, preferences.getBoolean("freeze_learning", false))
 
-        if(BuildConfig.IS_DONATION && preferences.getBoolean("use_prediction", false)) {
-            val assetPackManager = AssetPackManagerFactory.getInstance(applicationContext)
-            val assetManager = createPackageContext(packageName, 0).assets
-            val onCompleteListener = { states: Task<AssetPackStates?> ->
-                val status = states.result.packStates()?.get(assetPackName)?.status
-                when(status) {
-                    AssetPackStatus.NOT_INSTALLED -> {
-                        assetPackManager.fetch(listOf(assetPackName))
-                    }
-                    AssetPackStatus.COMPLETED -> {
-                        val assetPackPath = assetPackManager.packLocations[assetPackName]
-                        if(assetPackPath != null) {
-                            val wordListPath = File(assetPackPath.assetsPath, "wordlist.txt").path
-                            val modelPath = File(assetPackPath.assetsPath, "model.tflite").path
-                            predictor = Predictor(this, FileInputStream(wordListPath), FileInputStream(modelPath))
-                        }
-                    }
-                    else -> {}
-                }
-                Unit
-            }
-            assetPackManager
-                .getPackStates(listOf(assetPackName))
-                .addOnCompleteListener(onCompleteListener)
+        if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
+            loadPredictorFromAssetsPack("prediction")
         }
         else predictor = null
 
@@ -117,9 +98,6 @@ class ConverterService: AccessibilityService() {
             else -> VerticalCandidatesWindow(this)
         }
 
-        usePrediction = preferences.getBoolean("use_prediction", false)
-        sortByContext = preferences.getBoolean("sort_by_context", false)
-        enableAutoHiding = preferences.getBoolean("enable_auto_hiding", false)
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
@@ -287,6 +265,33 @@ class ConverterService: AccessibilityService() {
         list += if(nonHangulIndex > 0) hangul.slice(0 until nonHangulIndex) else hangul
         if(isHangul(hangul[0])) list.add(0, hangul[0].toString())
         return list.map { CandidatesWindow.Candidate(it.toString()) }
+    }
+
+    private fun loadPredictorFromAssetsPack(assetPackName: String) {
+        val assetPackManager = AssetPackManagerFactory.getInstance(applicationContext)
+        val onCompleteListener = { states: Task<AssetPackStates?> ->
+            val status = states.result.packStates()?.get(assetPackName)?.status
+            when(status) {
+                AssetPackStatus.NOT_INSTALLED -> {
+                    assetPackManager
+                        .fetch(listOf(assetPackName))
+                        .addOnSuccessListener { loadPredictorFromAssetsPack(assetPackName) }
+                }
+                AssetPackStatus.COMPLETED -> {
+                    val assetPackPath = assetPackManager.packLocations[assetPackName]
+                    if(assetPackPath != null) {
+                        val wordListPath = File(assetPackPath.assetsPath, "wordlist.txt").path
+                        val modelPath = File(assetPackPath.assetsPath, "model.tflite").path
+                        predictor = Predictor(this, FileInputStream(wordListPath), FileInputStream(modelPath))
+                    }
+                }
+                else -> {}
+            }
+            Unit
+        }
+        assetPackManager
+            .getPackStates(listOf(assetPackName))
+            .addOnCompleteListener(onCompleteListener)
     }
 
     companion object {
