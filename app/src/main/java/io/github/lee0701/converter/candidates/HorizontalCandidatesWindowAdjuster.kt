@@ -17,7 +17,7 @@ import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow.Key
 import io.github.lee0701.converter.databinding.AdjustCandidatesViewHorizontalBinding
 import java.util.*
 
-class HorizontalCandidateWindowAdjuster(private val context: Context) {
+class HorizontalCandidatesWindowAdjuster(private val context: Context) {
 
     private val windowManager = context.getSystemService(AccessibilityService.WINDOW_SERVICE) as WindowManager
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)

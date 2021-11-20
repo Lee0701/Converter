@@ -6,18 +6,18 @@ import android.widget.Toast
 import androidx.preference.EditTextPreference
 import io.github.lee0701.converter.ConverterService
 import io.github.lee0701.converter.R
-import io.github.lee0701.converter.candidates.HorizontalCandidateWindowAdjuster
+import io.github.lee0701.converter.candidates.HorizontalCandidatesWindowAdjuster
 
 class ShowCandidateWindowAdjusterPreference(context: Context?, attrs: AttributeSet?): EditTextPreference(context, attrs) {
 
-    private var adjuster: HorizontalCandidateWindowAdjuster? = null
+    private var adjuster: HorizontalCandidatesWindowAdjuster? = null
 
     override fun onClick() {
         closeAdjuster()
         val service = ConverterService.INSTANCE
         if(service != null) {
             super.onClick()
-            adjuster = HorizontalCandidateWindowAdjuster(service).apply { show() }
+            adjuster = HorizontalCandidatesWindowAdjuster(service).apply { show() }
         } else {
             Toast.makeText(context, R.string.accessibility_service_required, Toast.LENGTH_LONG).show()
         }
