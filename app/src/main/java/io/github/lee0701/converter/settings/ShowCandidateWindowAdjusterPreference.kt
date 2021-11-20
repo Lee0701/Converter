@@ -2,22 +2,33 @@ package io.github.lee0701.converter.settings
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.inputmethod.InputMethodManager
-import androidx.preference.Preference
-import io.github.lee0701.converter.candidates.HorizontalCandidateWindowAdjuster
+import android.widget.Toast
+import androidx.preference.EditTextPreference
+import io.github.lee0701.converter.ConverterService
+import io.github.lee0701.converter.R
+import io.github.lee0701.converter.candidates.HorizontalCandidatesWindowAdjuster
 
-class ShowCandidateWindowAdjusterPreference(context: Context?, attrs: AttributeSet?): Preference(context, attrs) {
+class ShowCandidateWindowAdjusterPreference(context: Context?, attrs: AttributeSet?): EditTextPreference(context, attrs) {
 
-    private var adjuster: HorizontalCandidateWindowAdjuster? = null
+    private var adjuster: HorizontalCandidatesWindowAdjuster? = null
 
     override fun onClick() {
         closeAdjuster()
-        adjuster = HorizontalCandidateWindowAdjuster(context).apply { show() }
-        val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        val service = ConverterService.INSTANCE
+        if(service != null) {
+            super.onClick()
+            adjuster = HorizontalCandidatesWindowAdjuster(service).apply { show() }
+        } else {
+            Toast.makeText(context, R.string.accessibility_service_required, Toast.LENGTH_LONG).show()
+        }
     }
     fun closeAdjuster() {
         adjuster?.close()
         adjuster = null
     }
+
+    override fun getText(): String {
+        return context.resources.getString(R.string.adjust_window_information)
+    }
+
 }

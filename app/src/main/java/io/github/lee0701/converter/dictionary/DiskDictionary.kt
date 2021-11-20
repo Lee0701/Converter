@@ -1,11 +1,10 @@
 package io.github.lee0701.converter.dictionary
 
-import io.github.lee0701.converter.HanjaDictionary
 import java.io.InputStream
 import java.lang.StringBuilder
 import java.nio.ByteBuffer
 
-class DiskDictionary(input: InputStream): ListDictionary<HanjaDictionary.Entry> {
+class DiskDictionary(input: InputStream): HanjaDictionary {
     private val data = ByteBuffer.wrap(input.readBytes())
 
     override fun search(key: String): List<HanjaDictionary.Entry> {
@@ -45,7 +44,7 @@ class DiskDictionary(input: InputStream): ListDictionary<HanjaDictionary.Entry> 
         var i = 0
         while(true) {
             val c = bb.getChar(idx + i)
-            if(c.toInt() == 0) break
+            if(c.code == 0) break
             sb.append(c)
             i += 2
         }

@@ -10,6 +10,7 @@ class HorizontalCandidateListAdapter(
     private val textColor: Int,
     private val extraColor: Int,
     private val textAlpha: Float,
+    private val windowHeight: Int,
     private val data: Array<CandidatesWindow.Candidate>,
     private val onItemClick: (String) -> Unit
 ): RecyclerView.Adapter<HorizontalCandidateListAdapter.CandidateItemViewHolder>() {
@@ -25,6 +26,7 @@ class HorizontalCandidateListAdapter(
             view.extra.setTextColor(extraColor)
             view.extra.alpha = textAlpha
         }
+        view.root.layoutParams.height = windowHeight
         return CandidateItemViewHolder(view)
     }
 

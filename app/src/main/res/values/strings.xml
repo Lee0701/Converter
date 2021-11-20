@@ -14,19 +14,25 @@
     <string name="smaller">Smaller</string>
     <string name="agree">Agree</string>
     <string name="disagree">Disagree</string>
+    <string name="enable">Enable</string>
 
 
+    <string name="accessibility_service_required">Please allow the accessibility service to use HanjaConverter.</string>
     <string name="overlay_permission_required">Please allow the overlay permission in settings app to use HanjaConverter.</string>
 
 
     <!-- Settings Activity -->
     <string name="title_activity_settings">Hanja Converter Settings</string>
 
+    <string name="system_overlay_not_enabled">System Overlay is not enabled</string>
+    <string name="accessibility_service_not_enabled">Accessibility Service not enabled</string>
+
     <!-- Preference Titles -->
     <string name="service_header">Service</string>
     <string name="conversion_header">Conversion</string>
     <string name="prediction_header">Prediction</string>
     <string name="visuals_header">Visuals</string>
+    <string name="behavior_header">Behavior</string>
     <string name="about_header">About</string>
 
     <!-- Service Preferences -->
@@ -37,19 +43,33 @@
     <!-- Conversion Preferences -->
     <string name="output_format_title">Conversion Output Format</string>
 
-    <string name="hanja_only">Hanja Only</string>
-    <string name="hanjahangul">HanjaHangul</string>
-    <string name="hanja_hangul">Hanja(Hangul)</string>
-    <string name="hangul_hanja">Hangul(Hanja)</string>
+    <string name="hanja_only" translatable="false">漢字</string>
+    <string name="hanjahangul" translatable="false">漢字한자</string>
+    <string name="hangulhanja" translatable="false">한자漢字</string>
+    <string name="hanja_hangul" translatable="false">漢字(한자)</string>
+    <string name="hangul_hanja" translatable="false">한자(漢字)</string>
 
     <!-- Prediction Preferences -->
     <string name="use_prediction_title">Use Prediction</string>
     <string name="use_prediction_summary">Enable next word prediction</string>
 
+    <string name="sort_by_context_title">Context Aware Conversion</string>
+    <string name="sort_by_context_summary">Sort candidates according to the context</string>
+
+    <string name="use_learned_word_title">Use Learned Word</string>
+    <string name="use_learned_word_summary">Display learned word sequences for conversion</string>
+
+    <string name="freeze_learning_title">Freeze Learning</string>
+    <string name="freeze_learning_summary">Stop learning new word sequences</string>
+
+    <string name="reset_learning_title">Clear Learned Words</string>
+    <string name="confirm_reset_learning">Are you sure you want to clear learned word sequences?</string>
+
     <!-- Visuals Preferences -->
     <string name="window_type_title">Conversion Window Type</string>
     <string name="adjust_window_title">Adjust Horizontal Conversion Window</string>
     <string name="adjust_window_summary">Please adjust it to fit in keyboard candidate window (for current screen orientation)</string>
+    <string name="adjust_window_information">You can close this window after saving settings on the adjuster.</string>
     <string name="window_width_title">Vertical Conversion Window Width</string>
     <string name="window_height_title">Vertical Conversion Window Height</string>
     <string name="column_count_title">Vertical Conversion Window Results Column Count</string>
@@ -72,6 +92,10 @@
     <string name="color_samsung_dark">Samsung Dark</string>
     <string name="color_custom">Custom</string>
 
+    <!-- Behavior Preferences -->
+    <string name="enable_auto_hiding_title">Auto-Hide Conversion Window</string>
+    <string name="enable_auto_hiding_summary">Automatically hide conversion window on keyboard close if supported</string>
+
     <!-- About Preferences -->
     <string name="about_app_info_title">Hanja Converter</string>
     <string name="about_app_info_summary">Developer contact: hgl1002@naver.com</string>
@@ -87,9 +111,11 @@
     <string name="information_details">
         Accessibility Service is used for the main functionality of Hanja Converter.
         \n\n
-        An access to Accessibility Service is required to convert the text typed by user to Hanja, working independently with keyboard service.
-        \n
-        The content entered by the user in any app is used by the Hanja Converter and is never used or collected for any other purpose.
+        Accessibility Service is only used for the following purposes:\n
+        - Extract content to convert to Hanja from the text entered by the user\n
+        - Replasce the text entered by the user with content converted to Hanja
+        \n\n
+        Hanja Converter never collects or uses the content entered by the user for any other purposes.
     </string>
 
     <string name="information_question">Do you agree to use the accessibility service?</string>

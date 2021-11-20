@@ -13,22 +13,26 @@ class OpenAccessibilitySettingsPreference(context: Context?, attrs: AttributeSet
     attrs
 ) {
     override fun onClick() {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        openAccessibilitySettings(context)
+    }
+    companion object {
+        fun openAccessibilitySettings(context: Context) {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-        if(!preferences.getBoolean("accessibility_service_agreed", false)) {
-            // User has not agreed to use accessibility service, show information window
-            val intent = Intent(context, InformationActivity::class.java)
-            context.startActivity(intent)
-        } else {
-            // Already agreed, Open accessibility service settings
-            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-            intent.addFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK
-                        or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        or Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
-            )
-            context.startActivity(intent)
+            if(!preferences.getBoolean("accessibility_service_agreed", false)) {
+                // User has not agreed to use accessibility service, show information window
+                val intent = Intent(context, InformationActivity::class.java)
+                context.startActivity(intent)
+            } else {
+                // Already agreed, Open accessibility service settings
+                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                intent.addFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK
+                            or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            or Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+                )
+                context.startActivity(intent)
+            }
         }
-
     }
 }

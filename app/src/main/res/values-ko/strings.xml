@@ -14,19 +14,25 @@
     <string name="smaller">작게</string>
     <string name="agree">同意</string>
     <string name="disagree">同意 안함</string>
+    <string name="enable">活性化</string>
 
 
+    <string name="accessibility_service_required">漢字變換器를 使用하시려면 接近性 서비스를 活性化해 주세요.</string>
     <string name="overlay_permission_required">漢字變換器를 使用하시려면 設定 앱에서 오버레이 權限을 許容해 주세요.</string>
 
 
     <!-- Settings Activity -->
     <string name="title_activity_settings">漢字變換器 設定</string>
 
+    <string name="system_overlay_not_enabled">시스템 오버레이가 非活性 狀態입니다</string>
+    <string name="accessibility_service_not_enabled">接近性 서비스가 非活性 狀態입니다</string>
+
     <!-- Preference Titles -->
     <string name="service_header">서비스</string>
     <string name="conversion_header">變換</string>
     <string name="prediction_header">豫測</string>
     <string name="visuals_header">視覺</string>
+    <string name="behavior_header">動作</string>
     <string name="about_header">情報</string>
 
     <!-- Service Preferences -->
@@ -37,19 +43,27 @@
     <!-- Conversion Preferences -->
     <string name="output_format_title">變換 出力 포맷</string>
 
-    <string name="hanja_only">漢字</string>
-    <string name="hanjahangul">漢字한글</string>
-    <string name="hanja_hangul">漢字(한글)</string>
-    <string name="hangul_hanja">한글(漢字)</string>
-
     <!-- Prediction Preferences -->
     <string name="use_prediction_title">豫測 機能 使用</string>
     <string name="use_prediction_summary">入力 中에 다음 單語를 豫測합니다.</string>
+
+    <string name="sort_by_context_title">文脈 基盤 變換</string>
+    <string name="sort_by_context_summary">文脈에 따라 候補 順序를 整列합니다.</string>
+
+    <string name="use_learned_word_title">學習 機能 使用</string>
+    <string name="use_learned_word_summary">學習된 單語를 變換 候補로 表示합니다.</string>
+
+    <string name="freeze_learning_title">學習 停止</string>
+    <string name="freeze_learning_summary">새로운 漢字語를 學習하지 않습니다.</string>
+
+    <string name="reset_learning_title">學習된 單語 削除</string>
+    <string name="confirm_reset_learning">學習된 單語를 모두 削除하시겠습니까?</string>
 
     <!-- Visuals Preferences -->
     <string name="window_type_title">變換 結果窓 種類</string>
     <string name="adjust_window_title">變換 結果窓 (가로) 調整</string>
     <string name="adjust_window_summary">키보드의 單語 推薦欄에 맞게 調整해 주세요. (現在 畵面方向 基準)</string>
+    <string name="adjust_window_information">調整을 貯藏하고 이 窓은 닫아주세요.</string>
     <string name="window_width_title">變換 結果窓 (세로) 너비</string>
     <string name="window_height_title">變換 (세로) 結果窓 높이</string>
     <string name="column_count_title">變換 結果窓 (세로) 列 數</string>
@@ -72,6 +86,10 @@
     <string name="color_samsung_dark">三星 다크</string>
     <string name="color_custom">使用者</string>
 
+    <!-- Behavior Preferences -->
+    <string name="enable_auto_hiding_title">變換 結果窓 自動 닫기</string>
+    <string name="enable_auto_hiding_summary">支援될 境遇, 키보드가 닫힐 때 變換 結果窓을 함께 닫습니다.</string>
+
     <!-- About Preferences -->
     <string name="about_app_info_title">漢字變換器</string>
     <string name="about_app_info_summary">開發者 連絡處: hgl1002@naver.com</string>
@@ -87,7 +105,11 @@
     <string name="information_details">
         漢字變換器의 主要 機能을 쓰려면 接近性 서비스를 使用해야 합니다.
         \n\n
-        키보드 앱과 別個로 動作하여 使用者가 入力한 內容을 漢字로 變換하기 爲해 接近性 서비스 權限이 必要합니다. 모든 앱에서 使用者가 入力한 內容이 漢字變換器에서 使用되며, 다른 目的으로 活用되거나 收集되지는 않습니다.
+        接近性 서비스 權限은 오직 다음과 같은 目的으로만 活用됩니다.\n
+        - 使用者가 入力한 텍스트 中 漢字로 變換할 內容 抽出\n
+        - 漢字로 變換된 內容으로 原本 텍스트 修正
+        \n\n
+        漢字變換器는 使用者가 入力한 內容을 다른 目的으로 活用하거나 收集하지 않습니다.
     </string>
 
     <string name="information_question">接近性 서비스 使用에 同意하십니까?</string>

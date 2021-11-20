@@ -5,21 +5,24 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.PixelFormat
-import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.TypedValue
 import android.view.*
 import android.widget.Toast
 import androidx.preference.PreferenceManager
 import io.github.lee0701.converter.ConverterService
-import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow.Key
 import io.github.lee0701.converter.R
+import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow.Key
 import io.github.lee0701.converter.databinding.AdjustCandidatesViewHorizontalBinding
-import java.lang.IllegalArgumentException
+import java.util.*
 
-class HorizontalCandidateWindowAdjuster(private val context: Context) {
+class HorizontalCandidatesWindowAdjuster(private val context: Context) {
 
     private val windowManager = context.getSystemService(AccessibilityService.WINDOW_SERVICE) as WindowManager
     private val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+
+    private val handler = Handler(Looper.getMainLooper())
 
     private val landscape get() = context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -28,7 +31,7 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
     private var windowY = preferences.getInt(keyWindowY, 500)
     private var windowHeight = preferences.getInt(keyWindowHeight, 200)
 
-    private val type = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY else WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
+    val type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
     private val flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
     private val layoutParams get() = WindowManager.LayoutParams(
         WindowManager.LayoutParams.MATCH_PARENT, windowHeight,
@@ -40,7 +43,7 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
 
     private var window: AdjustCandidatesViewHorizontalBinding? = null
 
-    @SuppressLint("InflateParams")
+    @SuppressLint("ClickableViewAccessibility")
     fun show() {
         val window = AdjustCandidatesViewHorizontalBinding.inflate(LayoutInflater.from(context))
         window.close.setOnClickListener {
@@ -72,13 +75,47 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
             windowManager.updateViewLayout(window.root, layoutParams)
         }
 
-        window.larger.setOnClickListener {
-            windowHeight += windowMoveAmount
-            windowManager.updateViewLayout(window.root, layoutParams)
+        window.larger.setOnTouchListener { view, event ->
+            when(event.action) {
+                MotionEvent.ACTION_UP -> {
+                    handler.removeCallbacksAndMessages(null)
+                    windowHeight += windowMoveAmount
+                    windowManager.updateViewLayout(window.root, layoutParams)
+                    false
+                }
+                else -> false
+            }
         }
-        window.smaller.setOnClickListener {
-            windowHeight -= windowMoveAmount
-            windowManager.updateViewLayout(window.root, layoutParams)
+        window.larger.setOnLongClickListener {
+            fun larger() {
+                windowHeight += windowMoveAmount
+                windowManager.updateViewLayout(window.root, layoutParams)
+                handler.postDelayed({ larger() }, 50)
+            }
+            larger()
+            return@setOnLongClickListener false
+        }
+        window.smaller.setOnTouchListener { view, event ->
+            when(event.action) {
+                MotionEvent.ACTION_UP -> {
+                    handler.removeCallbacksAndMessages(null)
+                    windowHeight -= windowMoveAmount
+                    if(windowHeight < MIN_WINDOW_HEIGHT) windowHeight = MIN_WINDOW_HEIGHT
+                    windowManager.updateViewLayout(window.root, layoutParams)
+                    false
+                }
+                else -> false
+            }
+        }
+        window.smaller.setOnLongClickListener {
+            fun smaller() {
+                windowHeight -= windowMoveAmount
+                if(windowHeight < MIN_WINDOW_HEIGHT) windowHeight = MIN_WINDOW_HEIGHT
+                windowManager.updateViewLayout(window.root, layoutParams)
+                handler.postDelayed({ smaller() }, 50)
+            }
+            smaller()
+            return@setOnLongClickListener false
         }
 
         window.save.setOnClickListener {
@@ -111,6 +148,10 @@ class HorizontalCandidateWindowAdjuster(private val context: Context) {
         } catch(ex: IllegalArgumentException) {
             // Window is already removed, do nothing
         }
+    }
+
+    companion object {
+        const val MIN_WINDOW_HEIGHT = 40
     }
 
 }

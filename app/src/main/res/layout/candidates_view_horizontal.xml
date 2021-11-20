@@ -5,12 +5,20 @@
     android:layout_height="wrap_content"
     android:background="?android:colorBackground">
 
-    <TextView
-        android:id="@+id/count"
-        android:layout_width="30dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:textSize="16sp" />
+    <FrameLayout
+        android:id="@+id/expand_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/expand"
+            android:layout_width="32sp"
+            android:layout_height="32sp"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_baseline_arrow_drop_down_24"
+            android:backgroundTint="@android:color/black"
+            android:contentDescription="@string/close" />
+    </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
@@ -19,12 +27,19 @@
         android:layout_height="match_parent"
         android:scrollbars="vertical" />
 
-    <ImageButton
-        android:id="@+id/close"
-        android:layout_width="32sp"
-        android:layout_height="32sp"
-        android:layout_gravity="center"
-        android:background="@drawable/ic_baseline_close_24"
-        android:backgroundTint="@android:color/black"
-        android:contentDescription="@string/close" />
+    <FrameLayout
+        android:id="@+id/close_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/close"
+            android:layout_width="32sp"
+            android:layout_height="32sp"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_baseline_close_24"
+            android:backgroundTint="@android:color/black"
+            android:contentDescription="@string/close" />
+    </FrameLayout>
+
 </LinearLayout>
