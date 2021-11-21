@@ -60,6 +60,10 @@ class ConverterService: AccessibilityService() {
         val sortByContext = preferences.getBoolean("sort_by_context", false)
         val usePrediction = preferences.getBoolean("use_prediction", false)
 
+        val tfLitePredictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
+            TFLitePredictor(this)
+        } else null
+
         val converters = mutableListOf<HanjaConverter>()
         if(BuildConfig.IS_DONATION && preferences.getBoolean("use_learned_word", false)) {
             val database = Room.databaseBuilder(applicationContext, HistoryDatabase::class.java, DB_HISTORY).build()
@@ -67,14 +71,15 @@ class ConverterService: AccessibilityService() {
             CoroutineScope(Dispatchers.IO).launch { historyHanjaConverter.deleteOldWords() }
             converters += historyHanjaConverter
         }
-        converters += DictionaryHanjaConverter(DiskDictionary(assets.open("dict.bin")))
-        val hanjaConverter = CompoundHanjaConverter(converters.toList())
-        val tfLitePredictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
-            TFLitePredictor(this)
-        } else null
-
-        converter = Converter(hanjaConverter, tfLitePredictor, sortByContext)
-        if(usePrediction && tfLitePredictor != null) predictor = Predictor(tfLitePredictor)
+        val dictionaryHanjaConverter = DictionaryHanjaConverter(DiskDictionary(assets.open("dict.bin")))
+        if(tfLitePredictor != null && sortByContext) {
+            converters += ContextSortingHanjaConverter(dictionaryHanjaConverter, tfLitePredictor)
+        } else {
+            converters += dictionaryHanjaConverter
+        }
+        converter = Converter(CompoundHanjaConverter(converters.toList()))
+        if(tfLitePredictor != null && usePrediction) predictor = Predictor(tfLitePredictor)
+        else predictor = null
 
         candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
             "horizontal" -> HorizontalCandidatesWindow(this)

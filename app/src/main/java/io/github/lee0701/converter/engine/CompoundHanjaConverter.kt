@@ -6,12 +6,12 @@ class CompoundHanjaConverter(
     val converters: List<HanjaConverter>,
 ): HanjaConverter {
 
-    override fun convert(word: String): List<Candidate> {
-        return converters.flatMap { it.convert(word) }.distinctBy { it.text }
+    override fun convert(composingText: ComposingText): List<Candidate> {
+        return converters.flatMap { it.convert(composingText) }.distinctBy { it.text }
     }
 
-    override fun convertPrefix(word: String): List<List<Candidate>> {
-        return converters.map { it.convertPrefix(word) }
+    override fun convertPrefix(composingText: ComposingText): List<List<Candidate>> {
+        return converters.map { it.convertPrefix(composingText) }
             .reduce { acc, list -> acc.zip(list).map { (l1, l2) -> (l1 + l2).distinctBy { it.text } } }
     }
 

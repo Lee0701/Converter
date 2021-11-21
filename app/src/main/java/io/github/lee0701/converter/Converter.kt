@@ -8,26 +8,11 @@ import kotlinx.coroutines.*
 
 class Converter(
     private val hanjaConverter: HanjaConverter,
-    private val predictor: TFLitePredictor?,
-    private val sortByContext: Boolean,
 ) {
-    private var predictionContext: String = ""
-    private var prediction: FloatArray = floatArrayOf()
 
     fun convertAsync(scope: CoroutineScope, composingText: ComposingText)
     : Deferred<List<Candidate>> = scope.async {
-        var converted = hanjaConverter.convertPrefix(composingText.composing.toString())
-        if(predictor != null && sortByContext && !converted.all { it.isEmpty() }) {
-            if(predictionContext != composingText.textBeforeComposing.toString()) {
-                predictionContext = composingText.textBeforeComposing.toString()
-                prediction = predictor.predict(predictor.tokenize(predictionContext))
-            }
-            if(prediction.isNotEmpty()) {
-                converted = converted.map { list ->
-                    list.sortedByDescending { predictor.getConfidence(prediction, it.text) }
-                }
-            }
-        }
+        val converted = hanjaConverter.convertPrefix(composingText)
         return@async getExtraCandidates(composingText.composing) + converted.flatten()
     }
 

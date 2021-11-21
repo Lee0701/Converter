@@ -9,12 +9,14 @@ class DictionaryHanjaConverter(
     private val dictionary: HanjaDictionary,
 ): HanjaConverter {
 
-    override fun convert(word: String): List<Candidate> {
+    override fun convert(composingText: ComposingText): List<Candidate> {
+        val word = composingText.composing.toString()
         val result = dictionary.search(word) ?: emptyList()
         return result.map { Candidate(it.result, it.extra ?: "") }
     }
 
-    override fun convertPrefix(word: String): List<List<Candidate>> {
+    override fun convertPrefix(composingText: ComposingText): List<List<Candidate>> {
+        val word = composingText.composing.toString()
         return word.indices.reversed().map { i ->
             dictionary.search(word.slice(0 .. i))
                 ?.sortedByDescending { it.frequency }

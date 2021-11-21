@@ -9,12 +9,14 @@ class HistoryHanjaConverter(
     private val freezeLearning: Boolean,
 ): HanjaConverter {
 
-    override fun convert(word: String): List<Candidate> {
+    override fun convert(composingText: ComposingText): List<Candidate> {
+        val word = composingText.composing.toString()
         val result = database.wordDao().searchWords(word)
         return result.sortedByDescending { it.count }.map { Candidate(it.result, "") }
     }
 
-    override fun convertPrefix(word: String): List<List<Candidate>> {
+    override fun convertPrefix(composingText: ComposingText): List<List<Candidate>> {
+        val word = composingText.composing.toString()
         return word.indices.reversed().map { i ->
             database.wordDao().searchWords(word.slice(0 .. i))
                 .sortedByDescending { it.count }
