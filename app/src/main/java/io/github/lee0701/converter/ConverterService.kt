@@ -136,19 +136,23 @@ class ConverterService: AccessibilityService() {
         job = scope.launch {
             if(composingText.composing.isNotEmpty()) {
                 val candidates = converter.convertAsync(scope, composingText).await()
-                withContext(Dispatchers.Main) {
-                    candidatesWindow.show(candidates, rect) { hanja ->
-                        val hangul = composingText.composing.take(hanja.length).toString()
-                        val replaced = composingText.replaced(hanja, outputFormat)
-                        ignoreText = replaced.text
-                        pasteFullText(source, replaced.text)
-                        setSelection(source, replaced.to)
-                        composingText = replaced
-                        convert(source)
-                        if(hanja.all { CharacterSet.isHanja(it) }) learn(hangul, hanja)
+                if(candidates.isNotEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        candidatesWindow.show(candidates, rect) { hanja ->
+                            val hangul = composingText.composing.take(hanja.length).toString()
+                            val replaced = composingText.replaced(hanja, outputFormat)
+                            ignoreText = replaced.text
+                            pasteFullText(source, replaced.text)
+                            setSelection(source, replaced.to)
+                            composingText = replaced
+                            convert(source)
+                            if(hanja.all { CharacterSet.isHanja(it) }) learn(hangul, hanja)
+                        }
                     }
+                } else {
+                    candidatesWindow.destroy()
                 }
-            } else {
+            } else if(predictor != null) {
                 learnConverted()
                 val anyHangul = composingText.textBeforeCursor.any { isHangul(it) }
                 if(anyHangul) {
@@ -166,6 +170,8 @@ class ConverterService: AccessibilityService() {
                 } else {
                     candidatesWindow.destroy()
                 }
+            } else {
+                candidatesWindow.destroy()
             }
         }
     }
