@@ -14,8 +14,8 @@ class Converter(
     private var predictionContext: String = ""
     private var prediction: FloatArray = floatArrayOf()
 
-    fun convert(composingText: ComposingText)
-    : Deferred<List<Candidate>> = CoroutineScope(Dispatchers.IO).async {
+    fun convertAsync(scope: CoroutineScope, composingText: ComposingText)
+    : Deferred<List<Candidate>> = scope.async {
         var converted = hanjaConverter.convertPrefix(composingText.composing.toString())
         if(predictor != null && sortByContext && !converted.all { it.isEmpty() }) {
             if(predictionContext != composingText.textBeforeComposing.toString()) {

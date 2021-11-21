@@ -21,15 +21,18 @@ import kotlin.math.min
 
 class ConverterService: AccessibilityService() {
 
-    private var outputFormat: OutputFormat? = null
-    private val rect = Rect()
-    private var ignoreText: CharSequence? = null
+    private val scope = CoroutineScope(Dispatchers.IO)
+    private var job: Job? = null
 
     private lateinit var converter: Converter
     private var predictor: Predictor? = null
     private lateinit var candidatesWindow: CandidatesWindow
 
     private var composingText = ComposingText("", 0)
+
+    private var outputFormat: OutputFormat? = null
+    private val rect = Rect()
+    private var ignoreText: CharSequence? = null
 
     private var enableAutoHiding = false
 
@@ -124,9 +127,10 @@ class ConverterService: AccessibilityService() {
     }
 
     private fun convert(source: AccessibilityNodeInfo) {
-        CoroutineScope(Dispatchers.IO).launch {
+        job?.cancel()
+        job = scope.launch {
             if(composingText.composing.isNotEmpty()) {
-                val candidates = converter.convert(composingText).await()
+                val candidates = converter.convertAsync(scope, composingText).await()
                 withContext(Dispatchers.Main) {
                     candidatesWindow.show(candidates, rect) { hanja ->
                         val hangul = composingText.composing.take(hanja.length).toString()
@@ -141,9 +145,9 @@ class ConverterService: AccessibilityService() {
                 }
             } else {
                 learnConverted()
-                val anyHangul = composingText.textBeforeCursor.any { CharacterSet.isHangul(it) }
+                val anyHangul = composingText.textBeforeCursor.any { isHangul(it) }
                 if(anyHangul) {
-                    val candidates = predictor?.predict(composingText)?.await()
+                    val candidates = predictor?.predictAsync(scope, composingText)?.await()
                     if(candidates != null) withContext(Dispatchers.Main) {
                         candidatesWindow.show(candidates, rect) { prediction ->
                             val inserted = composingText.inserted(prediction)
