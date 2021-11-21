@@ -3,6 +3,7 @@ package io.github.lee0701.converter.candidates.view
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import io.github.lee0701.converter.candidates.Candidate
 import io.github.lee0701.converter.databinding.CandidateItemHorizontalBinding
 
 class HorizontalCandidateListAdapter(
@@ -11,7 +12,7 @@ class HorizontalCandidateListAdapter(
     private val extraColor: Int,
     private val textAlpha: Float,
     private val windowHeight: Int,
-    private val data: Array<CandidatesWindow.Candidate>,
+    private val data: Array<Candidate>,
     private val onItemClick: (String) -> Unit
 ): RecyclerView.Adapter<HorizontalCandidateListAdapter.CandidateItemViewHolder>() {
 

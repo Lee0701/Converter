@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.graphics.Rect
 import android.view.WindowManager
 import androidx.preference.PreferenceManager
+import io.github.lee0701.converter.candidates.Candidate
 
 abstract class CandidatesWindow(context: Context) {
 
@@ -30,10 +31,5 @@ abstract class CandidatesWindow(context: Context) {
 
     abstract fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (String) -> Unit)
     abstract fun destroy()
-
-    data class Candidate(
-        val text: String,
-        val extra: String = "",
-    )
 
 }

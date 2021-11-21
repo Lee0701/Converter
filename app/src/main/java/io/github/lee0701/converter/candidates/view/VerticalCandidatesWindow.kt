@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.R
+import io.github.lee0701.converter.candidates.Candidate
 import io.github.lee0701.converter.databinding.CandidatesViewVerticalBinding
 
 class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(context) {

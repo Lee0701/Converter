@@ -1,13 +1,12 @@
 package io.github.lee0701.converter.engine
 
 import android.content.Context
-import io.github.lee0701.converter.candidates.view.CandidatesWindow
+import io.github.lee0701.converter.candidates.Candidate
 import io.github.lee0701.converter.ml.Model
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
-import java.lang.IllegalArgumentException
 
-class Predictor(context: Context) {
+class TFLitePredictor(context: Context) {
 
     private val indexToWord = context.assets.open("wordlist.txt").bufferedReader().readLines()
         .map { it.split("\t") }.map { (_, word, _) -> word }
@@ -16,7 +15,7 @@ class Predictor(context: Context) {
     private val seqLength = 99
     private val model = Model.newInstance(context)
 
-    fun predict(input: List<Int>, topn: Int = 10): List<CandidatesWindow.Candidate> {
+    fun predict(input: List<Int>, topn: Int = 10): List<Candidate> {
         if(topn <= 0) return emptyList()
         return output(predict(input), topn)
     }
@@ -32,10 +31,10 @@ class Predictor(context: Context) {
         }
     }
 
-    fun output(prediction: FloatArray, topn: Int = 10): List<CandidatesWindow.Candidate> {
+    fun output(prediction: FloatArray, topn: Int = 10): List<Candidate> {
         if(topn <= 0) return emptyList()
         return prediction.mapIndexed { i, value -> i to value }.sortedByDescending { it.second }.take(topn)
-            .map { (index, _) -> CandidatesWindow.Candidate(indexToWord[index], "") }
+            .map { (index, _) -> Candidate(indexToWord[index], "") }
     }
 
     fun getConfidence(prediction: FloatArray, word: String): Float? {

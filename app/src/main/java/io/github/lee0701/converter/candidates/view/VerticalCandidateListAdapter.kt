@@ -3,6 +3,7 @@ package io.github.lee0701.converter.candidates.view
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import io.github.lee0701.converter.candidates.Candidate
 import io.github.lee0701.converter.databinding.CandidateItemVerticalBinding
 
 class VerticalCandidateListAdapter(
@@ -10,7 +11,7 @@ class VerticalCandidateListAdapter(
     private val textColor: Int,
     private val extraColor: Int,
     private val textAlpha: Float,
-    private val data: Array<CandidatesWindow.Candidate>,
+    private val data: Array<Candidate>,
     private val onItemClick: (String) -> Unit
 ): RecyclerView.Adapter<VerticalCandidateListAdapter.CandidateItemViewHolder>() {
 

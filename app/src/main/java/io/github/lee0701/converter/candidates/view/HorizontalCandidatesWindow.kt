@@ -16,6 +16,7 @@ import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import io.github.lee0701.converter.R
+import io.github.lee0701.converter.candidates.Candidate
 import io.github.lee0701.converter.databinding.CandidatesViewHorizontalBinding
 
 class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow(context) {
