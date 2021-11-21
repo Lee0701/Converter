@@ -2,9 +2,7 @@ package io.github.lee0701.converter.settings
 
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.accessibility.AccessibilityManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
@@ -13,6 +11,8 @@ import com.google.android.material.snackbar.Snackbar
 import io.github.lee0701.converter.ConverterService
 import io.github.lee0701.converter.R
 import io.github.lee0701.converter.databinding.SettingsActivityBinding
+import io.github.lee0701.converter.settings.preference.OpenAccessibilitySettingsPreference
+import io.github.lee0701.converter.settings.preference.ShowCandidateWindowAdjusterPreference
 
 class SettingsActivity : AppCompatActivity() {
 

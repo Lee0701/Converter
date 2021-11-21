@@ -1,4 +1,4 @@
-package io.github.lee0701.converter.candidates
+package io.github.lee0701.converter.candidates.view
 
 import android.graphics.Color
 import androidx.core.graphics.ColorUtils

@@ -1,4 +1,4 @@
-package io.github.lee0701.converter.candidates
+package io.github.lee0701.converter.candidates.view
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Context
@@ -15,7 +15,12 @@ abstract class CandidatesWindow(context: Context) {
     protected val customWindowColor =
         preferences.getInt("custom_window_color", CandidatesWindowColor.DEFAULT)
     protected val windowColor =
-        preferences.getString("window_color", "default").let { CandidatesWindowColor.of(it ?: "", customWindowColor) }
+        preferences.getString("window_color", "default").let {
+            CandidatesWindowColor.of(
+                it ?: "",
+                customWindowColor
+            )
+        }
     protected val darkMode = preferences.getString("window_color", "default")?.contains("dark") ?: false
     protected val textAlpha = if(darkMode) CandidatesWindowColor.ALPHA_DARK else CandidatesWindowColor.ALPHA_LIGHT
     protected val textColor = CandidatesWindowColor.textColorOf(windowColor)

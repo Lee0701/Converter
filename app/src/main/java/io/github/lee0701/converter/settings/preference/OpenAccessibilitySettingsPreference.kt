@@ -1,4 +1,4 @@
-package io.github.lee0701.converter.settings
+package io.github.lee0701.converter.settings.preference
 
 import android.content.Context
 import android.content.Intent
@@ -6,7 +6,7 @@ import android.provider.Settings
 import android.util.AttributeSet
 import androidx.preference.Preference
 import androidx.preference.PreferenceManager
-import io.github.lee0701.converter.information.InformationActivity
+import io.github.lee0701.converter.settings.InformationActivity
 
 class OpenAccessibilitySettingsPreference(context: Context?, attrs: AttributeSet?): Preference(
     context,

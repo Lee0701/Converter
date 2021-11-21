@@ -1,4 +1,4 @@
-package io.github.lee0701.converter.candidates
+package io.github.lee0701.converter.candidates.view
 
 import android.annotation.SuppressLint
 import android.content.Context

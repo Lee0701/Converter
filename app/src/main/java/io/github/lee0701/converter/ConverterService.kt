@@ -11,10 +11,10 @@ import androidx.preference.PreferenceManager
 import androidx.room.Room
 import io.github.lee0701.converter.CharacterSet.isHangul
 import io.github.lee0701.converter.CharacterSet.isHanja
-import io.github.lee0701.converter.candidates.CandidatesWindow
-import io.github.lee0701.converter.candidates.CandidatesWindowHider
-import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow
-import io.github.lee0701.converter.candidates.VerticalCandidatesWindow
+import io.github.lee0701.converter.candidates.view.CandidatesWindow
+import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
+import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow
+import io.github.lee0701.converter.candidates.view.VerticalCandidatesWindow
 import io.github.lee0701.converter.dictionary.DiskDictionary
 import io.github.lee0701.converter.engine.ComposingText
 import io.github.lee0701.converter.engine.HanjaConverter

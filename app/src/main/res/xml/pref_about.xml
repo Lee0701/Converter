@@ -7,9 +7,9 @@
         <Preference
             android:title="@string/about_app_info_title"
             android:summary="@string/about_app_info_summary" />
-        <io.github.lee0701.converter.settings.OssLicensesMenuPreference
+        <io.github.lee0701.converter.settings.preference.OssLicensesMenuPreference
             android:title="@string/about_oss_licenses_title" />
-        <io.github.lee0701.converter.settings.DictionaryLicensePreference
+        <io.github.lee0701.converter.settings.preference.DictionaryLicensePreference
             android:title="@string/about_dictionary_license_title" />
 
     </PreferenceCategory>

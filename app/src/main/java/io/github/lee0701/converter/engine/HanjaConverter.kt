@@ -1,6 +1,6 @@
 package io.github.lee0701.converter.engine
 
-import io.github.lee0701.converter.candidates.CandidatesWindow
+import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.dictionary.HanjaDictionary
 import io.github.lee0701.converter.history.HistoryDatabase
 import io.github.lee0701.converter.history.Word

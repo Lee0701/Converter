@@ -1,4 +1,4 @@
-package io.github.lee0701.converter.settings
+package io.github.lee0701.converter.settings.preference
 
 import android.content.Context
 import android.util.AttributeSet
@@ -6,7 +6,7 @@ import android.widget.Toast
 import androidx.preference.EditTextPreference
 import io.github.lee0701.converter.ConverterService
 import io.github.lee0701.converter.R
-import io.github.lee0701.converter.candidates.HorizontalCandidatesWindowAdjuster
+import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindowAdjuster
 
 class ShowCandidateWindowAdjusterPreference(context: Context?, attrs: AttributeSet?): EditTextPreference(context, attrs) {
 

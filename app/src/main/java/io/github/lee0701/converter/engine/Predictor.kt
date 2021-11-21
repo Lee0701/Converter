@@ -1,7 +1,7 @@
 package io.github.lee0701.converter.engine
 
 import android.content.Context
-import io.github.lee0701.converter.candidates.CandidatesWindow
+import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.ml.Model
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer

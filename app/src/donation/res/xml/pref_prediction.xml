@@ -28,7 +28,7 @@
             app:summary="@string/freeze_learning_summary"
             android:defaultValue="false" />
 
-        <io.github.lee0701.converter.settings.ResetLearningPreference
+        <io.github.lee0701.converter.settings.preference.ResetLearningPreference
             app:title="@string/reset_learning_title" />
 
     </PreferenceCategory>

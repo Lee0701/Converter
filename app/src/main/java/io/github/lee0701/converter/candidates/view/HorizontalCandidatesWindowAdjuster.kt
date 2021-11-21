@@ -1,4 +1,4 @@
-package io.github.lee0701.converter.candidates
+package io.github.lee0701.converter.candidates.view
 
 import android.accessibilityservice.AccessibilityService
 import android.annotation.SuppressLint
@@ -13,7 +13,7 @@ import android.widget.Toast
 import androidx.preference.PreferenceManager
 import io.github.lee0701.converter.ConverterService
 import io.github.lee0701.converter.R
-import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow.Key
+import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow.Key
 import io.github.lee0701.converter.databinding.AdjustCandidatesViewHorizontalBinding
 import java.util.*
 

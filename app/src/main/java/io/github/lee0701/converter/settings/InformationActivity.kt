@@ -1,4 +1,4 @@
-package io.github.lee0701.converter.information
+package io.github.lee0701.converter.settings
 
 import android.content.Intent
 import android.os.Bundle
