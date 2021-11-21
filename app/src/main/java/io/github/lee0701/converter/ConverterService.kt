@@ -61,13 +61,13 @@ class ConverterService: AccessibilityService() {
         val usePrediction = preferences.getBoolean("use_prediction", false)
 
         val converters = mutableListOf<HanjaConverter>()
-        converters += DictionaryHanjaConverter(DiskDictionary(assets.open("dict.bin")))
         if(BuildConfig.IS_DONATION && preferences.getBoolean("use_learned_word", false)) {
             val database = Room.databaseBuilder(applicationContext, HistoryDatabase::class.java, DB_HISTORY).build()
             val historyHanjaConverter = HistoryHanjaConverter(database, preferences.getBoolean("freeze_learning", false))
             CoroutineScope(Dispatchers.IO).launch { historyHanjaConverter.deleteOldWords() }
             converters += historyHanjaConverter
         }
+        converters += DictionaryHanjaConverter(DiskDictionary(assets.open("dict.bin")))
         val hanjaConverter = CompoundHanjaConverter(converters.toList())
         val tfLitePredictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
             TFLitePredictor(this)
