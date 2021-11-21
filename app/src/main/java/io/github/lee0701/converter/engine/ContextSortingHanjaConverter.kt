@@ -18,27 +18,27 @@ class ContextSortingHanjaConverter(
                     prediction = predictor.predict(predictor.tokenize(predictionContext))
                 }
                 if(prediction.isNotEmpty()) {
-                    converted.sortedByDescending { predictor.getConfidence(prediction, it.text) }
+                    return@let converted.sortedByDescending { predictor.getConfidence(prediction, it.text) }
                 }
             }
-            converted
+            return@let converted
         }
     }
 
     override fun convertPrefix(composingText: ComposingText): List<List<Candidate>> {
         return hanjaConverter.convertPrefix(composingText).let { converted ->
-            if(!converted.all { it.isEmpty() }) {
+            if(converted.any { it.isNotEmpty() }) {
                 if(predictionContext != composingText.textBeforeComposing.toString()) {
                     predictionContext = composingText.textBeforeComposing.toString()
                     prediction = predictor.predict(predictor.tokenize(predictionContext))
                 }
                 if(prediction.isNotEmpty()) {
-                    converted.map { list ->
+                    return@let converted.map { list ->
                         list.sortedByDescending { predictor.getConfidence(prediction, it.text) }
                     }
                 }
             }
-            converted
+            return@let converted
         }
     }
 
