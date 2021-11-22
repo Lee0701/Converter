@@ -104,7 +104,7 @@ class ConverterService: AccessibilityService() {
                 val text = event.text.firstOrNull() ?: ""
                 if(text == ignoreText) return
 
-                val beforeText = event.beforeText
+                val beforeText = event.beforeText ?: ""
                 val fromIndex = event.fromIndex.let { if(it == -1) firstDifference(beforeText, text) else it }
                 val addedCount = event.addedCount
                 val removedCount = event.removedCount
