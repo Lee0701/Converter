@@ -38,6 +38,9 @@
     <string name="hangulhanja" translatable="false">한자漢字</string>
     <string name="hanja_hangul" translatable="false">漢字(한자)</string>
     <string name="hangul_hanja" translatable="false">한자(漢字)</string>
+    <string name="additional_dictionaries_title">Additional Dictionaries</string>
+    <string name="metro_station">Metro Station Names</string>
+    <string name="newly_coined">Newly-coined Words</string>
     <!-- Prediction Preferences -->
     <string name="use_prediction_title">Use Prediction</string>
     <string name="use_prediction_summary">Enable next word prediction.</string>

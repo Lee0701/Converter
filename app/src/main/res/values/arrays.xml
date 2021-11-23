@@ -15,6 +15,16 @@
         <item>hangul_hanja</item>
     </string-array>
 
+    <string-array name="additional_dictionaries_entries">
+        <item>@string/metro_station</item>
+        <item>@string/newly_coined</item>
+    </string-array>
+
+    <string-array name="additional_dictionaries_values">
+        <item>metro-station</item>
+        <item>newly-coined</item>
+    </string-array>
+
     <string-array name="window_type_entries">
         <item>@string/horizontal_list</item>
         <item>@string/vertical_list</item>
