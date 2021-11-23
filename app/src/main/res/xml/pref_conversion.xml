@@ -12,6 +12,13 @@
             app:entryValues="@array/output_format_values"
             app:defaultValue="hanja_only" />
 
+        <MultiSelectListPreference
+            app:key="additional_dictionaries"
+            app:title="@string/additional_dictionaries_title"
+            app:entries="@array/additional_dictionaries_entries"
+            android:entryValues="@array/additional_dictionaries_values"
+            android:defaultValue="@array/additional_dictionaries_values" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

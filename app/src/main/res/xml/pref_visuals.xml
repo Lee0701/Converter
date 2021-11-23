@@ -12,7 +12,7 @@
             app:entryValues="@array/window_type_values"
             app:defaultValue="horizontal" />
 
-        <io.github.lee0701.converter.settings.ShowCandidateWindowAdjusterPreference
+        <io.github.lee0701.converter.settings.preference.ShowCandidateWindowAdjusterPreference
             app:key="adjust_window"
             app:title="@string/adjust_window_title"
             app:summary="@string/adjust_window_summary" />
@@ -63,7 +63,7 @@
             app:preference_dialog_negative="@string/discard"
             app:preference_dialog_positive="@string/save" />
 
-        <io.github.lee0701.converter.settings.ColorEditTextPreference
+        <io.github.lee0701.converter.settings.preference.ColorEditTextPreference
             android:key="custom_window_color_text"
             android:title="@string/custom_window_color_text_title"
             android:defaultValue="0" />

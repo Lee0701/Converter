@@ -3,50 +3,36 @@ package io.github.lee0701.converter
 import android.accessibilityservice.AccessibilityService
 import android.graphics.Rect
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.preference.PreferenceManager
 import androidx.room.Room
 import io.github.lee0701.converter.CharacterSet.isHangul
-import io.github.lee0701.converter.CharacterSet.isHanja
-import io.github.lee0701.converter.candidates.CandidatesWindow
-import io.github.lee0701.converter.candidates.CandidatesWindowHider
-import io.github.lee0701.converter.candidates.HorizontalCandidatesWindow
-import io.github.lee0701.converter.candidates.VerticalCandidatesWindow
-import io.github.lee0701.converter.dictionary.DiskDictionary
-import io.github.lee0701.converter.engine.ComposingText
-import io.github.lee0701.converter.engine.HanjaConverter
-import io.github.lee0701.converter.engine.OutputFormat
-import io.github.lee0701.converter.engine.Predictor
+import io.github.lee0701.converter.candidates.view.CandidatesWindow
+import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
+import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow
+import io.github.lee0701.converter.candidates.view.VerticalCandidatesWindow
+import io.github.lee0701.converter.engine.*
 import io.github.lee0701.converter.history.HistoryDatabase
 import io.github.lee0701.converter.settings.SettingsActivity
 import kotlinx.coroutines.*
-import kotlin.math.abs
 import kotlin.math.min
 
 class ConverterService: AccessibilityService() {
 
-    private val handler = Handler(Looper.getMainLooper())
+    private val scope = CoroutineScope(Dispatchers.IO)
+    private var job: Job? = null
+
+    private lateinit var converter: Converter
+    private var predictor: Predictor? = null
+    private lateinit var candidatesWindow: CandidatesWindow
+
+    private var composingText = ComposingText("", 0)
 
     private var outputFormat: OutputFormat? = null
     private val rect = Rect()
     private var ignoreText: CharSequence? = null
 
-    private lateinit var hanjaConverter: HanjaConverter
-    private var predictor: Predictor? = null
-    private lateinit var candidatesWindow: CandidatesWindow
-
-    private var composingText = ComposingText("", 0)
-    private var predictionContext: String = ""
-    private var prediction: FloatArray = floatArrayOf()
-
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    private var job: Job? = null
-
-    private var usePrediction = false
-    private var sortByContext = false
     private var enableAutoHiding = false
 
     override fun onCreate() {
@@ -70,16 +56,32 @@ class ConverterService: AccessibilityService() {
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         outputFormat =
             preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
-        usePrediction = preferences.getBoolean("use_prediction", false)
-        sortByContext = preferences.getBoolean("sort_by_context", false)
-        val dictionary = DiskDictionary(assets.open("dict.bin"))
-        val database = if(BuildConfig.IS_DONATION && preferences.getBoolean("use_learned_word", false)) {
-            Room.databaseBuilder(applicationContext, HistoryDatabase::class.java, DB_HISTORY).build()
+        val sortByContext = preferences.getBoolean("sort_by_context", false)
+        val usePrediction = preferences.getBoolean("use_prediction", false)
+
+        val tfLitePredictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
+            TFLitePredictor(this)
         } else null
-        hanjaConverter = HanjaConverter(dictionary, database, scope, preferences.getBoolean("freeze_learning", false))
-        predictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
-            Predictor(this)
-        } else null
+
+        val converters = mutableListOf<HanjaConverter>()
+        if(BuildConfig.IS_DONATION && preferences.getBoolean("use_learned_word", false)) {
+            val database = Room.databaseBuilder(applicationContext, HistoryDatabase::class.java, DB_HISTORY).build()
+            val historyHanjaConverter = HistoryHanjaConverter(database, preferences.getBoolean("freeze_learning", false))
+            CoroutineScope(Dispatchers.IO).launch { historyHanjaConverter.deleteOldWords() }
+            converters += historyHanjaConverter
+        }
+        val additional = preferences.getStringSet("additional_dictionaries", setOf())?.toList() ?: listOf()
+        val dictionaries = DictionaryManager.loadCompoundDictionary(assets, listOf("base") + additional)
+        val dictionaryHanjaConverter = DictionaryHanjaConverter(dictionaries)
+        if(tfLitePredictor != null && sortByContext) {
+            converters += ContextSortingHanjaConverter(dictionaryHanjaConverter, tfLitePredictor)
+        } else {
+            converters += dictionaryHanjaConverter
+        }
+        converter = Converter(CompoundHanjaConverter(converters.toList()))
+        if(tfLitePredictor != null && usePrediction) predictor = Predictor(tfLitePredictor)
+        else predictor = null
+
         candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
             "horizontal" -> HorizontalCandidatesWindow(this)
             else -> VerticalCandidatesWindow(this)
@@ -87,7 +89,8 @@ class ConverterService: AccessibilityService() {
         enableAutoHiding = preferences.getBoolean("enable_auto_hiding", false)
     }
 
-    override fun onAccessibilityEvent(event: AccessibilityEvent) {
+    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        if(event == null) return
         when(event.eventType) {
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
                 val isHideEvent = CandidatesWindowHider.of(event.packageName?.toString() ?: "")?.isHideEvent(event)
@@ -109,32 +112,19 @@ class ConverterService: AccessibilityService() {
                 val addedCount = event.addedCount
                 val removedCount = event.removedCount
 
-                val addedText = text.drop(fromIndex).take(addedCount)
-                val toIndex = fromIndex + addedCount
+                val newComposingText = composingText.textChanged(text, fromIndex, addedCount, removedCount)
+                if(newComposingText.from != composingText.from) learnConverted()
+                composingText = newComposingText
 
-                if(addedText.isNotEmpty() && addedText.all { isHangul(it) }) {
-                    if(composingText.composing.isEmpty()) {
-                        // Create composing text if not exists
-                        composingText = ComposingText(text, fromIndex, toIndex)
-                    } else {
-                        val spaceIndex = composingText.composing.lastIndexOfAny(charArrayOf(' ', '\t', '\r', '\n'))
-                        val from = composingText.from + if(spaceIndex > -1) spaceIndex + 1 else 0
-                        composingText = composingText.copy(text = text, from = from, to = toIndex)
-                    }
-                } else {
-                    learnConverted()
-                    // Reset composing if non-hangul
-                    composingText = ComposingText(text, toIndex)
-                }
                 convert(source)
             }
             AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
                 val source = event.source ?: return
                 val start = source.textSelectionStart
                 val end = source.textSelectionEnd
-                if(start == -1 || end == -1) return
-                if(start == end && abs(start - composingText.to) > 1) {
-                    composingText = ComposingText(composingText.text, start)
+                val newComposingText = composingText.textSelectionChanged(start, end)
+                if(composingText != newComposingText) {
+                    this.composingText = newComposingText
                     convert(source)
                 }
             }
@@ -144,73 +134,46 @@ class ConverterService: AccessibilityService() {
 
     private fun convert(source: AccessibilityNodeInfo) {
         job?.cancel()
-        if(job?.isActive == true) {
-            scope.launch {
-                delay(100)
-                if(job?.isActive != true) convert(source)
-            }
-            return
-        }
         job = scope.launch {
-            val predictor = predictor
             if(composingText.composing.isNotEmpty()) {
-                var converted = hanjaConverter.convertPrefixAsync(composingText.composing.toString()).await()
-                if(predictor != null && sortByContext && !converted.all { it.isEmpty() }) {
-                    if(predictionContext != composingText.textBeforeComposing.toString()) {
-                        predictionContext = composingText.textBeforeComposing.toString()
-                        prediction = predictor.predict(predictor.tokenize(predictionContext))
-                    }
-                    if(prediction.isNotEmpty()) {
-                        converted = converted.map { list ->
-                            list.sortedByDescending { predictor.getConfidence(prediction, it.text) }
-                        }
-                    }
-                }
-                val candidates = getExtraCandidates(composingText.composing) + converted.flatten()
-                withContext(Dispatchers.Main) {
-                    candidatesWindow.show(candidates, rect) { hanja ->
-                        val hangul = composingText.composing.take(hanja.length).toString()
-                        val replaced = composingText.replaced(hanja, outputFormat)
-                        ignoreText = replaced.text
-                        pasteFullText(source, replaced.text)
-                        setSelection(source, replaced.to)
-                        composingText = replaced
-                        convert(source)
-                        if(hanja.all { isHanja(it) }) learn(hangul, hanja)
-                    }
-                }
-            } else {
-                learnConverted()
-
-                val textBeforeCursor = composingText.textBeforeCursor.toString()
-                if(predictor != null && usePrediction && textBeforeCursor.any { isHangul(it) }) {
-                    if(predictionContext != textBeforeCursor && textBeforeCursor.length > predictionContext.length) {
-                        predictionContext = textBeforeCursor
-                        prediction = predictor.predict(predictor.tokenize(predictionContext))
-                    } else {
-                        predictionContext = ""
-                    }
-                    if(prediction.isNotEmpty()) {
-                        val candidates = predictor.output(prediction, 10)
-                        withContext(Dispatchers.Main) {
-                            candidatesWindow.show(candidates, rect) { prediction ->
-                                val inserted = composingText.inserted(prediction)
-                                ignoreText = inserted.text
-                                pasteFullText(source, inserted.text)
-                                handler.post { setSelection(source, inserted.to) }
-                                composingText = inserted
-                                convert(source)
-                            }
+                val candidates = converter.convertAsync(scope, composingText).await()
+                if(candidates.isNotEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        candidatesWindow.show(candidates, rect) { hanja ->
+                            val hangul = composingText.composing.take(hanja.length).toString()
+                            val replaced = composingText.replaced(hanja, outputFormat)
+                            ignoreText = replaced.text
+                            pasteFullText(source, replaced.text)
+                            setSelection(source, replaced.to)
+                            composingText = replaced
+                            convert(source)
+                            if(hanja.all { CharacterSet.isHanja(it) }) learn(hangul, hanja)
                         }
                     }
                 } else {
-                    if(predictor != null) predictionContext = ""
-                    withContext(Dispatchers.Main) {
-                        candidatesWindow.destroy()
-                    }
+                    candidatesWindow.destroy()
                 }
+            } else if(predictor != null) {
+                learnConverted()
+                val anyHangul = composingText.textBeforeCursor.any { isHangul(it) }
+                if(anyHangul) {
+                    val candidates = predictor?.predictAsync(scope, composingText)?.await()
+                    if(candidates != null) withContext(Dispatchers.Main) {
+                        candidatesWindow.show(candidates, rect) { prediction ->
+                            val inserted = composingText.inserted(prediction)
+                            ignoreText = inserted.text
+                            pasteFullText(source, inserted.text)
+                            setSelection(source, inserted.to)
+                            composingText = inserted
+                            convert(source)
+                        }
+                    }
+                } else {
+                    candidatesWindow.destroy()
+                }
+            } else {
+                candidatesWindow.destroy()
             }
-            job = null
         }
     }
 
@@ -234,7 +197,7 @@ class ConverterService: AccessibilityService() {
     }
 
     private fun learn(input: String, result: String) {
-        hanjaConverter.learnAsync(input, result)
+        CoroutineScope(Dispatchers.IO).launch { converter.learn(input, result) }
     }
 
     private fun firstDifference(a: CharSequence, b: CharSequence): Int {
@@ -243,15 +206,6 @@ class ConverterService: AccessibilityService() {
             if(a[i] != b[i]) return i
         }
         return len
-    }
-
-    private fun getExtraCandidates(hangul: CharSequence): List<CandidatesWindow.Candidate> {
-        if(hangul.isEmpty()) return emptyList()
-        val list = mutableListOf<CharSequence>()
-        val nonHangulIndex = hangul.indexOfFirst { c -> !isHangul(c) }
-        list += if(nonHangulIndex > 0) hangul.slice(0 until nonHangulIndex) else hangul
-        if(isHangul(hangul[0])) list.add(0, hangul[0].toString())
-        return list.map { CandidatesWindow.Candidate(it.toString()) }
     }
 
     companion object {

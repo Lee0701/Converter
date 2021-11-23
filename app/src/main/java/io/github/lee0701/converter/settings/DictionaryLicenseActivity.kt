@@ -10,7 +10,7 @@ class DictionaryLicenseActivity : AppCompatActivity() {
         val binding = ActivityDictionaryLicenseBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val bytes = assets.open("dict.bin").readBytes()
+        val bytes = assets.open("dict/base.bin").readBytes()
         val endIndex = bytes.indexOf(0)
         val license = String(bytes.sliceArray(0 until endIndex))
 
