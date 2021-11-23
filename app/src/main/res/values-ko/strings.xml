@@ -88,10 +88,4 @@
     <string name="information_question">接近性 서비스 使用에 同意하십니까\?</string>
     <!-- Dictionary License Activity -->
     <string name="title_activity_dictionary_license">漢字辭典 라이선스</string>
-    <string name="candidates_count_format" translatable="false"/>
-    <string name="hanja_only" translatable="false"/>
-    <string name="hanjahangul" translatable="false"/>
-    <string name="hangulhanja" translatable="false"/>
-    <string name="hanja_hangul" translatable="false"/>
-    <string name="hangul_hanja" translatable="false"/>
 </resources>
