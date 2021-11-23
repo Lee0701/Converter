@@ -88,4 +88,7 @@
     <string name="information_question">接近性 서비스 使用에 同意하십니까\?</string>
     <!-- Dictionary License Activity -->
     <string name="title_activity_dictionary_license">漢字辭典 라이선스</string>
+    <string name="additional_dictionaries_title">追加 辭典</string>
+    <string name="metro_station">都市鐵道 驛名</string>
+    <string name="newly_coined">新造語</string>
 </resources>
