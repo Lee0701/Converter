@@ -13,7 +13,7 @@ class Converter(
     fun convertAsync(scope: CoroutineScope, composingText: ComposingText)
     : Deferred<List<Candidate>> = scope.async {
         val converted = hanjaConverter.convertPrefix(composingText)
-        return@async getExtraCandidates(composingText.composing) + converted.flatten()
+        return@async getExtraCandidates(composingText.composing) + converted.flatten().distinctBy { it.text }
     }
 
     fun learn(input: String, result: String) {

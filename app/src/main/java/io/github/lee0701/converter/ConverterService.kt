@@ -12,7 +12,6 @@ import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.view.VerticalCandidatesWindow
-import io.github.lee0701.converter.dictionary.DiskDictionary
 import io.github.lee0701.converter.engine.*
 import io.github.lee0701.converter.history.HistoryDatabase
 import io.github.lee0701.converter.settings.SettingsActivity
@@ -71,7 +70,9 @@ class ConverterService: AccessibilityService() {
             CoroutineScope(Dispatchers.IO).launch { historyHanjaConverter.deleteOldWords() }
             converters += historyHanjaConverter
         }
-        val dictionaryHanjaConverter = DictionaryHanjaConverter(DiskDictionary(assets.open("dict.bin")))
+        val additional = preferences.getStringSet("additional_dictionaries", setOf())?.toList() ?: listOf()
+        val dictionaries = DictionaryManager.loadCompoundDictionary(assets, listOf("base") + additional)
+        val dictionaryHanjaConverter = DictionaryHanjaConverter(dictionaries)
         if(tfLitePredictor != null && sortByContext) {
             converters += ContextSortingHanjaConverter(dictionaryHanjaConverter, tfLitePredictor)
         } else {

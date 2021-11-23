@@ -2,11 +2,10 @@ package io.github.lee0701.converter.engine
 
 import io.github.lee0701.converter.candidates.Candidate
 import io.github.lee0701.converter.dictionary.HanjaDictionary
-import io.github.lee0701.converter.history.Word
-import kotlinx.coroutines.*
+import io.github.lee0701.converter.dictionary.ListDictionary
 
 class DictionaryHanjaConverter(
-    private val dictionary: HanjaDictionary,
+    private val dictionary: ListDictionary<HanjaDictionary.Entry>,
 ): HanjaConverter {
 
     override fun convert(composingText: ComposingText): List<Candidate> {
