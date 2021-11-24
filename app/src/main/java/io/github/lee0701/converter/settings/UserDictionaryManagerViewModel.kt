@@ -13,6 +13,8 @@ import io.github.lee0701.converter.userdictionary.UserDictionaryWord
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.InputStream
+import java.io.OutputStream
 
 class UserDictionaryManagerViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -96,6 +98,7 @@ class UserDictionaryManagerViewModel(application: Application) : AndroidViewMode
         coroutineScope.launch {
             database.dictionaryDao().deleteDictionary(dictionary)
             loadAllDictionaries()
+            loadAllWords()
         }
     }
 
@@ -104,6 +107,27 @@ class UserDictionaryManagerViewModel(application: Application) : AndroidViewMode
             val words = database.wordDao().getAllWords(dictionary.id)
             database.wordDao().deleteWords(*words)
             loadAllWords()
+        }
+    }
+
+    fun importDictionary(dictionary: UserDictionary, inputStream: InputStream) {
+        coroutineScope.launch {
+            val lines = inputStream.bufferedReader().readLines()
+            val words = lines
+                .filter { !it.startsWith('#') }
+                .map { it.split(':') }.filter { it.size == 3 }
+                .map { (hangul, hanja, description) -> UserDictionaryWord(dictionary.id, hangul, hanja, description) }
+                .toTypedArray()
+            database.wordDao().insertWords(*words)
+            loadAllWords()
+        }
+    }
+
+    fun exportDictionary(dictionary: UserDictionary, outputStream: OutputStream) {
+        coroutineScope.launch {
+            val words = database.wordDao().getAllWords(dictionary.id)
+            val lines = words.map { word -> "${word.hangul}:${word.hanja}:${word.description}" }
+            outputStream.write(lines.joinToString("\n").toByteArray())
         }
     }
 

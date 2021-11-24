@@ -108,6 +108,8 @@
     <string name="new_dictionary">New Dictioanry</string>
     <string name="edit_dictionary">Edit Dictioanry</string>
     <string name="delete_dictionary">Delete Dictioanry</string>
+    <string name="import_dictionary">Import Dictionary</string>
+    <string name="export_dictionary">Export Dictionary</string>
     <string name="add_word">Add Word</string>
     <string name="input_dictionary_name">Dictionary Name</string>
     <string name="enable_dictionary">Enable</string>

@@ -1,14 +1,21 @@
 package io.github.lee0701.converter.settings
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.*
 import io.github.lee0701.converter.BuildConfig
 import io.github.lee0701.converter.R
@@ -19,10 +26,22 @@ import io.github.lee0701.converter.databinding.UserDictionaryWordListItemBinding
 import io.github.lee0701.converter.userdictionary.UserDictionary
 import io.github.lee0701.converter.userdictionary.UserDictionaryWord
 
-class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+class UserDictionaryManagerActivity: AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private lateinit var binding: ActivityUserDictionaryManagerBinding
     private val viewModel: UserDictionaryManagerViewModel by viewModels()
+
+    private val importLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        importCurrentDictionary(it.data?.data ?: return@registerForActivityResult)
+    }
+
+    private val exportLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        exportCurrentDictionary(it.data?.data ?: return@registerForActivityResult)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +81,6 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
 
         viewModel.words.observe(this, { list ->
             wordListAdapter.submitList(list)
-            println(list)
         })
 
         viewModel.loadAllDictionaries()
@@ -98,8 +116,36 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
                     }.setNegativeButton(R.string.cancel) { _, _ ->
                     }.show()
             }
+            R.id.action_import_dictionary -> {
+                val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = "text/plain"
+                }
+                importLauncher.launch(intent)
+            }
+            R.id.action_export_dictionary -> {
+                val dictionaryName = viewModel.selectedDictionary.value?.name ?: ""
+                val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TITLE, "dictionary_${dictionaryName}.txt")
+                }
+                exportLauncher.launch(intent)
+            }
         }
         return false
+    }
+
+    private fun exportCurrentDictionary(uri: Uri) {
+        val dictionary = viewModel.selectedDictionary.value ?: return
+        val outputStream = contentResolver.openOutputStream(uri) ?: return
+        viewModel.exportDictionary(dictionary, outputStream)
+    }
+
+    private fun importCurrentDictionary(uri: Uri) {
+        val dictionary = viewModel.selectedDictionary.value ?: return
+        val inputStream = contentResolver.openInputStream(uri) ?: return
+        viewModel.importDictionary(dictionary, inputStream)
     }
 
     override fun onItemSelected(adapterView: AdapterView<*>, view: View?, position: Int, p3: Long) {
@@ -187,7 +233,9 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
 
         override fun onBindViewHolder(holder: WordViewHolder, position: Int) {
             holder.onBind(getItem(position))
-            holder.binding.root.setOnClickListener { onItemClick(getItem(position)) }
+            holder.binding.root.setOnClickListener {
+                if(position < itemCount) onItemClick(getItem(position))
+            }
         }
     }
 
@@ -210,4 +258,5 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
             return oldItem.description == newItem.description
         }
     }
+
 }
