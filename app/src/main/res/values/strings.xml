@@ -39,6 +39,7 @@
     <string name="hanja_hangul" translatable="false">漢字(한자)</string>
     <string name="hangul_hanja" translatable="false">한자(漢字)</string>
     <string name="additional_dictionaries_title">Additional Dictionaries</string>
+    <string name="person_name">Person Names</string>
     <string name="metro_station">Metro Station Names</string>
     <string name="newly_coined">Newly-coined Words</string>
     <!-- Prediction Preferences -->
