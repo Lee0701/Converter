@@ -49,7 +49,8 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
             dictionaryListAdapter.clear()
             dictionaryListAdapter.addAll(list)
             val dictionary = list.firstOrNull()
-            if(dictionary != null) viewModel.selectDictionary(dictionary)
+            if(viewModel.selectedDictionary.value == null && dictionary != null)
+                viewModel.selectDictionary(dictionary)
         })
 
         viewModel.selectedDictionary.observe(this, { _ ->
@@ -58,6 +59,7 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
 
         viewModel.words.observe(this, { list ->
             wordListAdapter.submitList(list)
+            println(list)
         })
 
         viewModel.loadAllDictionaries()

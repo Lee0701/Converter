@@ -42,9 +42,13 @@ class UserDictionaryManagerViewModel(application: Application) : AndroidViewMode
 
     fun loadAllWords() {
         coroutineScope.launch {
-            val dictionary = selectedDictionary.value ?: return@launch
-            val list = database.wordDao().getAllWords(dictionary.id).toList()
-            viewModelScope.launch { _words.value = list }
+            val dictionary = selectedDictionary.value
+            if(dictionary == null) {
+                viewModelScope.launch { _words.value = emptyList() }
+            } else {
+                val list = database.wordDao().getAllWords(dictionary.id).toList()
+                viewModelScope.launch { _words.value = list }
+            }
         }
     }
 
