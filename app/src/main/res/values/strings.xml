@@ -11,6 +11,9 @@
     <string name="down">Down</string>
     <string name="larger">Larger</string>
     <string name="smaller">Smaller</string>
+    <string name="delete">Delete</string>
+    <string name="clear">Clear</string>
+    <string name="cancel">Cancel</string>
     <string name="agree">Agree</string>
     <string name="disagree">Disagree</string>
     <string name="enable">Enable</string>
@@ -39,8 +42,10 @@
     <string name="hanja_hangul" translatable="false">漢字(한자)</string>
     <string name="hangul_hanja" translatable="false">한자(漢字)</string>
     <string name="additional_dictionaries_title">Additional Dictionaries</string>
+    <string name="person_name">Person Names</string>
     <string name="metro_station">Metro Station Names</string>
     <string name="newly_coined">Newly-coined Words</string>
+    <string name="user_dictionary_manager_title">User Dictionary Manager</string>
     <!-- Prediction Preferences -->
     <string name="use_prediction_title">Use Prediction</string>
     <string name="use_prediction_summary">Enable next word prediction.</string>
@@ -97,4 +102,20 @@
     <string name="information_question">Do you agree to use the accessibility service?</string>
     <!-- Dictionary License Activity -->
     <string name="title_activity_dictionary_license">Hanja Dictionary License</string>
+    <!-- User Dictionary Manager Activity -->
+    <string name="title_activity_user_dictionary_manager">User Dictionary Manager</string>
+    <string name="clear_dictionary">Clear Dictionary</string>
+    <string name="new_dictionary">New Dictioanry</string>
+    <string name="edit_dictionary">Edit Dictioanry</string>
+    <string name="delete_dictionary">Delete Dictioanry</string>
+    <string name="import_dictionary">Import Dictionary</string>
+    <string name="export_dictionary">Export Dictionary</string>
+    <string name="add_word">Add Word</string>
+    <string name="input_dictionary_name">Dictionary Name</string>
+    <string name="enable_dictionary">Enable</string>
+    <string name="input_hangul">Hangul</string>
+    <string name="input_hanja">Hanja</string>
+    <string name="input_description">Description</string>
+    <string name="confirm_delete_dictionary">Are you sure want to delete this dictionary?</string>
+    <string name="confirm_clear_dictionary">Are you sure want to clear all entries from the dictionary?</string>
 </resources>
