@@ -12,9 +12,11 @@ import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.view.VerticalCandidatesWindow
+import io.github.lee0701.converter.dictionary.UserDictionaryDictionary
 import io.github.lee0701.converter.engine.*
 import io.github.lee0701.converter.history.HistoryDatabase
 import io.github.lee0701.converter.settings.SettingsActivity
+import io.github.lee0701.converter.userdictionary.UserDictionaryDatabase
 import kotlinx.coroutines.*
 import kotlin.math.min
 
@@ -64,20 +66,29 @@ class ConverterService: AccessibilityService() {
         } else null
 
         val converters = mutableListOf<HanjaConverter>()
+
+
+        val userDictionaryDatabase = Room.databaseBuilder(applicationContext, UserDictionaryDatabase::class.java, DB_USER_DICTIONARY).build()
+        val userDictionaryHanjaConverter = DictionaryHanjaConverter(UserDictionaryDictionary(userDictionaryDatabase))
+        converters += userDictionaryHanjaConverter
+
         if(BuildConfig.IS_DONATION && preferences.getBoolean("use_learned_word", false)) {
-            val database = Room.databaseBuilder(applicationContext, HistoryDatabase::class.java, DB_HISTORY).build()
-            val historyHanjaConverter = HistoryHanjaConverter(database, preferences.getBoolean("freeze_learning", false))
+            val historyDatabase = Room.databaseBuilder(applicationContext, HistoryDatabase::class.java, DB_HISTORY).build()
+            val historyHanjaConverter = HistoryHanjaConverter(historyDatabase, preferences.getBoolean("freeze_learning", false))
             CoroutineScope(Dispatchers.IO).launch { historyHanjaConverter.deleteOldWords() }
             converters += historyHanjaConverter
         }
+
         val additional = preferences.getStringSet("additional_dictionaries", setOf())?.toList() ?: listOf()
         val dictionaries = DictionaryManager.loadCompoundDictionary(assets, listOf("base") + additional)
         val dictionaryHanjaConverter = DictionaryHanjaConverter(dictionaries)
+
         if(tfLitePredictor != null && sortByContext) {
             converters += ContextSortingHanjaConverter(dictionaryHanjaConverter, tfLitePredictor)
         } else {
             converters += dictionaryHanjaConverter
         }
+
         converter = Converter(CompoundHanjaConverter(converters.toList()))
         if(tfLitePredictor != null && usePrediction) predictor = Predictor(tfLitePredictor)
         else predictor = null
@@ -212,6 +223,7 @@ class ConverterService: AccessibilityService() {
         var INSTANCE: ConverterService? = null
 
         const val DB_HISTORY = "history"
+        const val DB_USER_DICTIONARY = "user_dictionary"
     }
 
 }
