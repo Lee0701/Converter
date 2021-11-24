@@ -99,4 +99,12 @@ class UserDictionaryManagerViewModel(application: Application) : AndroidViewMode
         }
     }
 
+    fun clearDictionary(dictionary: UserDictionary) {
+        coroutineScope.launch {
+            val words = database.wordDao().getAllWords(dictionary.id)
+            database.wordDao().deleteWords(*words)
+            loadAllWords()
+        }
+    }
+
 }

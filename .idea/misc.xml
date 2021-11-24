@@ -3,10 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/donation/res/menu/user_dictionary_manager_action.xml" value="0.6583333333333333" />
+        <entry key="app/src/main/res/drawable/baseline_file_download_24.xml" value="1.5125" />
+        <entry key="app/src/main/res/drawable/baseline_file_upload_24.xml" value="1.5125" />
         <entry key="app/src/main/res/drawable/bg_divider.xml" value="2.00625" />
         <entry key="app/src/main/res/drawable/ic_baseline_arrow_drop_down_24.xml" value="3.228125" />
         <entry key="app/src/main/res/drawable/ic_baseline_arrow_drop_up_24.xml" value="3.228125" />
         <entry key="app/src/main/res/drawable/ic_baseline_close_24.xml" value="3.228125" />
+        <entry key="app/src/main/res/drawable/ic_baseline_file_download_24.xml" value="1.5125" />
         <entry key="app/src/main/res/layout/activity_dictionary_license.xml" value="1.2708333333333333" />
         <entry key="app/src/main/res/layout/activity_settings.xml" value="0.29924242424242425" />
         <entry key="app/src/main/res/layout/activity_user_dictionary.xml" value="0.6515151515151515" />
@@ -21,6 +25,7 @@
         <entry key="app/src/main/res/layout/user_dictionary_list_item.xml" value="0.5815508021390374" />
         <entry key="app/src/main/res/layout/user_dictionary_word_list_item.xml" value="0.7166666666666667" />
         <entry key="app/src/main/res/menu/user_dictionary_manager_action.xml" value="0.6583333333333333" />
+        <entry key="app/src/main/res/menu/user_dictionary_manager_action_donation.xml" value="0.6583333333333333" />
       </map>
     </option>
   </component>

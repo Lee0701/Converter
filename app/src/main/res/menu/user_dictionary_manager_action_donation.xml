@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_new_dictionary"
+        android:icon="@drawable/ic_baseline_add_circle_outline_24"
+        android:title="@string/new_dictionary"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_edit_dictionary"
+        android:icon="@drawable/ic_baseline_edit_24"
+        android:title="@string/edit_dictionary"
+        app:showAsAction="ifRoom" />
+
+</menu>

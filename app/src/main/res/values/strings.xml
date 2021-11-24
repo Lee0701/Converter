@@ -12,6 +12,8 @@
     <string name="larger">Larger</string>
     <string name="smaller">Smaller</string>
     <string name="delete">Delete</string>
+    <string name="clear">Clear</string>
+    <string name="cancel">Cancel</string>
     <string name="agree">Agree</string>
     <string name="disagree">Disagree</string>
     <string name="enable">Enable</string>
@@ -102,6 +104,7 @@
     <string name="title_activity_dictionary_license">Hanja Dictionary License</string>
     <!-- User Dictionary Manager Activity -->
     <string name="title_activity_user_dictionary_manager">User Dictionary Manager</string>
+    <string name="clear_dictionary">Clear Dictionary</string>
     <string name="new_dictionary">New Dictioanry</string>
     <string name="edit_dictionary">Edit Dictioanry</string>
     <string name="delete_dictionary">Delete Dictioanry</string>
@@ -111,4 +114,6 @@
     <string name="input_hangul">Hangul</string>
     <string name="input_hanja">Hanja</string>
     <string name="input_description">Description</string>
+    <string name="confirm_delete_dictionary">Are you sure want to delete this dictionary?</string>
+    <string name="confirm_clear_dictionary">Are you sure want to clear all entries from the dictionary?</string>
 </resources>

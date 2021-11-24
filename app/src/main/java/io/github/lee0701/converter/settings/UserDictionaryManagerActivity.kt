@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.*
+import io.github.lee0701.converter.BuildConfig
 import io.github.lee0701.converter.R
 import io.github.lee0701.converter.databinding.ActivityUserDictionaryManagerBinding
 import io.github.lee0701.converter.databinding.DialogUserDictionaryEditBinding
@@ -46,11 +47,13 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
         binding.wordList.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         viewModel.dictionaries.observe(this, { list ->
+            val previousSelected = viewModel.selectedDictionary.value?.id
             dictionaryListAdapter.clear()
             dictionaryListAdapter.addAll(list)
-            val dictionary = list.firstOrNull()
-            if(viewModel.selectedDictionary.value == null && dictionary != null)
-                viewModel.selectDictionary(dictionary)
+            val dictionary =
+                if(previousSelected != null) list.find { it.id == previousSelected }
+                else list.firstOrNull()
+            if(dictionary != null) viewModel.selectDictionary(dictionary)
         })
 
         viewModel.selectedDictionary.observe(this, { _ ->
@@ -69,7 +72,10 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.user_dictionary_manager_action, menu)
+        val resId =
+            if(BuildConfig.IS_DONATION) R.menu.user_dictionary_manager_action_donation
+            else R.menu.user_dictionary_manager_action
+        menuInflater.inflate(resId, menu)
         return true
     }
 
@@ -82,6 +88,15 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
             R.id.action_edit_dictionary -> {
                 showEditDictionaryDialog(viewModel.selectedDictionary.value ?: return false)
                 return true
+            }
+            R.id.action_clear_dictionary -> {
+                AlertDialog.Builder(this)
+                    .setMessage(R.string.confirm_clear_dictionary)
+                    .setPositiveButton(R.string.clear) { _, _ ->
+                        val dictionary = viewModel.selectedDictionary.value ?: return@setPositiveButton
+                        viewModel.clearDictionary(dictionary)
+                    }.setNegativeButton(R.string.cancel) { _, _ ->
+                    }.show()
             }
         }
         return false
@@ -110,7 +125,7 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
                 )
                 if(create) viewModel.insertWord(newWord)
                 else viewModel.updateWord(word, newWord)
-            }.setNegativeButton(R.string.discard) { _, _ ->
+            }.setNegativeButton(R.string.cancel) { _, _ ->
             }
         if(!create) builder.setNeutralButton(R.string.delete) { _, _ ->
             viewModel.deleteWord(word)
@@ -130,10 +145,15 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
                 )
                 if(create) viewModel.insertDictionary(newDictionary)
                 else viewModel.updateDictionary(newDictionary)
-            }.setNegativeButton(R.string.discard) { _, _ ->
+            }.setNegativeButton(R.string.cancel) { _, _ ->
             }
         if(!create) builder.setNeutralButton(R.string.delete) { _, _ ->
-            viewModel.deleteDictionary(dictionary)
+            AlertDialog.Builder(this)
+                .setMessage(R.string.confirm_delete_dictionary)
+                .setPositiveButton(R.string.delete) { _, _ ->
+                    viewModel.deleteDictionary(dictionary)
+                }.setNegativeButton(R.string.cancel) { _, _ ->
+                }.show()
         }
         builder.show()
     }
