@@ -1,6 +1,7 @@
 package io.github.lee0701.converter.settings
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,10 +10,12 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.*
 import io.github.lee0701.converter.R
 import io.github.lee0701.converter.databinding.ActivityUserDictionaryManagerBinding
+import io.github.lee0701.converter.databinding.DialogUserDictionaryWordEditBinding
 import io.github.lee0701.converter.databinding.UserDictionaryWordListItemBinding
 import io.github.lee0701.converter.userdictionary.UserDictionary
 import io.github.lee0701.converter.userdictionary.UserDictionaryWord
@@ -30,7 +33,11 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
         binding.dictionaryList.adapter = dictionaryListAdapter
         binding.dictionaryList.onItemSelectedListener = this
 
-        val wordListAdapter = WordListAdapter()
+        val onItemClick = { word: UserDictionaryWord ->
+            showEditWordDialog(word)
+        }
+
+        val wordListAdapter = WordListAdapter(onItemClick)
         binding.wordList.adapter = wordListAdapter
         binding.wordList.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
@@ -43,8 +50,8 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
             if(dictionary != null) viewModel.selectDictionary(dictionary)
         })
 
-        viewModel.selectedDictionary.observe(this, { selected ->
-            viewModel.loadAllWords(selected)
+        viewModel.selectedDictionary.observe(this, { _ ->
+            viewModel.loadAllWords()
         })
 
         viewModel.words.observe(this, { list ->
@@ -54,6 +61,7 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
         viewModel.loadAllDictionaries()
 
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
     }
 
     override fun onItemSelected(adapterView: AdapterView<*>, view: View?, position: Int, p3: Long) {
@@ -63,6 +71,25 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
 
     override fun onNothingSelected(p0: AdapterView<*>?) {
         binding.dictionaryList.setSelection(0)
+    }
+
+    private fun showEditWordDialog(word: UserDictionaryWord) {
+        val view = DialogUserDictionaryWordEditBinding.inflate(layoutInflater)
+        view.hangul.setText(word.hangul)
+        view.hanja.setText(word.hanja)
+        view.description.setText(word.description)
+        AlertDialog.Builder(this).setView(view.root)
+            .setPositiveButton(R.string.save) { _, _ ->
+                val newWord = word.copy(
+                    hangul = view.hangul.text.toString(),
+                    hanja = view.hanja.text.toString(),
+                    description = view.description.text.toString()
+                )
+                viewModel.updateWord(word, newWord)
+            }.setNegativeButton(R.string.discard) { _, _ ->
+            }.setNeutralButton(R.string.delete) { _, _ ->
+                viewModel.deleteWord(word)
+            }.show()
     }
 
     class DictionaryListAdapter(
@@ -85,19 +112,20 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
         }
     }
 
-    class WordListAdapter: ListAdapter<UserDictionaryWord, WordViewHolder>(WordDiffCallback()) {
+    class WordListAdapter(
+        private val onItemClick: (UserDictionaryWord) -> Unit
+    ): ListAdapter<UserDictionaryWord, WordViewHolder>(WordDiffCallback()) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordViewHolder {
             return WordViewHolder(UserDictionaryWordListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         }
 
         override fun onBindViewHolder(holder: WordViewHolder, position: Int) {
             holder.onBind(getItem(position))
+            holder.binding.root.setOnClickListener { onItemClick(getItem(position)) }
         }
     }
 
-    class WordViewHolder(
-        private val binding: UserDictionaryWordListItemBinding
-    ): RecyclerView.ViewHolder(binding.root) {
+    class WordViewHolder(val binding: UserDictionaryWordListItemBinding): RecyclerView.ViewHolder(binding.root) {
         fun onBind(word: UserDictionaryWord) {
             binding.hangul.text = word.hangul
             binding.hanja.text = word.hanja

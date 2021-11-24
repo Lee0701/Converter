@@ -11,9 +11,13 @@
     <string name="down">Down</string>
     <string name="larger">Larger</string>
     <string name="smaller">Smaller</string>
+    <string name="delete">Delete</string>
     <string name="agree">Agree</string>
     <string name="disagree">Disagree</string>
     <string name="enable">Enable</string>
+    <string name="input_hangul">Hangul</string>
+    <string name="input_hanja">Hanja</string>
+    <string name="input_description">Description</string>
     <string name="accessibility_service_required">Please allow the accessibility service to use HanjaConverter.</string>
     <string name="overlay_permission_required">Please allow the overlay permission in settings app to use HanjaConverter.</string>
     <!-- Settings Activity -->
@@ -99,4 +103,6 @@
     <string name="information_question">Do you agree to use the accessibility service?</string>
     <!-- Dictionary License Activity -->
     <string name="title_activity_dictionary_license">Hanja Dictionary License</string>
+    <!-- User Dictionary Manager Activity -->
+    <string name="title_activity_user_dictionary_manager">User Dictionary Manager</string>
 </resources>

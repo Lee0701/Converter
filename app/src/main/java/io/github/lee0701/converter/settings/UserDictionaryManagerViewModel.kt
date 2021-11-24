@@ -40,10 +40,30 @@ class UserDictionaryManagerViewModel(application: Application) : AndroidViewMode
         _selectedDictionary.value = dictionary
     }
 
-    fun loadAllWords(dictionary: UserDictionary) {
+    fun loadAllWords() {
         coroutineScope.launch {
+            val dictionary = selectedDictionary.value ?: return@launch
             val list = database.wordDao().getAllWords(dictionary.id).toList()
             viewModelScope.launch { _words.value = list }
+        }
+    }
+
+    fun updateWord(oldWord: UserDictionaryWord, newWord: UserDictionaryWord) {
+        coroutineScope.launch {
+            if(oldWord.hangul == newWord.hangul && oldWord.hanja == newWord.hanja) {
+                database.wordDao().updateWords(newWord)
+            } else {
+                database.wordDao().deleteWords(oldWord)
+                database.wordDao().insertWords(newWord)
+            }
+            loadAllWords()
+        }
+    }
+
+    fun deleteWord(word: UserDictionaryWord) {
+        coroutineScope.launch {
+            database.wordDao().deleteWords(word)
+            loadAllWords()
         }
     }
 
