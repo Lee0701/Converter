@@ -91,4 +91,24 @@
     <string name="additional_dictionaries_title">追加 辭典</string>
     <string name="metro_station">都市鐵道 驛名</string>
     <string name="newly_coined">新造語</string>
+    <string name="cancel">取消</string>
+    <string name="user_dictionary_manager_title">使用者 辭典 管理</string>
+    <string name="title_activity_user_dictionary_manager">使用者 辭典 管理者</string>
+    <string name="clear_dictionary">辭典 비우기</string>
+    <string name="new_dictionary">辭典 生成</string>
+    <string name="edit_dictionary">辭典 編輯</string>
+    <string name="delete_dictionary">辭典 削除</string>
+    <string name="import_dictionary">辭典 가져오기</string>
+    <string name="export_dictionary">辭典 내보내기</string>
+    <string name="add_word">單語 追加</string>
+    <string name="input_dictionary_name">辭典名</string>
+    <string name="enable_dictionary">使用하기</string>
+    <string name="input_hangul">한글</string>
+    <string name="input_hanja">漢字</string>
+    <string name="input_description">說明</string>
+    <string name="confirm_delete_dictionary">正말로 이 辭典을 削除하시겠습니까\?</string>
+    <string name="confirm_clear_dictionary">正말로 이 辭典을 비우시겠습니까\?</string>
+    <string name="delete">削除</string>
+    <string name="clear">비우기</string>
+    <string name="person_name">人名</string>
 </resources>
