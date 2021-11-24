@@ -73,6 +73,9 @@ class UserDictionaryManagerActivity: AppCompatActivity(), AdapterView.OnItemSele
                 if(previousSelected != null) list.find { it.id == previousSelected }
                 else list.firstOrNull()
             if(dictionary != null) viewModel.selectDictionary(dictionary)
+            if(!BuildConfig.IS_DONATION && list.isEmpty()) {
+                viewModel.insertDictionary(UserDictionary(name = "default"))
+            }
         })
 
         viewModel.selectedDictionary.observe(this, { _ ->
