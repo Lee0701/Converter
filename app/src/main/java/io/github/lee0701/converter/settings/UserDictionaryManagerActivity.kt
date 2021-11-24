@@ -10,10 +10,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import io.github.lee0701.converter.R
 import io.github.lee0701.converter.databinding.ActivityUserDictionaryManagerBinding
 import io.github.lee0701.converter.databinding.UserDictionaryWordListItemBinding
@@ -37,6 +34,7 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
         binding.wordList.adapter = wordListAdapter
         binding.wordList.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.wordList.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
         viewModel.dictionaries.observe(this, { list ->
             dictionaryListAdapter.clear()
@@ -89,7 +87,7 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
 
     class WordListAdapter: ListAdapter<UserDictionaryWord, WordViewHolder>(WordDiffCallback()) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordViewHolder {
-            return WordViewHolder(UserDictionaryWordListItemBinding.inflate(LayoutInflater.from(parent.context)))
+            return WordViewHolder(UserDictionaryWordListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         }
 
         override fun onBindViewHolder(holder: WordViewHolder, position: Int) {
@@ -101,7 +99,9 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
         private val binding: UserDictionaryWordListItemBinding
     ): RecyclerView.ViewHolder(binding.root) {
         fun onBind(word: UserDictionaryWord) {
-            binding.root.text = "${word.hangul}:${word.hanja}"
+            binding.hangul.text = word.hangul
+            binding.hanja.text = word.hanja
+            binding.description.text = word.description
         }
     }
 
