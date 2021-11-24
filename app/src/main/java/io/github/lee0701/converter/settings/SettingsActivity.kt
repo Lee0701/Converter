@@ -10,20 +10,20 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import io.github.lee0701.converter.ConverterService
 import io.github.lee0701.converter.R
-import io.github.lee0701.converter.databinding.SettingsActivityBinding
+import io.github.lee0701.converter.databinding.ActivitySettingsBinding
 import io.github.lee0701.converter.settings.preference.OpenAccessibilitySettingsPreference
 import io.github.lee0701.converter.settings.preference.ShowCandidateWindowAdjusterPreference
 
 class SettingsActivity : AppCompatActivity() {
 
-    private lateinit var binding: SettingsActivityBinding
+    private lateinit var binding: ActivitySettingsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
 
-        binding = SettingsActivityBinding.inflate(layoutInflater)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         if (savedInstanceState == null) {
             supportFragmentManager

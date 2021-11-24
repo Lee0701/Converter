@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -62,6 +63,11 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
 
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.user_dictionary_manager_action, menu)
+        return true
     }
 
     override fun onItemSelected(adapterView: AdapterView<*>, view: View?, position: Int, p3: Long) {

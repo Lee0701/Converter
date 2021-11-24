@@ -105,4 +105,8 @@
     <string name="title_activity_dictionary_license">Hanja Dictionary License</string>
     <!-- User Dictionary Manager Activity -->
     <string name="title_activity_user_dictionary_manager">User Dictionary Manager</string>
+    <string name="new_dictionary">New Dictioanry</string>
+    <string name="edit_dictionary">Edit Dictioanry</string>
+    <string name="delete_dictionary">Delete Dictioanry</string>
+    <string name="add_word">Add Word</string>
 </resources>
