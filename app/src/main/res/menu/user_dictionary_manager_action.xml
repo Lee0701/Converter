@@ -3,19 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_delete"
-        android:icon="@drawable/ic_baseline_delete_forever_24"
-        android:title="@string/delete_dictionary"
-        app:showAsAction="always" />
-
-    <item
-        android:id="@+id/action_new"
+        android:id="@+id/action_new_dictionary"
         android:icon="@drawable/ic_baseline_add_circle_outline_24"
         android:title="@string/new_dictionary"
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/action_edit"
+        android:id="@+id/action_edit_dictionary"
         android:icon="@drawable/ic_baseline_edit_24"
         android:title="@string/edit_dictionary"
         app:showAsAction="always" />

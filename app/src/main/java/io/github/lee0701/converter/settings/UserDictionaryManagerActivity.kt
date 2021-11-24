@@ -1,12 +1,8 @@
 package io.github.lee0701.converter.settings
 
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
@@ -16,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.*
 import io.github.lee0701.converter.R
 import io.github.lee0701.converter.databinding.ActivityUserDictionaryManagerBinding
+import io.github.lee0701.converter.databinding.DialogUserDictionaryEditBinding
 import io.github.lee0701.converter.databinding.DialogUserDictionaryWordEditBinding
 import io.github.lee0701.converter.databinding.UserDictionaryWordListItemBinding
 import io.github.lee0701.converter.userdictionary.UserDictionary
@@ -36,6 +33,10 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
 
         val onItemClick = { word: UserDictionaryWord ->
             showEditWordDialog(word)
+        }
+        binding.addWord.setOnClickListener { _ ->
+            val dictionaryId = viewModel.selectedDictionary.value?.id ?: return@setOnClickListener
+            showEditWordDialog(UserDictionaryWord(dictionaryId, "", "", ""), true)
         }
 
         val wordListAdapter = WordListAdapter(onItemClick)
@@ -70,6 +71,20 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
         return true
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.action_new_dictionary -> {
+                showEditDictionaryDialog(UserDictionary(name = "", enabled = false), true)
+                return true
+            }
+            R.id.action_edit_dictionary -> {
+                showEditDictionaryDialog(viewModel.selectedDictionary.value ?: return false)
+                return true
+            }
+        }
+        return false
+    }
+
     override fun onItemSelected(adapterView: AdapterView<*>, view: View?, position: Int, p3: Long) {
         val dictionary = adapterView.adapter.getItem(position) as UserDictionary
         viewModel.selectDictionary(dictionary)
@@ -79,23 +94,46 @@ class UserDictionaryManagerActivity : AppCompatActivity(), AdapterView.OnItemSel
         binding.dictionaryList.setSelection(0)
     }
 
-    private fun showEditWordDialog(word: UserDictionaryWord) {
+    private fun showEditWordDialog(word: UserDictionaryWord, create: Boolean = false) {
         val view = DialogUserDictionaryWordEditBinding.inflate(layoutInflater)
         view.hangul.setText(word.hangul)
         view.hanja.setText(word.hanja)
         view.description.setText(word.description)
-        AlertDialog.Builder(this).setView(view.root)
+        val builder = AlertDialog.Builder(this).setView(view.root)
             .setPositiveButton(R.string.save) { _, _ ->
                 val newWord = word.copy(
                     hangul = view.hangul.text.toString(),
                     hanja = view.hanja.text.toString(),
                     description = view.description.text.toString()
                 )
-                viewModel.updateWord(word, newWord)
+                if(create) viewModel.insertWord(newWord)
+                else viewModel.updateWord(word, newWord)
             }.setNegativeButton(R.string.discard) { _, _ ->
-            }.setNeutralButton(R.string.delete) { _, _ ->
-                viewModel.deleteWord(word)
-            }.show()
+            }
+        if(!create) builder.setNeutralButton(R.string.delete) { _, _ ->
+            viewModel.deleteWord(word)
+        }
+        builder.show()
+    }
+
+    private fun showEditDictionaryDialog(dictionary: UserDictionary, create: Boolean = false) {
+        val view = DialogUserDictionaryEditBinding.inflate(layoutInflater)
+        view.dictionaryName.setText(dictionary.name)
+        view.enable.isChecked = dictionary.enabled
+        val builder = AlertDialog.Builder(this).setView(view.root)
+            .setPositiveButton(R.string.save) { _, _ ->
+                val newDictionary = dictionary.copy(
+                    name = view.dictionaryName.text.toString(),
+                    enabled = view.enable.isChecked
+                )
+                if(create) viewModel.insertDictionary(newDictionary)
+                else viewModel.updateDictionary(newDictionary)
+            }.setNegativeButton(R.string.discard) { _, _ ->
+            }
+        if(!create) builder.setNeutralButton(R.string.delete) { _, _ ->
+            viewModel.deleteDictionary(dictionary)
+        }
+        builder.show()
     }
 
     class DictionaryListAdapter(

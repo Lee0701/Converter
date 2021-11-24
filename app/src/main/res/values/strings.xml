@@ -15,9 +15,6 @@
     <string name="agree">Agree</string>
     <string name="disagree">Disagree</string>
     <string name="enable">Enable</string>
-    <string name="input_hangul">Hangul</string>
-    <string name="input_hanja">Hanja</string>
-    <string name="input_description">Description</string>
     <string name="accessibility_service_required">Please allow the accessibility service to use HanjaConverter.</string>
     <string name="overlay_permission_required">Please allow the overlay permission in settings app to use HanjaConverter.</string>
     <!-- Settings Activity -->
@@ -109,4 +106,9 @@
     <string name="edit_dictionary">Edit Dictioanry</string>
     <string name="delete_dictionary">Delete Dictioanry</string>
     <string name="add_word">Add Word</string>
+    <string name="input_dictionary_name">Dictionary Name</string>
+    <string name="enable_dictionary">Enable</string>
+    <string name="input_hangul">Hangul</string>
+    <string name="input_hanja">Hanja</string>
+    <string name="input_description">Description</string>
 </resources>

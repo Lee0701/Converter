@@ -48,6 +48,13 @@ class UserDictionaryManagerViewModel(application: Application) : AndroidViewMode
         }
     }
 
+    fun insertWord(word: UserDictionaryWord) {
+        coroutineScope.launch {
+            database.wordDao().insertWords(word)
+            loadAllWords()
+        }
+    }
+
     fun updateWord(oldWord: UserDictionaryWord, newWord: UserDictionaryWord) {
         coroutineScope.launch {
             if(oldWord.hangul == newWord.hangul && oldWord.hanja == newWord.hanja) {
@@ -64,6 +71,27 @@ class UserDictionaryManagerViewModel(application: Application) : AndroidViewMode
         coroutineScope.launch {
             database.wordDao().deleteWords(word)
             loadAllWords()
+        }
+    }
+
+    fun insertDictionary(dictionary: UserDictionary) {
+        coroutineScope.launch {
+            database.dictionaryDao().insertDictionary(dictionary)
+            loadAllDictionaries()
+        }
+    }
+
+    fun updateDictionary(dictionary: UserDictionary) {
+        coroutineScope.launch {
+            database.dictionaryDao().updateDictionary(dictionary)
+            loadAllDictionaries()
+        }
+    }
+
+    fun deleteDictionary(dictionary: UserDictionary) {
+        coroutineScope.launch {
+            database.dictionaryDao().deleteDictionary(dictionary)
+            loadAllDictionaries()
         }
     }
 
