@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="custom_window_color_summary">将候选框设置为“自定义”颜色</string>
+    <string name="custom_window_color_summary">将候选框设置为“自定义”颜色。</string>
     <string name="information_details">汉字变换器的主要功能需要使用无障碍服务。
 \n
 \n 无障碍服务仅用于以下目的：
@@ -35,7 +35,7 @@
     <string name="accessibility_service_not_enabled">无障碍服务未激活</string>
     <string name="enable_overlay_permission_title">激活悬浮窗权限</string>
     <string name="use_prediction_title">使用预测功能</string>
-    <string name="use_prediction_summary">输入时预测下一单词</string>
+    <string name="use_prediction_summary">输入时预测下一单词。</string>
     <string name="sort_by_context_title">基于语境的转换</string>
     <string name="information_question">是否同意使用无障碍服务？</string>
     <string name="title_activity_dictionary_license">汉字辞典许可证</string>
@@ -46,13 +46,13 @@
     <string name="window_height_title">纵向候选框高度</string>
     <string name="column_count_title">纵向候选框列数</string>
     <string name="show_extra_title">显示附加信息</string>
-    <string name="show_extra_summary">为每个候选词显示附加信息（如单词释义）</string>
+    <string name="show_extra_summary">为每个候选词显示附加信息（如单词释义）。</string>
     <string name="window_color_title">候选框颜色</string>
     <string name="custom_window_color_title">自定义候选框颜色</string>
-    <string name="sort_by_context_summary">候选词按语境排序</string>
+    <string name="sort_by_context_summary">候选词按语境排序。</string>
     <string name="use_learned_word_title">使用学习功能</string>
     <string name="freeze_learning_title">停止学习</string>
-    <string name="freeze_learning_summary">停止学习新短语</string>
+    <string name="freeze_learning_summary">停止学习新短语。</string>
     <string name="reset_learning_title">清除已学习短语</string>
     <string name="confirm_reset_learning">确定要清除所有已学习短语吗？</string>
     <string name="custom_window_color_text_title">自定义候选框颜色（RGB值）</string>
@@ -66,16 +66,39 @@
     <string name="color_samsung_light">三星浅色主题</string>
     <string name="color_samsung_dark">三星深色主题</string>
     <string name="color_custom">自定义</string>
-    <string name="enable_auto_hiding_summary">如果支持，收起键盘时自动隐藏候选框</string>
+    <string name="enable_auto_hiding_summary">如果支持，收起键盘时自动隐藏候选框。</string>
     <string name="about_app_info_summary">开发者联系方式：hgl1002@naver.com</string>
     <string name="about_dictionary_license_title">汉字辞典许可证</string>
     <string name="about_oss_licenses_title">开源许可证</string>
     <string name="first_fragment_label">重要信息</string>
     <string name="about_app_info_title">汉字变换器</string>
     <string name="enable_service_summary">请允许“汉字变换器”使用无障碍服务。</string>
-    <string name="use_learned_word_summary">在候选词中显示已学习短语</string>
+    <string name="use_learned_word_summary">在候选词中显示已学习短语。</string>
     <string name="app_name">汉字变换器</string>
     <string name="disagree">不同意</string>
-    <string name="adjust_window_summary">请调整候选框以贴合输入法界面（以当前屏幕方向为准）</string>
+    <string name="adjust_window_summary">请调整候选框以贴合输入法界面。（以当前屏幕方向为准）</string>
     <string name="accessibility_service_required">请激活无障碍服务，以正常使用汉字变换器。</string>
+    <string name="additional_dictionaries_title">更多辞典</string>
+    <string name="metro_station">地铁站名</string>
+    <string name="export_dictionary">导出词典</string>
+    <string name="delete">删除</string>
+    <string name="clear">清除</string>
+    <string name="cancel">取消</string>
+    <string name="person_name">人名</string>
+    <string name="user_dictionary_manager_title">用户词典管理器</string>
+    <string name="title_activity_user_dictionary_manager">用户词典管理器</string>
+    <string name="clear_dictionary">清除词典</string>
+    <string name="new_dictionary">新词典</string>
+    <string name="edit_dictionary">编辑词典</string>
+    <string name="delete_dictionary">删除词典</string>
+    <string name="import_dictionary">导入词典</string>
+    <string name="newly_coined">新造词</string>
+    <string name="add_word">新增单词</string>
+    <string name="input_dictionary_name">词典名</string>
+    <string name="enable_dictionary">激活</string>
+    <string name="input_hangul">韩文</string>
+    <string name="input_hanja">汉字</string>
+    <string name="input_description">说明</string>
+    <string name="confirm_delete_dictionary">确定要删除此词典吗？</string>
+    <string name="confirm_clear_dictionary">确定要清除词典中所有条目吗？</string>
 </resources>
