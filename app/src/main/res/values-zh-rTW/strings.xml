@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="adjust_window_summary">請調整它以符合鍵盤的候選詞窗（以現在螢幕方向為準）</string>
-    <string name="custom_window_color_summary">變換視窗顏色設為「自訂」</string>
+    <string name="adjust_window_summary">請調整它以符合鍵盤的候選詞窗。（以現在螢幕方向為準）</string>
+    <string name="custom_window_color_summary">變換視窗顏色設為「自訂」。</string>
     <string name="close">關閉</string>
     <string name="save">儲存</string>
     <string name="discard">捨棄</string>
     <string name="use_learned_word_title">使用詞語學習功能</string>
-    <string name="use_learned_word_summary">變換時顯示已學習的詞語</string>
+    <string name="use_learned_word_summary">變換時顯示已學習的詞語。</string>
     <string name="freeze_learning_title">停止學習</string>
-    <string name="freeze_learning_summary">停止學習新詞語</string>
+    <string name="freeze_learning_summary">停止學習新詞語。</string>
     <string name="reset_learning_title">清除已學習詞語</string>
     <string name="confirm_reset_learning">您是否確定清除以學習詞語？</string>
     <string name="window_type_title">變換視窗類型</string>
@@ -20,7 +20,7 @@
     <string name="show_extra_title">顯示額外資訊</string>
     <string name="window_color_title">變換視窗顏色</string>
     <string name="custom_window_color_title">自訂變換視窗顏色</string>
-    <string name="show_extra_summary">每個候選詞皆顯示額外資訊（釋義）</string>
+    <string name="show_extra_summary">每個候選詞皆顯示額外資訊（釋義）。</string>
     <string name="up">上</string>
     <string name="down">下</string>
     <string name="larger">放大</string>
@@ -42,7 +42,7 @@
     <string name="enable_overlay_permission_title">啟動置頂權限</string>
     <string name="output_format_title">變換輸出格式</string>
     <string name="use_prediction_title">使用預測功能</string>
-    <string name="use_prediction_summary">啟動預測下一個詞的功能</string>
+    <string name="use_prediction_summary">啟動預測下一個詞的功能。</string>
     <string name="sort_by_context_title">根據前後文變換</string>
     <string name="information_details">使用輔助服務係為漢字變換器主要功能運作。
 \n
@@ -67,7 +67,7 @@
     <string name="color_samsung_dark">三星深色主題</string>
     <string name="color_custom">自訂</string>
     <string name="enable_auto_hiding_title">變換視窗自動隱藏</string>
-    <string name="enable_auto_hiding_summary">關閉鍵盤時自動隱藏變換視窗（如有支援）</string>
+    <string name="enable_auto_hiding_summary">關閉鍵盤時自動隱藏變換視窗（如有支援）。</string>
     <string name="about_app_info_title">漢字變換器</string>
     <string name="about_app_info_summary">聯絡開發者：hgl1002@naver.com</string>
     <string name="about_oss_licenses_title">開放原始碼授權條款</string>
@@ -77,5 +77,28 @@
     <string name="settings_saved">已儲存。</string>
     <string name="move">移動</string>
     <string name="system_overlay_not_enabled">置頂功能尚未啟動</string>
-    <string name="sort_by_context_summary">根據前後文調整候選詞順序</string>
+    <string name="sort_by_context_summary">根據前後文調整候選詞順序。</string>
+    <string name="user_dictionary_manager_title">使用者辭典管理員</string>
+    <string name="delete">刪除</string>
+    <string name="clear">清除</string>
+    <string name="cancel">取消</string>
+    <string name="person_name">人名</string>
+    <string name="title_activity_user_dictionary_manager">使用者辭典管理員</string>
+    <string name="clear_dictionary">清除辭典</string>
+    <string name="new_dictionary">新辭典</string>
+    <string name="edit_dictionary">編輯辭典</string>
+    <string name="delete_dictionary">刪除辭典</string>
+    <string name="import_dictionary">匯入辭典</string>
+    <string name="additional_dictionaries_title">額外的辭典</string>
+    <string name="metro_station">捷運站名</string>
+    <string name="newly_coined">新詞</string>
+    <string name="export_dictionary">匯出辭典</string>
+    <string name="add_word">新增詞語</string>
+    <string name="input_dictionary_name">辭典名稱</string>
+    <string name="enable_dictionary">啟動</string>
+    <string name="input_hangul">韓文</string>
+    <string name="input_hanja">漢字</string>
+    <string name="input_description">描述</string>
+    <string name="confirm_delete_dictionary">您是否確定刪除此辭典？</string>
+    <string name="confirm_clear_dictionary">您是否確定從辭典清除所有項目？</string>
 </resources>
