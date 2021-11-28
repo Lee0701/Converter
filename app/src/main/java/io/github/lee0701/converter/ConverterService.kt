@@ -35,7 +35,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.math.min
 
-class ConverterService: AccessibilityService(), AssetPackStateUpdateListener {
+class ConverterService: AccessibilityService() {
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private var job: Job? = null
@@ -58,6 +58,7 @@ class ConverterService: AccessibilityService(), AssetPackStateUpdateListener {
         SettingsActivity.PREFERENCE_LIST.forEach {
             PreferenceManager.setDefaultValues(this, it, false)
         }
+        if(BuildConfig.IS_DONATION) checkAssetPack(ASSET_PACK_PREDICTION)
         restartService()
         INSTANCE = this
     }
@@ -87,17 +88,7 @@ class ConverterService: AccessibilityService(), AssetPackStateUpdateListener {
                 val wordListPath = File(assetPackPath.assetsPath, "wordlist.txt").path
                 val modelPath = File(assetPackPath.assetsPath, "model.tflite").path
                 TFLitePredictor(this@ConverterService, FileInputStream(wordListPath), FileInputStream(modelPath))
-            } else {
-                scope.launch {
-                    delay(2000)
-                    CoroutineScope(Dispatchers.Main).launch {
-                        assetPackManager.getPackStates(listOf(ASSET_PACK_PREDICTION)).addOnCompleteListener {
-                            onStateUpdate(it.result.packStates[ASSET_PACK_PREDICTION]?: return@addOnCompleteListener)
-                        }
-                    }
-                }
-                null
-            }
+            } else null
         } else null
 
         val converters = mutableListOf<HanjaConverter>()
@@ -253,28 +244,27 @@ class ConverterService: AccessibilityService(), AssetPackStateUpdateListener {
         return len
     }
 
-    override fun onStateUpdate(state: AssetPackState) {
-        if(state.name != ASSET_PACK_PREDICTION) return
-        when(state.status) {
-            AssetPackStatus.NOT_INSTALLED -> {
-                assetPackManager.fetch(listOf(ASSET_PACK_PREDICTION))
-            }
-            AssetPackStatus.WAITING_FOR_WIFI -> {
-                Toast.makeText(this@ConverterService, R.string.waiting_for_wifi, Toast.LENGTH_SHORT).show()
-            }
-            AssetPackStatus.DOWNLOADING -> {
-                val percent = 100.0 * state.bytesDownloaded() / state.totalBytesToDownload()
-                val text = resources.getString(R.string.asset_pack_download_progress).format(percent.toInt())
-                Toast.makeText(this@ConverterService, text, Toast.LENGTH_SHORT).show()
-            }
-            AssetPackStatus.TRANSFERRING -> {
-                Toast.makeText(this@ConverterService, R.string.asset_pack_transferring, Toast.LENGTH_SHORT).show()
-            }
-            AssetPackStatus.COMPLETED -> {
-                restartService()
-            }
-            AssetPackStatus.FAILED -> {
-                Toast.makeText(this@ConverterService, R.string.asset_pack_load_failed, Toast.LENGTH_LONG).show()
+    private fun checkAssetPack(assetPackName: String) {
+        assetPackManager.getPackStates(listOf(assetPackName)).addOnCompleteListener {
+            val state = it.result.packStates[assetPackName]
+            println(state)
+            when(state?.status) {
+                AssetPackStatus.COMPLETED -> {
+                    restartService()
+                }
+                AssetPackStatus.NOT_INSTALLED -> {
+                    assetPackManager.fetch(listOf(assetPackName))
+                    checkAssetPack(assetPackName)
+                }
+                AssetPackStatus.FAILED, AssetPackStatus.UNKNOWN -> {
+                    Toast.makeText(this, R.string.asset_pack_load_failed, Toast.LENGTH_LONG).show()
+                }
+                else -> scope.launch {
+                    delay(2000)
+                    CoroutineScope(Dispatchers.Main).launch {
+                        checkAssetPack(assetPackName)
+                    }
+                }
             }
         }
     }

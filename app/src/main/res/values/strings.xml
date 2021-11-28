@@ -19,9 +19,6 @@
     <string name="enable">Enable</string>
     <string name="accessibility_service_required">Please allow the accessibility service to use HanjaConverter.</string>
     <string name="overlay_permission_required">Please allow the overlay permission in settings app to use HanjaConverter.</string>
-    <string name="waiting_for_wifi">Connect to Wi-Fi network to download prediction asset pack.</string>
-    <string name="asset_pack_download_progress">Downloading prediction asset pack: %d%%</string>
-    <string name="asset_pack_transferring">Transferring prediction asset pack.</string>
     <string name="asset_pack_load_failed">Unable to load prediction asset pack.</string>
     <!-- Settings Activity -->
     <string name="title_activity_settings">Hanja Converter Settings</string>
