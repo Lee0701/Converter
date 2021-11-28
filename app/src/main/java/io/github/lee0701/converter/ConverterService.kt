@@ -243,14 +243,18 @@ class ConverterService: AccessibilityService() {
                 return@async loadTFLitePredictorAsync(assetPackName).await()
             }
             AssetPackStatus.DOWNLOADING -> {
-                val percent = 100.0 * state.bytesDownloaded() / state.totalBytesToDownload()
-                val text = resources.getString(R.string.asset_pack_download_progress).format(percent.toInt())
-                Toast.makeText(this@ConverterService, text, Toast.LENGTH_SHORT).show()
+                CoroutineScope(Dispatchers.Main).launch {
+                    val percent = 100.0 * state.bytesDownloaded() / state.totalBytesToDownload()
+                    val text = resources.getString(R.string.asset_pack_download_progress).format(percent.toInt())
+                    Toast.makeText(this@ConverterService, text, Toast.LENGTH_SHORT).show()
+                }
                 delay(2000)
                 return@async loadTFLitePredictorAsync(assetPackName).await()
             }
             AssetPackStatus.TRANSFERRING -> {
-                Toast.makeText(this@ConverterService, R.string.asset_pack_transferring, Toast.LENGTH_SHORT).show()
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(this@ConverterService, R.string.asset_pack_transferring, Toast.LENGTH_SHORT).show()
+                }
                 delay(2000)
                 return@async loadTFLitePredictorAsync(assetPackName).await()
             }
@@ -267,14 +271,18 @@ class ConverterService: AccessibilityService() {
                 return@async loadTFLitePredictorAsync(assetPackName).await()
             }
             AssetPackStatus.WAITING_FOR_WIFI -> {
-                Toast.makeText(this@ConverterService, R.string.waiting_for_wifi, Toast.LENGTH_SHORT).show()
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(this@ConverterService, R.string.waiting_for_wifi, Toast.LENGTH_SHORT).show()
+                }
                 return@async null
             }
             else -> {
 
             }
         }
-        Toast.makeText(this@ConverterService, R.string.asset_pack_load_failed, Toast.LENGTH_LONG).show()
+        CoroutineScope(Dispatchers.Main).launch {
+            Toast.makeText(this@ConverterService, R.string.asset_pack_load_failed, Toast.LENGTH_LONG).show()
+        }
         return@async null
     }
 
