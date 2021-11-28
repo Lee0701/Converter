@@ -86,4 +86,19 @@
     <string name="input_hanja">漢字</string>
     <string name="input_description">説明</string>
     <string name="confirm_delete_dictionary">この辞書を削除してもよろしいですか？</string>
+    <string name="person_name">人名</string>
+    <string name="title_activity_user_dictionary_manager">ユーザー辞書管理</string>
+    <string name="import_dictionary">辞書をインポートする</string>
+    <string name="export_dictionary">辞書をエクスポートする</string>
+    <string name="clear">クリア</string>
+    <string name="cancel">キャンセル</string>
+    <string name="metro_station">駅名</string>
+    <string name="newly_coined">造語</string>
+    <string name="user_dictionary_manager_title">ユーザー辞書管理</string>
+    <string name="clear_dictionary">辞書をクリア</string>
+    <string name="new_dictionary">辞書を追加する</string>
+    <string name="edit_dictionary">辞書を編集する</string>
+    <string name="delete_dictionary">辞書を削除する</string>
+    <string name="delete">削除</string>
+    <string name="additional_dictionaries_title">拡張辞書</string>
 </resources>
