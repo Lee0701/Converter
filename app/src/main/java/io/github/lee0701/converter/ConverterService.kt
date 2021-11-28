@@ -11,13 +11,10 @@ import androidx.room.Room
 import com.google.android.play.core.assetpacks.AssetPackManager
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory
 import com.google.android.play.core.assetpacks.AssetPackState
-import com.google.android.play.core.assetpacks.AssetPackStateUpdateListener
 import com.google.android.play.core.assetpacks.model.AssetPackStatus
 import com.google.android.play.core.ktx.assetsPath
-import com.google.android.play.core.ktx.name
 import com.google.android.play.core.ktx.packStates
 import com.google.android.play.core.ktx.status
-import com.google.android.play.core.tasks.Task
 import io.github.lee0701.converter.CharacterSet.isHangul
 import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
@@ -31,8 +28,6 @@ import io.github.lee0701.converter.userdictionary.UserDictionaryDatabase
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileInputStream
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import kotlin.math.min
 
 class ConverterService: AccessibilityService() {
@@ -244,26 +239,29 @@ class ConverterService: AccessibilityService() {
         return len
     }
 
-    private fun checkAssetPack(assetPackName: String) {
-        assetPackManager.getPackStates(listOf(assetPackName)).addOnCompleteListener {
-            val state = it.result.packStates[assetPackName]
-            println(state)
-            when(state?.status) {
-                AssetPackStatus.COMPLETED -> {
-                    restartService()
+    private fun checkAssetPack(name: String) {
+        assetPackManager.getPackStates(listOf(name)).addOnCompleteListener {
+            onAssetPackState(name, it.result.packStates[name])
+        }
+    }
+
+    private fun onAssetPackState(name: String, state: AssetPackState?) {
+        when(state?.status) {
+            AssetPackStatus.COMPLETED -> {
+                restartService()
+            }
+            AssetPackStatus.NOT_INSTALLED -> {
+                assetPackManager.fetch(listOf(name)).addOnCompleteListener {
+                    onAssetPackState(name, it.result.packStates[name])
                 }
-                AssetPackStatus.NOT_INSTALLED -> {
-                    assetPackManager.fetch(listOf(assetPackName))
-                    checkAssetPack(assetPackName)
-                }
-                AssetPackStatus.FAILED, AssetPackStatus.UNKNOWN -> {
-                    Toast.makeText(this, R.string.asset_pack_load_failed, Toast.LENGTH_LONG).show()
-                }
-                else -> scope.launch {
-                    delay(2000)
-                    CoroutineScope(Dispatchers.Main).launch {
-                        checkAssetPack(assetPackName)
-                    }
+            }
+            AssetPackStatus.FAILED, AssetPackStatus.UNKNOWN -> {
+                Toast.makeText(this, R.string.asset_pack_load_failed, Toast.LENGTH_LONG).show()
+            }
+            else -> scope.launch {
+                delay(2000)
+                CoroutineScope(Dispatchers.Main).launch {
+                    if(INSTANCE != null) checkAssetPack(name)
                 }
             }
         }
