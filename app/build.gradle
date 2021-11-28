@@ -3,8 +3,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 
-def playcoreDir = file('../play-core-native-sdk')
-
 android {
     compileSdkVersion 31
     buildToolsVersion "30.0.3"
@@ -21,8 +19,6 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            proguardFile "$playcoreDir/proguard/common.pgcfg"
-            proguardFile "$playcoreDir/proguard/per-feature-proguard-files"
             ndk.debugSymbolLevel = 'FULL'
         }
         debug {
