@@ -10,11 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".settings.DictionaryLicenseActivity"
-            android:label="@string/title_activity_dictionary_license"
+            android:name=".settings.UserDictionaryManagerActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:exported="false" />
         <activity
-            android:name=".information.InformationActivity"
+            android:name=".settings.DictionaryLicenseActivity"
+            android:exported="false"
+            android:label="@string/title_activity_dictionary_license" />
+        <activity
+            android:name=".settings.InformationActivity"
             android:exported="false"
             android:label="@string/title_activity_information"
             android:theme="@style/AppTheme.NoActionBar" />

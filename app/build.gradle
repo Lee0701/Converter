@@ -42,8 +42,8 @@ android {
         common {
             dimension "version"
             applicationIdSuffix ""
-            versionCode 13
-            versionName "0.2.0"
+            versionCode 15
+            versionName "0.2.2"
             buildConfigField 'boolean', 'IS_DONATION', 'false'
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher",
@@ -53,8 +53,8 @@ android {
         donation {
             dimension "version"
             applicationIdSuffix ".donation"
-            versionCode 8
-            versionName "0.2.3"
+            versionCode 10
+            versionName "0.2.5"
             buildConfigField 'boolean', 'IS_DONATION', 'true'
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher_donation",
@@ -82,21 +82,25 @@ android {
 
 dependencies {
     def room_version = "2.3.0"
+    def lifecycle_version = "2.4.0"
+
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2-native-mt'
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.recyclerview:recyclerview-selection:1.1.0'
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'com.github.skydoves:colorpickerpreference:2.0.6'
     implementation 'org.tensorflow:tensorflow-lite-support:0.3.0'
     implementation 'org.tensorflow:tensorflow-lite-metadata:0.3.0'
     implementation "com.google.android.gms:play-services-oss-licenses:17.0.0"
     implementation 'com.google.android.material:material:1.4.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
     implementation 'com.google.android.flexbox:flexbox:3.0.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'

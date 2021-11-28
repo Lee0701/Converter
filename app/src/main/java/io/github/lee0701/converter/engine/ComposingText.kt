@@ -1,6 +1,8 @@
 package io.github.lee0701.converter.engine
 
 import android.text.TextUtils
+import io.github.lee0701.converter.CharacterSet
+import kotlin.math.abs
 
 data class ComposingText(
     val text: CharSequence,
@@ -13,6 +15,33 @@ data class ComposingText(
     val textBeforeCursor: CharSequence = text.take(to)
     val textAfterCursor: CharSequence = text.drop(to)
     val textBeforeComposing: CharSequence = text.take(from)
+
+    fun textChanged(text: CharSequence, fromIndex: Int, addedCount: Int, removedCount: Int): ComposingText {
+        val addedText = text.drop(fromIndex).take(addedCount)
+        val toIndex = fromIndex + addedCount
+
+        if(addedText.isNotEmpty() && addedText.all { CharacterSet.isHangul(it) }) {
+            if(composing.isEmpty()) {
+                // Create composing text if not exists
+                return ComposingText(text, fromIndex, toIndex)
+            } else {
+                val spaceIndex = this.composing.lastIndexOfAny(charArrayOf(' ', '\t', '\r', '\n'))
+                val from = this.from + if(spaceIndex > -1) spaceIndex + 1 else 0
+                return this.copy(text = text, from = from, to = toIndex)
+            }
+        } else {
+            // Reset composing if non-hangul
+            return ComposingText(text, toIndex)
+        }
+    }
+
+    fun textSelectionChanged(start: Int, end: Int): ComposingText {
+        if(start == -1 || end == -1) return this
+        if(start == end && abs(start - this.to) > 1) {
+            return ComposingText(this.text, start)
+        }
+        return this
+    }
 
     fun replaced(with: String, format: OutputFormat?): ComposingText {
         val replace = composing.take(with.length)

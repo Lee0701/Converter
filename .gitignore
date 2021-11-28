@@ -1,6 +1,8 @@
+<<<<<<< HEAD
 
 output.apks
 
+app/src/main/assets/dict/*
 **/model.tflite
 **/wordlist.txt
 
