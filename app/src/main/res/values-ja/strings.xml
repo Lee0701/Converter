@@ -78,4 +78,5 @@
     <string name="about_dictionary_license_title">漢字辞書ライセンス</string>
     <string name="title_activity_information">漢字変換器情報</string>
     <string name="title_activity_dictionary_license">漢字辞書ライセンス</string>
+    <string name="input_hangul">ハングル</string>
 </resources>
