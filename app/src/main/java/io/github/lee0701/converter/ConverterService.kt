@@ -5,14 +5,14 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.Toast
 import androidx.preference.PreferenceManager
+import androidx.room.Room
 import com.google.android.play.core.assetpacks.AssetPackManagerFactory
-import com.google.android.play.core.assetpacks.AssetPackStates
 import com.google.android.play.core.assetpacks.model.AssetPackStatus
 import com.google.android.play.core.ktx.assetsPath
 import com.google.android.play.core.ktx.status
 import com.google.android.play.core.tasks.Task
-import androidx.room.Room
 import io.github.lee0701.converter.CharacterSet.isHangul
 import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
@@ -22,13 +22,12 @@ import io.github.lee0701.converter.dictionary.UserDictionaryDictionary
 import io.github.lee0701.converter.engine.*
 import io.github.lee0701.converter.history.HistoryDatabase
 import io.github.lee0701.converter.settings.SettingsActivity
-import java.io.File
-import kotlinx.coroutines.*
-import java.io.FileInputStream
 import io.github.lee0701.converter.userdictionary.UserDictionaryDatabase
+import kotlinx.coroutines.*
+import java.io.File
+import java.io.FileInputStream
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 import kotlin.math.min
 
 class ConverterService: AccessibilityService() {
@@ -77,7 +76,7 @@ class ConverterService: AccessibilityService() {
         val usePrediction = preferences.getBoolean("use_prediction", false)
 
         val tfLitePredictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
-            loadTFLitePredictorFromAssetsPack("prediction").await()
+            loadTFLitePredictorAsync("prediction").await()
         } else null
 
         val converters = mutableListOf<HanjaConverter>()
@@ -234,17 +233,26 @@ class ConverterService: AccessibilityService() {
         return len
     }
 
-    private suspend fun loadTFLitePredictorFromAssetsPack(assetPackName: String): Deferred<TFLitePredictor?> = scope.async {
+    private suspend fun loadTFLitePredictorAsync(assetPackName: String): Deferred<TFLitePredictor?> = scope.async {
         val assetPackManager = AssetPackManagerFactory.getInstance(applicationContext)
         val states = assetPackManager.getPackStates(listOf(assetPackName)).await()
-        val status = states.result.packStates()?.get(assetPackName)?.status
-        when(status) {
-            AssetPackStatus.NOT_INSTALLED -> {
-                assetPackManager.fetch(listOf(assetPackName)).await()
-                return@async loadTFLitePredictorFromAssetsPack(assetPackName).await()
+        val state = states.result.packStates()?.get(assetPackName)
+        when(state?.status) {
+            AssetPackStatus.PENDING -> {
+                delay(2000)
+                return@async loadTFLitePredictorAsync(assetPackName).await()
             }
             AssetPackStatus.DOWNLOADING -> {
-                return@async null
+                val percent = 100.0 * state.bytesDownloaded() / state.totalBytesToDownload()
+                val text = resources.getString(R.string.asset_pack_download_progress).format(percent.toInt())
+                Toast.makeText(this@ConverterService, text, Toast.LENGTH_SHORT).show()
+                delay(2000)
+                return@async loadTFLitePredictorAsync(assetPackName).await()
+            }
+            AssetPackStatus.TRANSFERRING -> {
+                Toast.makeText(this@ConverterService, R.string.asset_pack_transferring, Toast.LENGTH_SHORT).show()
+                delay(2000)
+                return@async loadTFLitePredictorAsync(assetPackName).await()
             }
             AssetPackStatus.COMPLETED -> {
                 val assetPackPath = assetPackManager.packLocations[assetPackName]
@@ -252,20 +260,30 @@ class ConverterService: AccessibilityService() {
                     val wordListPath = File(assetPackPath.assetsPath, "wordlist.txt").path
                     val modelPath = File(assetPackPath.assetsPath, "model.tflite").path
                     return@async TFLitePredictor(this@ConverterService, FileInputStream(wordListPath), FileInputStream(modelPath))
-                } else {
-                    return@async null
                 }
             }
-            else -> return@async null
+            AssetPackStatus.NOT_INSTALLED -> {
+                assetPackManager.fetch(listOf(assetPackName)).await()
+                return@async loadTFLitePredictorAsync(assetPackName).await()
+            }
+            AssetPackStatus.WAITING_FOR_WIFI -> {
+                Toast.makeText(this@ConverterService, R.string.waiting_for_wifi, Toast.LENGTH_SHORT).show()
+                return@async null
+            }
+            else -> {
+
+            }
         }
+        Toast.makeText(this@ConverterService, R.string.asset_pack_load_failed, Toast.LENGTH_LONG).show()
+        return@async null
     }
 
-    suspend fun <T> Task<T>.await(): Task<T> = suspendCoroutine { cont ->
+    private suspend fun <T> Task<T>.await(): Task<T> = suspendCancellableCoroutine { cont ->
         addOnCompleteListener { task ->
-            cont.resume(task)
+            if(cont.isActive) cont.resume(task)
         }
         addOnFailureListener { exception ->
-            cont.resumeWithException(exception)
+            if(cont.isActive) cont.resumeWithException(exception)
         }
     }
 
