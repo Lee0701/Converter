@@ -247,24 +247,33 @@ class ConverterService: AccessibilityService() {
         val location = assetPackManager.packLocations[name]
         if(location == null) {
             assetPackManager.fetch(listOf(name)).addOnCompleteListener {
-                when(it.result.packStates()[name]?.status()) {
-                    AssetPackStatus.COMPLETED -> {
-                        restartService()
-                    }
-                    AssetPackStatus.FAILED -> {
-                        Toast.makeText(this, R.string.asset_pack_load_failed, Toast.LENGTH_LONG).show()
-                    }
-                    else -> {
-                        // Re-check pack status.
-                        assetPackManager.getPackStates(listOf(name)).addOnCompleteListener {
-                            restartService()
-                        }
-                    }
-                }
+                onAssetPackState(name, it.result.packStates()[name])
             }
             return false
         }
         return true
+    }
+
+    private fun onAssetPackState(name: String, state: AssetPackState?) {
+        when(state?.status()) {
+            AssetPackStatus.COMPLETED -> {
+                restartService()
+            }
+            AssetPackStatus.FAILED -> {
+                Toast.makeText(this, R.string.asset_pack_load_failed, Toast.LENGTH_LONG).show()
+            }
+            AssetPackStatus.PENDING, AssetPackStatus.DOWNLOADING, AssetPackStatus.TRANSFERRING -> {
+                // Check for pack status again after two seconds.
+                scope.launch {
+                    delay(2000)
+                    CoroutineScope(Dispatchers.Main).launch {
+                        assetPackManager.getPackStates(listOf(name)).addOnCompleteListener {
+                            onAssetPackState(name, it.result.packStates()[name])
+                        }
+                    }
+                }
+            }
+        }
     }
 
     companion object {
