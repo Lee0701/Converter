@@ -1,6 +1,7 @@
 package io.github.lee0701.converter
 
 import android.accessibilityservice.AccessibilityService
+import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.accessibility.AccessibilityEvent
@@ -50,8 +51,11 @@ class ConverterService: AccessibilityService() {
 
     override fun onCreate() {
         super.onCreate()
-        SettingsActivity.PREFERENCE_LIST.forEach {
-            PreferenceManager.setDefaultValues(this, it, false)
+        if(!getSharedPreferences(PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES, Context.MODE_PRIVATE)
+                .getBoolean(PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES, false)) {
+            SettingsActivity.PREFERENCE_LIST.forEach {
+                PreferenceManager.setDefaultValues(this, it, true)
+            }
         }
         restartService()
         INSTANCE = this
@@ -243,12 +247,18 @@ class ConverterService: AccessibilityService() {
         val location = assetPackManager.packLocations[name]
         if(location == null) {
             assetPackManager.fetch(listOf(name)).addOnCompleteListener {
-                when(it.result.packStates()[name]?.status) {
+                when(it.result.packStates()[name]?.status()) {
                     AssetPackStatus.COMPLETED -> {
                         restartService()
                     }
                     AssetPackStatus.FAILED -> {
                         Toast.makeText(this, R.string.asset_pack_load_failed, Toast.LENGTH_LONG).show()
+                    }
+                    else -> {
+                        // Re-check pack status.
+                        assetPackManager.getPackStates(listOf(name)).addOnCompleteListener {
+                            restartService()
+                        }
                     }
                 }
             }
