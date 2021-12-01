@@ -259,12 +259,13 @@ class ConverterService: AccessibilityService() {
             AssetPackStatus.COMPLETED -> {
                 restartService()
             }
-            AssetPackStatus.FAILED -> {
+            AssetPackStatus.FAILED, AssetPackStatus.CANCELED, AssetPackStatus.UNKNOWN -> {
                 Toast.makeText(this, R.string.asset_pack_load_failed, Toast.LENGTH_LONG).show()
             }
             AssetPackStatus.PENDING, AssetPackStatus.DOWNLOADING, AssetPackStatus.TRANSFERRING -> {
                 // Check for pack status again after two seconds.
                 scope.launch {
+                    if(INSTANCE == null) return@launch
                     delay(2000)
                     CoroutineScope(Dispatchers.Main).launch {
                         assetPackManager.getPackStates(listOf(name)).addOnCompleteListener {
@@ -272,6 +273,19 @@ class ConverterService: AccessibilityService() {
                         }
                     }
                 }
+            }
+            AssetPackStatus.NOT_INSTALLED -> {
+                scope.launch {
+                    if(INSTANCE == null) return@launch
+                    delay(2000)
+                    CoroutineScope(Dispatchers.Main).launch {
+                        assetPackManager.fetch(listOf(name)).addOnCompleteListener {
+                            onAssetPackState(name, it.result.packStates()[name])
+                        }
+                    }
+                }
+            }
+            AssetPackStatus.WAITING_FOR_WIFI -> {
             }
         }
     }
