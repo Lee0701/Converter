@@ -53,7 +53,6 @@ class ConverterService: AccessibilityService() {
         SettingsActivity.PREFERENCE_LIST.forEach {
             PreferenceManager.setDefaultValues(this, it, false)
         }
-        if(BuildConfig.IS_DONATION) checkAssetPack(ASSET_PACK_PREDICTION)
         restartService()
         INSTANCE = this
     }
@@ -78,11 +77,12 @@ class ConverterService: AccessibilityService() {
         val usePrediction = preferences.getBoolean("use_prediction", false)
 
         val tfLitePredictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
-            val assetPackPath = assetPackManager.packLocations[ASSET_PACK_PREDICTION]
-            if(assetPackPath != null) {
-                val wordListPath = File(assetPackPath.assetsPath, "wordlist.txt").path
-                val modelPath = File(assetPackPath.assetsPath, "model.tflite").path
-                TFLitePredictor(this@ConverterService, FileInputStream(wordListPath), FileInputStream(modelPath))
+            if(checkAssetPack(ASSET_PACK_PREDICTION)) {
+                val wordListPath = assetPackManager.getAssetLocation(ASSET_PACK_PREDICTION, "wordlist.txt")?.path()
+                val modelPath = assetPackManager.getAssetLocation(ASSET_PACK_PREDICTION, "model.tflite")?.path()
+                if(wordListPath != null && modelPath != null)
+                    TFLitePredictor(this@ConverterService, FileInputStream(wordListPath), FileInputStream(modelPath))
+                else null
             } else null
         } else null
 
@@ -239,32 +239,22 @@ class ConverterService: AccessibilityService() {
         return len
     }
 
-    private fun checkAssetPack(name: String) {
-        assetPackManager.getPackStates(listOf(name)).addOnCompleteListener {
-            onAssetPackState(name, it.result.packStates[name])
-        }
-    }
-
-    private fun onAssetPackState(name: String, state: AssetPackState?) {
-        when(state?.status) {
-            AssetPackStatus.COMPLETED -> {
-                restartService()
-            }
-            AssetPackStatus.NOT_INSTALLED -> {
-                assetPackManager.fetch(listOf(name)).addOnCompleteListener {
-                    onAssetPackState(name, it.result.packStates[name])
+    private fun checkAssetPack(name: String): Boolean {
+        val location = assetPackManager.packLocations[name]
+        if(location == null) {
+            assetPackManager.fetch(listOf(name)).addOnCompleteListener {
+                when(it.result.packStates()[name]?.status) {
+                    AssetPackStatus.COMPLETED -> {
+                        restartService()
+                    }
+                    AssetPackStatus.FAILED -> {
+                        Toast.makeText(this, R.string.asset_pack_load_failed, Toast.LENGTH_LONG).show()
+                    }
                 }
             }
-            AssetPackStatus.FAILED, AssetPackStatus.UNKNOWN -> {
-                Toast.makeText(this, R.string.asset_pack_load_failed, Toast.LENGTH_LONG).show()
-            }
-            else -> scope.launch {
-                delay(2000)
-                CoroutineScope(Dispatchers.Main).launch {
-                    if(INSTANCE != null) checkAssetPack(name)
-                }
-            }
+            return false
         }
+        return true
     }
 
     companion object {
