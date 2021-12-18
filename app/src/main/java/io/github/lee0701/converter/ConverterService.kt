@@ -6,16 +6,8 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import android.widget.Toast
 import androidx.preference.PreferenceManager
 import androidx.room.Room
-import com.google.android.play.core.assetpacks.AssetPackManager
-import com.google.android.play.core.assetpacks.AssetPackManagerFactory
-import com.google.android.play.core.assetpacks.AssetPackState
-import com.google.android.play.core.assetpacks.model.AssetPackStatus
-import com.google.android.play.core.ktx.assetsPath
-import com.google.android.play.core.ktx.packStates
-import com.google.android.play.core.ktx.status
 import io.github.lee0701.converter.CharacterSet.isHangul
 import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
@@ -27,7 +19,6 @@ import io.github.lee0701.converter.history.HistoryDatabase
 import io.github.lee0701.converter.settings.SettingsActivity
 import io.github.lee0701.converter.userdictionary.UserDictionaryDatabase
 import kotlinx.coroutines.*
-import java.io.File
 import java.io.FileInputStream
 import kotlin.math.min
 
@@ -35,7 +26,6 @@ class ConverterService: AccessibilityService() {
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private var job: Job? = null
-    private val assetPackManager: AssetPackManager by lazy { AssetPackManagerFactory.getInstance(applicationContext) }
 
     private lateinit var converter: Converter
     private var predictor: Predictor? = null
@@ -81,13 +71,11 @@ class ConverterService: AccessibilityService() {
         val usePrediction = preferences.getBoolean("use_prediction", false)
 
         val tfLitePredictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
-            if(checkAssetPack(ASSET_PACK_PREDICTION)) {
-                val wordListPath = assetPackManager.getAssetLocation(ASSET_PACK_PREDICTION, "wordlist.txt")?.path()
-                val modelPath = assetPackManager.getAssetLocation(ASSET_PACK_PREDICTION, "model.tflite")?.path()
-                if(wordListPath != null && modelPath != null)
-                    TFLitePredictor(this@ConverterService, FileInputStream(wordListPath), FileInputStream(modelPath))
-                else null
-            } else null
+                TFLitePredictor(
+                    this@ConverterService,
+                    assets.open("ml/wordlist.txt"),
+                    assets.openFd("ml/model.tflite")
+                )
         } else null
 
         val converters = mutableListOf<HanjaConverter>()
@@ -243,60 +231,11 @@ class ConverterService: AccessibilityService() {
         return len
     }
 
-    private fun checkAssetPack(name: String): Boolean {
-        val location = assetPackManager.packLocations[name]
-        if(location == null) {
-            assetPackManager.fetch(listOf(name)).addOnCompleteListener {
-                onAssetPackState(name, it.result.packStates()[name])
-            }
-            return false
-        }
-        return true
-    }
-
-    private fun onAssetPackState(name: String, state: AssetPackState?) {
-        when(state?.status()) {
-            AssetPackStatus.COMPLETED -> {
-                restartService()
-            }
-            AssetPackStatus.FAILED, AssetPackStatus.CANCELED, AssetPackStatus.UNKNOWN -> {
-                Toast.makeText(this, R.string.asset_pack_load_failed, Toast.LENGTH_LONG).show()
-            }
-            AssetPackStatus.PENDING, AssetPackStatus.DOWNLOADING, AssetPackStatus.TRANSFERRING -> {
-                // Check for pack status again after two seconds.
-                scope.launch {
-                    if(INSTANCE == null) return@launch
-                    delay(2000)
-                    CoroutineScope(Dispatchers.Main).launch {
-                        assetPackManager.getPackStates(listOf(name)).addOnCompleteListener {
-                            onAssetPackState(name, it.result.packStates()[name])
-                        }
-                    }
-                }
-            }
-            AssetPackStatus.NOT_INSTALLED -> {
-                scope.launch {
-                    if(INSTANCE == null) return@launch
-                    delay(2000)
-                    CoroutineScope(Dispatchers.Main).launch {
-                        assetPackManager.fetch(listOf(name)).addOnCompleteListener {
-                            onAssetPackState(name, it.result.packStates()[name])
-                        }
-                    }
-                }
-            }
-            AssetPackStatus.WAITING_FOR_WIFI -> {
-            }
-        }
-    }
-
     companion object {
         var INSTANCE: ConverterService? = null
 
         const val DB_HISTORY = "history"
         const val DB_USER_DICTIONARY = "user_dictionary"
-
-        const val ASSET_PACK_PREDICTION = "prediction"
     }
 
 }

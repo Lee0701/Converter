@@ -1,6 +1,7 @@
 package io.github.lee0701.converter.engine
 
 import android.content.Context
+import android.content.res.AssetFileDescriptor
 import io.github.lee0701.converter.candidates.Candidate
 import org.tensorflow.lite.Interpreter
 import java.io.FileInputStream
@@ -8,14 +9,15 @@ import java.io.InputStream
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 
-class TFLitePredictor(context: Context, wordList: InputStream, model: FileInputStream) {
+class TFLitePredictor(context: Context, wordList: InputStream, model: AssetFileDescriptor) {
 
     private val indexToWord = wordList.bufferedReader().readLines()
         .map { it.split("\t") }.map { (_, word, _) -> word }
     private val wordToIndex = indexToWord.mapIndexed { i, w -> w to i }.toMap()
 
     private val seqLength = 99
-    private val interpreter = Interpreter(loadModel(model))
+    private val interpreter = Interpreter(model.createInputStream().channel.map(
+        FileChannel.MapMode.READ_ONLY, model.startOffset, model.declaredLength))
 
     fun predict(input: List<Int>, topn: Int = 10): List<Candidate> {
         if(topn <= 0) return emptyList()
@@ -63,9 +65,4 @@ class TFLitePredictor(context: Context, wordList: InputStream, model: FileInputS
         return result.filter { it != -1 }
     }
 
-    companion object {
-        fun loadModel(stream: FileInputStream): MappedByteBuffer {
-            return stream.channel.map(FileChannel.MapMode.READ_ONLY, 0, stream.channel.size())
-        }
-    }
 }

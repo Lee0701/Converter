@@ -1,3 +1,2 @@
 include ':app'
-include ':prediction'
 rootProject.name = "Converter"
