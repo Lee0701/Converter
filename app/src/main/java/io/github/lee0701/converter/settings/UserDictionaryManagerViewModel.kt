@@ -25,8 +25,8 @@ class UserDictionaryManagerViewModel(application: Application) : AndroidViewMode
     private val _dictionaries = MutableLiveData<List<UserDictionary>>()
     val dictionaries: LiveData<List<UserDictionary>> = _dictionaries
 
-    private val _selectedDictionary = MutableLiveData<UserDictionary>()
-    val selectedDictionary: LiveData<UserDictionary> = _selectedDictionary
+    private val _selectedDictionary = MutableLiveData<UserDictionary?>()
+    val selectedDictionary: LiveData<UserDictionary?> = _selectedDictionary
 
     private val _words = MutableLiveData<List<UserDictionaryWord>>()
     val words: LiveData<List<UserDictionaryWord>> = _words
@@ -34,7 +34,12 @@ class UserDictionaryManagerViewModel(application: Application) : AndroidViewMode
     fun loadAllDictionaries() {
         coroutineScope.launch {
             val list = database.dictionaryDao().getAllDictionaries().toList()
-            viewModelScope.launch { _dictionaries.value = list }
+            viewModelScope.launch {
+                _dictionaries.value = list
+                if(dictionaries.value?.contains(selectedDictionary.value) != true) {
+                    _selectedDictionary.value = null
+                }
+            }
         }
     }
 
@@ -98,7 +103,6 @@ class UserDictionaryManagerViewModel(application: Application) : AndroidViewMode
         coroutineScope.launch {
             database.dictionaryDao().deleteDictionary(dictionary)
             loadAllDictionaries()
-            loadAllWords()
         }
     }
 
