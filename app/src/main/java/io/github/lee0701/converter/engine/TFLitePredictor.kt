@@ -15,7 +15,7 @@ class TFLitePredictor(context: Context, wordList: InputStream, model: AssetFileD
         .map { it.split("\t") }.map { (_, word, _) -> word }
     private val wordToIndex = indexToWord.mapIndexed { i, w -> w to i }.toMap()
 
-    private val seqLength = 99
+    private val seqLength = 100
     private val interpreter = Interpreter(model.createInputStream().channel.map(
         FileChannel.MapMode.READ_ONLY, model.startOffset, model.declaredLength))
 
@@ -26,10 +26,11 @@ class TFLitePredictor(context: Context, wordList: InputStream, model: AssetFileD
 
     fun predict(input: List<Int>): FloatArray {
         try {
-            val inputArray = ((0 until seqLength).map { indexToWord.size } + input).takeLast(seqLength).map { it.toFloat() }.toFloatArray()
-            val outputArray = arrayOf((0 until indexToWord.size + 1).map { 0f }.toFloatArray())
+            val inputArray = ((0 until seqLength).map { 0 } + input.map { it + 1 })     // word index 0 is for PAD word
+                .takeLast(seqLength).map { it.toFloat() }.toFloatArray()
+            val outputArray = arrayOf((0 until seqLength).map { (0 until indexToWord.size + 1).map { 0f }.toFloatArray() }.toTypedArray())
             interpreter.run(arrayOf(inputArray), outputArray)
-            return outputArray[0]
+            return outputArray[0][seqLength - 1]
         } catch(ex: IllegalArgumentException) {
             ex.printStackTrace()
             return floatArrayOf()
@@ -39,7 +40,7 @@ class TFLitePredictor(context: Context, wordList: InputStream, model: AssetFileD
     fun output(prediction: FloatArray, topn: Int = 10): List<Candidate> {
         if(topn <= 0) return emptyList()
         return prediction.mapIndexed { i, value -> i to value }.sortedByDescending { it.second }.take(topn)
-            .map { (index, _) -> Candidate(indexToWord[index], "") }
+            .map { (index, _) -> Candidate(indexToWord[index - 1], "") }
     }
 
     fun getConfidence(prediction: FloatArray, word: String): Float? {

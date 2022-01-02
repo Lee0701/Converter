@@ -19,7 +19,6 @@ import io.github.lee0701.converter.history.HistoryDatabase
 import io.github.lee0701.converter.settings.SettingsActivity
 import io.github.lee0701.converter.userdictionary.UserDictionaryDatabase
 import kotlinx.coroutines.*
-import java.io.FileInputStream
 import kotlin.math.min
 
 class ConverterService: AccessibilityService() {
