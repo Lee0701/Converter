@@ -33,7 +33,7 @@ class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(c
     private var candidatesView: CandidatesViewVerticalBinding? = null
     private var windowShown = false
 
-    override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (String) -> Unit) {
+    override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (Candidate) -> Unit) {
         if(candidatesView == null) {
             val candidatesView = CandidatesViewVerticalBinding.inflate(LayoutInflater.from(context))
             candidatesView.root.setBackgroundColor(windowColor)

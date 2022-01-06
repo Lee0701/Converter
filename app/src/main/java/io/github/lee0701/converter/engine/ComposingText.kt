@@ -43,11 +43,11 @@ data class ComposingText(
         return this
     }
 
-    fun replaced(with: String, format: OutputFormat?): ComposingText {
-        val replace = composing.take(with.length)
+    fun replaced(with: String, length: Int, format: OutputFormat?): ComposingText {
+        val replace = composing.take(length)
         val formatted = format?.getOutput(with, replace) ?: with
-        val lengthDiff = formatted.length - with.length
-        val fullText = TextUtils.concat(text.take(from), formatted, composing.drop(with.length), text.drop(to))
+        val lengthDiff = formatted.length - length
+        val fullText = TextUtils.concat(text.take(from), formatted, composing.drop(length), text.drop(to))
         return this.copy(text = fullText, from = from + formatted.length, to = to + lengthDiff,
             unconverted = unconverted + replace, converted = converted + with)
     }

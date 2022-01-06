@@ -38,7 +38,7 @@ class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow
         type, flags, PixelFormat.TRANSLUCENT
     ).apply { gravity = Gravity.TOP or Gravity.START }
 
-    override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (String) -> Unit) {
+    override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (Candidate) -> Unit) {
         if(candidatesView == null) {
             val candidatesView = CandidatesViewHorizontalBinding.inflate(LayoutInflater.from(context))
 

@@ -19,7 +19,6 @@ import io.github.lee0701.converter.history.HistoryDatabase
 import io.github.lee0701.converter.settings.SettingsActivity
 import io.github.lee0701.converter.userdictionary.UserDictionaryDatabase
 import kotlinx.coroutines.*
-import java.io.FileInputStream
 import kotlin.math.min
 
 class ConverterService: AccessibilityService() {
@@ -162,9 +161,12 @@ class ConverterService: AccessibilityService() {
                 val candidates = converter.convertAsync(scope, composingText).await()
                 if(candidates.isNotEmpty()) {
                     withContext(Dispatchers.Main) {
-                        candidatesWindow.show(candidates, rect) { hanja ->
-                            val hangul = composingText.composing.take(hanja.length).toString()
-                            val replaced = composingText.replaced(hanja, outputFormat)
+                        candidatesWindow.show(candidates, rect) { candidate ->
+                            val hanja = candidate.text
+                            val hangul =
+                                if(candidate.input.isEmpty()) composingText.composing.take(hanja.length).toString()
+                                else candidate.input
+                            val replaced = composingText.replaced(hanja, hangul.length, outputFormat)
                             ignoreText = replaced.text
                             pasteFullText(source, replaced.text)
                             setSelection(source, replaced.to)
@@ -182,7 +184,8 @@ class ConverterService: AccessibilityService() {
                 if(anyHangul) {
                     val candidates = predictor?.predictAsync(scope, composingText)?.await()
                     if(candidates != null) withContext(Dispatchers.Main) {
-                        candidatesWindow.show(candidates, rect) { prediction ->
+                        candidatesWindow.show(candidates, rect) { candidate ->
+                            val prediction = candidate.text
                             val inserted = composingText.inserted(prediction)
                             ignoreText = inserted.text
                             pasteFullText(source, inserted.text)

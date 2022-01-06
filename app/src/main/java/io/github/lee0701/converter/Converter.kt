@@ -26,7 +26,7 @@ class Converter(
         val nonHangulIndex = hangul.indexOfFirst { c -> !CharacterSet.isHangul(c) }
         list += if(nonHangulIndex > 0) hangul.slice(0 until nonHangulIndex) else hangul
         if(CharacterSet.isHangul(hangul[0])) list.add(0, hangul[0].toString())
-        return list.map { Candidate(it.toString()) }
+        return list.map { Candidate(it.toString(), it.toString(), "") }
     }
 
 }

@@ -12,7 +12,7 @@ class VerticalCandidateListAdapter(
     private val extraColor: Int,
     private val textAlpha: Float,
     private val data: Array<Candidate>,
-    private val onItemClick: (String) -> Unit
+    private val onItemClick: (Candidate) -> Unit
 ): RecyclerView.Adapter<VerticalCandidateListAdapter.CandidateItemViewHolder>() {
 
     class CandidateItemViewHolder(val view: CandidateItemVerticalBinding): RecyclerView.ViewHolder(view.root)
@@ -32,7 +32,7 @@ class VerticalCandidateListAdapter(
     override fun onBindViewHolder(holder: CandidateItemViewHolder, position: Int) {
         holder.view.text.text = data[position].text
         holder.view.extra.text = data[position].extra
-        holder.view.root.setOnClickListener { this.onItemClick(data[position].text) }
+        holder.view.root.setOnClickListener { this.onItemClick(data[position]) }
     }
 
     override fun getItemCount(): Int {

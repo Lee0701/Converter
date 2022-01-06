@@ -13,7 +13,7 @@ class HorizontalCandidateListAdapter(
     private val textAlpha: Float,
     private val windowHeight: Int,
     private val data: Array<Candidate>,
-    private val onItemClick: (String) -> Unit
+    private val onItemClick: (Candidate) -> Unit
 ): RecyclerView.Adapter<HorizontalCandidateListAdapter.CandidateItemViewHolder>() {
 
     class CandidateItemViewHolder(val view: CandidateItemHorizontalBinding): RecyclerView.ViewHolder(view.root)
@@ -34,7 +34,7 @@ class HorizontalCandidateListAdapter(
     override fun onBindViewHolder(holder: CandidateItemViewHolder, position: Int) {
         holder.view.text.text = data[position].text
         holder.view.extra.text = data[position].extra
-        holder.view.root.setOnClickListener { this.onItemClick(data[position].text) }
+        holder.view.root.setOnClickListener { this.onItemClick(data[position]) }
     }
 
     override fun getItemCount(): Int {

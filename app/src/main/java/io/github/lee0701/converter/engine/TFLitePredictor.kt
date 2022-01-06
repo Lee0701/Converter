@@ -39,7 +39,7 @@ class TFLitePredictor(context: Context, wordList: InputStream, model: AssetFileD
     fun output(prediction: FloatArray, topn: Int = 10): List<Candidate> {
         if(topn <= 0) return emptyList()
         return prediction.mapIndexed { i, value -> i to value }.sortedByDescending { it.second }.take(topn)
-            .map { (index, _) -> Candidate(indexToWord[index], "") }
+            .map { (index, _) -> Candidate("", indexToWord[index], "") }
     }
 
     fun getConfidence(prediction: FloatArray, word: String): Float? {
