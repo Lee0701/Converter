@@ -7,12 +7,25 @@ class CompoundHanjaConverter(
 ): HanjaConverter {
 
     override fun convert(composingText: ComposingText): List<Candidate> {
-        return converters.flatMap { it.convert(composingText) }.distinctBy { it.text }
+        val converted = converters.flatMap { it.convert(composingText) }
+        val labeled = converted.map { word ->
+            if(word.extra.isNotEmpty()) word
+            else word.copy(extra = converted.find { it.text == word.text && it.extra.isNotEmpty() }?.extra ?: "")
+        }
+        return labeled.distinctBy { it.text }
     }
 
     override fun convertPrefix(composingText: ComposingText): List<List<Candidate>> {
-        return converters.map { it.convertPrefix(composingText) }
-            .reduce { acc, list -> acc.zip(list).map { (l1, l2) -> (l1 + l2).distinctBy { it.text } } }
+        return converters.map { it.convertPrefix(composingText) }       // Per-length list of list of candidates
+            .reduce { acc, list -> acc.zip(list).map { (l1, l2) ->
+                val merged = l1 + l2                                    // Merge same-length candidates
+                val labeled = merged.map { word ->
+                    if(word.extra.isNotEmpty()) word
+                    else word.copy(extra = merged.find { it.text == word.text && it.extra.isNotEmpty() }?.extra ?: "")
+                                                                        // Copy extra label from existing one if non existent
+                }
+                labeled.distinctBy { it.text }                          // Remove duplications
+            } }
     }
 
     override fun learn(input: String, result: String) {
