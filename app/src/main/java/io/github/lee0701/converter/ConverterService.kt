@@ -19,6 +19,7 @@ import io.github.lee0701.converter.history.HistoryDatabase
 import io.github.lee0701.converter.settings.SettingsActivity
 import io.github.lee0701.converter.userdictionary.UserDictionaryDatabase
 import kotlinx.coroutines.*
+import kotlin.math.max
 import kotlin.math.min
 
 class ConverterService: AccessibilityService() {
@@ -131,8 +132,8 @@ class ConverterService: AccessibilityService() {
 
                 val beforeText = event.beforeText ?: ""
                 val fromIndex = event.fromIndex.let { if(it == -1) firstDifference(beforeText, text) else it }
-                val addedCount = event.addedCount
-                val removedCount = event.removedCount
+                val addedCount = max(event.addedCount, 0)
+                val removedCount = max(event.removedCount, 0)
 
                 val newComposingText = composingText.textChanged(text, fromIndex, addedCount, removedCount)
                 if(newComposingText.from != composingText.from) learnConverted()
