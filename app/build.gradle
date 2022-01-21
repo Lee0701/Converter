@@ -38,8 +38,8 @@ android {
         common {
             dimension "version"
             applicationIdSuffix ""
-            versionCode 16
-            versionName "0.3.0"
+            versionCode 17
+            versionName "0.3.1"
             buildConfigField 'boolean', 'IS_DONATION', 'false'
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher",
