@@ -1,7 +1,6 @@
 package io.github.lee0701.converter
 
 import android.accessibilityservice.AccessibilityService
-import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.accessibility.AccessibilityEvent
@@ -19,6 +18,8 @@ import io.github.lee0701.converter.history.HistoryDatabase
 import io.github.lee0701.converter.settings.SettingsActivity
 import io.github.lee0701.converter.userdictionary.UserDictionaryDatabase
 import kotlinx.coroutines.*
+import org.allenai.word2vec.Word2VecModel
+import java.nio.ByteOrder
 import kotlin.math.max
 import kotlin.math.min
 
@@ -41,7 +42,7 @@ class ConverterService: AccessibilityService() {
 
     override fun onCreate() {
         super.onCreate()
-        if(!getSharedPreferences(PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES, Context.MODE_PRIVATE)
+        if(!getSharedPreferences(PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES, MODE_PRIVATE)
                 .getBoolean(PreferenceManager.KEY_HAS_SET_DEFAULT_VALUES, false)) {
             SettingsActivity.PREFERENCE_LIST.forEach {
                 PreferenceManager.setDefaultValues(this, it, true)
@@ -95,8 +96,13 @@ class ConverterService: AccessibilityService() {
         val dictionaries = DictionaryManager.loadCompoundDictionary(assets, listOf("base") + additional)
         val dictionaryHanjaConverter = DictionaryHanjaConverter(dictionaries)
 
-        if(tfLitePredictor != null && sortByContext) {
-            converters += ContextSortingHanjaConverter(dictionaryHanjaConverter, tfLitePredictor)
+//        if(tfLitePredictor != null && sortByContext) {
+        if(sortByContext) {
+//            converters += TFLiteContextSortingHanjaConverter(dictionaryHanjaConverter, tfLitePredictor)
+//            val model = WordVectorSerializer.readWord2Vec(assets.open("word2vec/model.bin"), false)
+            val file = AssetsFileCache(assets, cacheDir).cached("word2vec/word2vec.txt")
+            val model = Word2VecModel.fromTextFile(file)
+            converters += Word2VecContextSortingHanjaConverter(dictionaryHanjaConverter, model)
         } else {
             converters += dictionaryHanjaConverter
         }

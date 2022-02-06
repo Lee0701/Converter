@@ -30,6 +30,7 @@
         <entry key="app/src/main/res/layout/user_dictionary_word_list_item.xml" value="0.7166666666666667" />
         <entry key="app/src/main/res/menu/user_dictionary_manager_action.xml" value="1.1" />
         <entry key="app/src/main/res/menu/user_dictionary_manager_action_donation.xml" value="0.6583333333333333" />
+        <entry key="app/src/main/res/xml/pref_prediction.xml" value="0.6193181818181818" />
       </map>
     </option>
   </component>
