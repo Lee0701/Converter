@@ -8,7 +8,7 @@ import io.github.lee0701.converter.ConverterService
 import io.github.lee0701.converter.R
 import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindowAdjuster
 
-class ShowCandidateWindowAdjusterPreference(context: Context?, attrs: AttributeSet?): EditTextPreference(context, attrs) {
+class ShowCandidateWindowAdjusterPreference(context: Context, attrs: AttributeSet?): EditTextPreference(context, attrs) {
 
     private var adjuster: HorizontalCandidatesWindowAdjuster? = null
 

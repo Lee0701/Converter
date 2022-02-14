@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import androidx.preference.EditTextPreference
 import java.lang.NumberFormatException
 
-class ColorEditTextPreference(context: Context?, attrs: AttributeSet?): EditTextPreference(context, attrs) {
+class ColorEditTextPreference(context: Context, attrs: AttributeSet?): EditTextPreference(context, attrs) {
     override fun persistString(value: String?): Boolean {
         if(value == null) return false
         return try {
