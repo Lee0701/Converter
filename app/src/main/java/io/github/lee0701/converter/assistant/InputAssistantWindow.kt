@@ -29,7 +29,7 @@ class InputAssistantWindow(private val context: Context) {
         0, 0,
         type, flags, PixelFormat.TRANSLUCENT
     ).apply {
-        gravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP
+        gravity = Gravity.CENTER
         softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
     }
 
@@ -37,7 +37,7 @@ class InputAssistantWindow(private val context: Context) {
         if(this.binding == null) {
             val binding = InputAssistantViewBinding.inflate(LayoutInflater.from(context))
             binding.close.setOnClickListener { destroy() }
-            binding.check.setOnClickListener { onAccept(binding.text.text) }
+            binding.paste.setOnClickListener { onAccept(binding.text.text) }
 
             try {
                 windowManager.addView(binding.root, layoutParams)

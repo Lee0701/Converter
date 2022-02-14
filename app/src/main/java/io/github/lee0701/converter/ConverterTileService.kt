@@ -18,6 +18,16 @@ class ConverterTileService: TileService() {
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var inputAssistantWindow: InputAssistantWindow
 
+    override fun onCreate() {
+        super.onCreate()
+        INSTANCE = this
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        INSTANCE = null
+    }
+
     override fun onStartListening() {
         val tile = qsTile ?: return
         inputAssistantWindow = InputAssistantWindow(this)
@@ -34,5 +44,13 @@ class ConverterTileService: TileService() {
             clipboard.setPrimaryClip(clip)
             handler.postDelayed({ accessibilityService.pasteClipboard() }, 300)
         }
+    }
+
+    fun closeWindow() {
+        inputAssistantWindow.destroy()
+    }
+
+    companion object {
+        var INSTANCE: ConverterTileService? = null
     }
 }

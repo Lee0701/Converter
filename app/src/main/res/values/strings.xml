@@ -5,6 +5,7 @@
     <string name="assistant_title">Hanja Input Assistant</string>
     <string name="settings_saved">Saved.</string>
     <string name="candidates_count_format" translatable="false">%1$s / %2$s</string>
+    <string name="paste">Paste</string>
     <string name="close">Close</string>
     <string name="save">Save</string>
     <string name="discard">Discard</string>
