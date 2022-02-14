@@ -13,8 +13,6 @@ import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.view.VerticalCandidatesWindow
-import io.github.lee0701.converter.dictionary.CompoundDictionary
-import io.github.lee0701.converter.dictionary.HistoryDictionary
 import io.github.lee0701.converter.dictionary.UserDictionaryDictionary
 import io.github.lee0701.converter.engine.*
 import io.github.lee0701.converter.history.HistoryDatabase
@@ -24,7 +22,7 @@ import kotlinx.coroutines.*
 import kotlin.math.max
 import kotlin.math.min
 
-class ConverterService: AccessibilityService() {
+class ConverterAccessibilityService: AccessibilityService() {
 
     private val scope = CoroutineScope(Dispatchers.IO)
     private var job: Job? = null
@@ -32,6 +30,7 @@ class ConverterService: AccessibilityService() {
     private lateinit var converter: Converter
     private var predictor: Predictor? = null
     private lateinit var candidatesWindow: CandidatesWindow
+    private var source: AccessibilityNodeInfo? = null
 
     private var composingText = ComposingText("", 0)
 
@@ -62,7 +61,7 @@ class ConverterService: AccessibilityService() {
     }
 
     fun restartService() {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(this@ConverterService)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this@ConverterAccessibilityService)
 
         outputFormat = preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
         enableAutoHiding = preferences.getBoolean("enable_auto_hiding", false)
@@ -74,7 +73,7 @@ class ConverterService: AccessibilityService() {
 
         val tfLitePredictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
                 TFLitePredictor(
-                    this@ConverterService,
+                    this@ConverterAccessibilityService,
                     assets.open("ml/wordlist.txt"),
                     assets.openFd("ml/model.tflite")
                 )
@@ -115,8 +114,8 @@ class ConverterService: AccessibilityService() {
         else predictor = null
 
         candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
-            "horizontal" -> HorizontalCandidatesWindow(this@ConverterService)
-            else -> VerticalCandidatesWindow(this@ConverterService)
+            "horizontal" -> HorizontalCandidatesWindow(this@ConverterAccessibilityService)
+            else -> VerticalCandidatesWindow(this@ConverterAccessibilityService)
         }
 
     }
@@ -129,6 +128,9 @@ class ConverterService: AccessibilityService() {
                 if(enableAutoHiding && isHideEvent == true) {
                     candidatesWindow.destroy()
                 }
+            }
+            AccessibilityEvent.TYPE_VIEW_FOCUSED -> {
+                this.source = event.source
             }
             AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> {
                 val source = event.source ?: return
@@ -149,6 +151,7 @@ class ConverterService: AccessibilityService() {
                 composingText = newComposingText
 
                 convert(source)
+
             }
             AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
                 val source = event.source ?: return
@@ -211,6 +214,11 @@ class ConverterService: AccessibilityService() {
         }
     }
 
+    fun pasteClipboard() {
+        val source = this.source ?: return
+        source.performAction(AccessibilityNodeInfo.ACTION_PASTE)
+    }
+
     private fun pasteFullText(source: AccessibilityNodeInfo, fullText: CharSequence) {
         val arguments = Bundle()
         arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, fullText)
@@ -243,7 +251,7 @@ class ConverterService: AccessibilityService() {
     }
 
     companion object {
-        var INSTANCE: ConverterService? = null
+        var INSTANCE: ConverterAccessibilityService? = null
 
         const val DB_HISTORY = "history"
         const val DB_USER_DICTIONARY = "user_dictionary"

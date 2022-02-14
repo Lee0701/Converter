@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.room.Room
-import io.github.lee0701.converter.ConverterService
+import io.github.lee0701.converter.ConverterAccessibilityService
 import io.github.lee0701.converter.userdictionary.UserDictionary
 import io.github.lee0701.converter.userdictionary.UserDictionaryDatabase
 import io.github.lee0701.converter.userdictionary.UserDictionaryWord
@@ -19,7 +19,7 @@ import java.io.OutputStream
 class UserDictionaryManagerViewModel(application: Application) : AndroidViewModel(application) {
 
     val database = Room.databaseBuilder(application,
-        UserDictionaryDatabase::class.java, ConverterService.DB_USER_DICTIONARY).build()
+        UserDictionaryDatabase::class.java, ConverterAccessibilityService.DB_USER_DICTIONARY).build()
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val _dictionaries = MutableLiveData<List<UserDictionary>>()

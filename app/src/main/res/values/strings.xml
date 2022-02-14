@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Hanja Converter</string>
+    <string name="tile_name">Hanja Input Assistant</string>
+    <string name="assistant_title">Hanja Input Assistant</string>
     <string name="settings_saved">Saved.</string>
     <string name="candidates_count_format" translatable="false">%1$s / %2$s</string>
     <string name="close">Close</string>
