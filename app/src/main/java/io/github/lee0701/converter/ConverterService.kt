@@ -13,6 +13,8 @@ import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.view.VerticalCandidatesWindow
+import io.github.lee0701.converter.dictionary.CompoundDictionary
+import io.github.lee0701.converter.dictionary.HistoryDictionary
 import io.github.lee0701.converter.dictionary.UserDictionaryDictionary
 import io.github.lee0701.converter.engine.*
 import io.github.lee0701.converter.history.HistoryDatabase
@@ -103,6 +105,7 @@ class ConverterService: AccessibilityService() {
 
         var hanjaConverter: HanjaConverter
         hanjaConverter = CompoundHanjaConverter(converters.toList())
+
         hanjaConverter = PredictingHanjaConverter(hanjaConverter, dictionaries)
 
         converter = Converter(hanjaConverter)
