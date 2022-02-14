@@ -13,7 +13,6 @@ import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.view.VerticalCandidatesWindow
-import io.github.lee0701.converter.dictionary.DiskDictionary
 import io.github.lee0701.converter.dictionary.UserDictionaryDictionary
 import io.github.lee0701.converter.engine.*
 import io.github.lee0701.converter.history.HistoryDatabase
@@ -102,7 +101,8 @@ class ConverterService: AccessibilityService() {
             converters += dictionaryHanjaConverter
         }
 
-        var hanjaConverter: HanjaConverter = CompoundHanjaConverter(converters.toList())
+        var hanjaConverter: HanjaConverter
+        hanjaConverter = CompoundHanjaConverter(converters.toList())
         hanjaConverter = PredictingHanjaConverter(hanjaConverter, dictionaries)
 
         converter = Converter(hanjaConverter)
@@ -167,11 +167,9 @@ class ConverterService: AccessibilityService() {
                 if(candidates.isNotEmpty()) {
                     withContext(Dispatchers.Main) {
                         candidatesWindow.show(candidates, rect) { candidate ->
-                            val hanja = candidate.text
-                            val hangul =
-                                if(candidate.input.isEmpty()) composingText.composing.take(hanja.length).toString()
-                                else candidate.input
-                            val replaced = composingText.replaced(hanja, hangul.length, outputFormat)
+                            val hanja = candidate.hanja
+                            val hangul = candidate.hangul.ifEmpty { composingText.composing.take(hanja.length).toString() }
+                            val replaced = composingText.replaced(hangul, hanja, candidate.input.length, outputFormat)
                             ignoreText = replaced.text
                             pasteFullText(source, replaced.text)
                             setSelection(source, replaced.to)
@@ -190,7 +188,7 @@ class ConverterService: AccessibilityService() {
                     val candidates = predictor?.predictAsync(scope, composingText)?.await()
                     if(candidates != null) withContext(Dispatchers.Main) {
                         candidatesWindow.show(candidates, rect) { candidate ->
-                            val prediction = candidate.text
+                            val prediction = candidate.hanja
                             val inserted = composingText.inserted(prediction)
                             ignoreText = inserted.text
                             pasteFullText(source, inserted.text)

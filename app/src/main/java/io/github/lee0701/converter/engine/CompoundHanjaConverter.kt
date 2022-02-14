@@ -10,9 +10,9 @@ class CompoundHanjaConverter(
         val converted = converters.flatMap { it.convert(composingText) }
         val labeled = converted.map { word ->
             if(word.extra.isNotEmpty()) word
-            else word.copy(extra = converted.find { it.text == word.text && it.extra.isNotEmpty() }?.extra ?: "")
+            else word.copy(extra = converted.find { it.hanja == word.hanja && it.extra.isNotEmpty() }?.extra ?: "")
         }
-        return labeled.distinctBy { it.text }
+        return labeled.distinctBy { it.hanja }
     }
 
     override fun convertPrefix(composingText: ComposingText): List<List<Candidate>> {
@@ -21,10 +21,10 @@ class CompoundHanjaConverter(
                 val merged = l1 + l2                                    // Merge same-length candidates
                 val labeled = merged.map { word ->
                     if(word.extra.isNotEmpty()) word
-                    else word.copy(extra = merged.find { it.text == word.text && it.extra.isNotEmpty() }?.extra ?: "")
+                    else word.copy(extra = merged.find { it.hanja == word.hanja && it.extra.isNotEmpty() }?.extra ?: "")
                                                                         // Copy extra label from existing one if non existent
                 }
-                labeled.distinctBy { it.text }                          // Remove duplications
+                labeled.distinctBy { it.hanja }                          // Remove duplications
             } }
     }
 

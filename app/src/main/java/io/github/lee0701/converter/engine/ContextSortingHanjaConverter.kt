@@ -18,7 +18,7 @@ class ContextSortingHanjaConverter(
                     prediction = predictor.predict(predictor.tokenize(predictionContext))
                 }
                 if(prediction.isNotEmpty()) {
-                    return@let converted.sortedByDescending { predictor.getConfidence(prediction, it.text) }
+                    return@let converted.sortedByDescending { predictor.getConfidence(prediction, it.hanja) }
                 }
             }
             return@let converted
@@ -34,7 +34,7 @@ class ContextSortingHanjaConverter(
                 }
                 if(prediction.isNotEmpty()) {
                     return@let converted.map { list ->
-                        list.sortedByDescending { predictor.getConfidence(prediction, it.text) }
+                        list.sortedByDescending { predictor.getConfidence(prediction, it.hanja) }
                     }
                 }
             }

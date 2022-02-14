@@ -20,10 +20,12 @@ class PredictingHanjaConverter(
     }
 
     override fun learn(input: String, result: String) {
+        hanjaConverter.learn(input, result)
     }
 
     private fun predict(composingText: ComposingText): List<Candidate> {
-        val preprocessed = preprocess(composingText.composing.toString())
+        val composing = composingText.composing.toString()
+        val preprocessed = preprocess(composing)
         val predicted = preprocessed.flatMap { word ->
             val first = word.dropLast(1)
             val last = word.lastOrNull()
@@ -34,7 +36,7 @@ class PredictingHanjaConverter(
             return@flatMap predicted.filter { (k, _) -> word != k && match(word, k) }
         }
         val sorted = predicted.sortedByDescending { (_, result) -> result.frequency }
-        val candidates = sorted.map { (key, value) -> Candidate(key, value.result, value.extra ?: "") }
+        val candidates = sorted.map { (key, value) -> Candidate(key, value.result, value.extra ?: "", composing) }
 
         return candidates.take(1)
     }
