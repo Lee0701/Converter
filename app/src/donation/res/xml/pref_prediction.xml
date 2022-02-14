@@ -11,6 +11,12 @@
             app:defaultValue="true" />
 
         <CheckBoxPreference
+            app:key="use_autocomplete"
+            app:title="@string/use_autocomplete_title"
+            app:summary="@string/use_autocomplete_summary"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
             app:key="sort_by_context"
             app:title="@string/sort_by_context_title"
             app:summary="@string/sort_by_context_summary"

@@ -106,7 +106,9 @@ class ConverterService: AccessibilityService() {
         var hanjaConverter: HanjaConverter
         hanjaConverter = CompoundHanjaConverter(converters.toList())
 
-        hanjaConverter = PredictingHanjaConverter(hanjaConverter, dictionaries)
+        if(BuildConfig.IS_DONATION && preferences.getBoolean("use_autocomplete", false)) {
+            hanjaConverter = PredictingHanjaConverter(hanjaConverter, dictionaries)
+        }
 
         converter = Converter(hanjaConverter)
         if(tfLitePredictor != null && usePrediction) predictor = Predictor(tfLitePredictor)
