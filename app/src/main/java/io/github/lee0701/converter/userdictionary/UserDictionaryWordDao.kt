@@ -22,4 +22,7 @@ interface UserDictionaryWordDao {
     @Query("SELECT * FROM user_dictionary_word WHERE dictionaryId = :dictionaryId AND hangul = :hangul")
     fun searchWords(dictionaryId: Int, hangul: String): Array<UserDictionaryWord>
 
+    @Query("SELECT * FROM user_dictionary_word WHERE dictionaryId = :dictionaryId AND hangul like :hangul || '%'")
+    fun searchWordsPrefix(dictionaryId: Int, hangul: String): Array<UserDictionaryWord>
+
 }

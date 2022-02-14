@@ -102,10 +102,8 @@ class ConverterService: AccessibilityService() {
             converters += dictionaryHanjaConverter
         }
 
-//        hanjaConverter = PredictingHanjaConverter(hanjaConverter, DiskDictionary(assets.open("dict/base.bin")))
-
         var hanjaConverter: HanjaConverter = CompoundHanjaConverter(converters.toList())
-        hanjaConverter = PredictingHanjaConverter(hanjaConverter, DiskDictionary(assets.open("dict/base.bin")))
+        hanjaConverter = PredictingHanjaConverter(hanjaConverter, dictionaries)
 
         converter = Converter(hanjaConverter)
         if(tfLitePredictor != null && usePrediction) predictor = Predictor(tfLitePredictor)
