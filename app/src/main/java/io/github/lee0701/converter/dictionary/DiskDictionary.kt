@@ -4,7 +4,7 @@ import java.io.InputStream
 import java.lang.StringBuilder
 import java.nio.ByteBuffer
 
-class DiskDictionary(input: InputStream): HanjaDictionary, PredictingDictionary<List<HanjaDictionary.Entry>> {
+class DiskDictionary(input: InputStream): HanjaDictionary, PredictingDictionary<HanjaDictionary.Entry> {
 
     private val data = ByteBuffer.wrap(input.readBytes())
     private val root get() = data.getInt(data.capacity() - 4)
@@ -18,17 +18,17 @@ class DiskDictionary(input: InputStream): HanjaDictionary, PredictingDictionary<
         return p.entries
     }
 
-    override fun predict(key: String): List<HanjaDictionary.Entry> {
+    override fun predict(key: String): List<Pair<String, HanjaDictionary.Entry>> {
         var p = Node(root)
         for(c in key) {
             p = p.children[c] ?: return listOf()
         }
-        return getEntriesRecursive(p, 5)
+        return getEntriesRecursive(p, key, key.length * 2)
     }
 
-    private fun getEntriesRecursive(p: Node, depth: Int): List<HanjaDictionary.Entry> {
-        if(depth <= 0) return emptyList()
-        return p.entries + p.children.flatMap { getEntriesRecursive(it.value, depth-1) }
+    private fun getEntriesRecursive(p: Node, string: String, depth: Int): List<Pair<String, HanjaDictionary.Entry>> {
+        if(depth <= 0) return listOf()
+        return p.entries.map { string to it } + p.children.flatMap { getEntriesRecursive(it.value, string + it.key, depth-1) }
     }
 
     private fun getChars(bb: ByteBuffer, idx: Int): String {

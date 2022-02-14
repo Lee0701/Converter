@@ -94,7 +94,7 @@ class ConverterService: AccessibilityService() {
 
         val additional = preferences.getStringSet("additional_dictionaries", setOf())?.toList() ?: listOf()
         val dictionaries = DictionaryManager.loadCompoundDictionary(assets, listOf("base") + additional)
-        val dictionaryHanjaConverter = PredictingHanjaConverter(DiskDictionary(assets.open("dict/base.bin")))
+        val dictionaryHanjaConverter: HanjaConverter = DictionaryHanjaConverter(dictionaries)
 
         if(tfLitePredictor != null && sortByContext) {
             converters += ContextSortingHanjaConverter(dictionaryHanjaConverter, tfLitePredictor)
@@ -102,7 +102,12 @@ class ConverterService: AccessibilityService() {
             converters += dictionaryHanjaConverter
         }
 
-        converter = Converter(CompoundHanjaConverter(converters.toList()))
+//        hanjaConverter = PredictingHanjaConverter(hanjaConverter, DiskDictionary(assets.open("dict/base.bin")))
+
+        var hanjaConverter: HanjaConverter = CompoundHanjaConverter(converters.toList())
+        hanjaConverter = PredictingHanjaConverter(hanjaConverter, DiskDictionary(assets.open("dict/base.bin")))
+
+        converter = Converter(hanjaConverter)
         if(tfLitePredictor != null && usePrediction) predictor = Predictor(tfLitePredictor)
         else predictor = null
 
