@@ -8,7 +8,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceManager
 import io.github.lee0701.converter.settings.InformationActivity
 
-class OpenAccessibilitySettingsPreference(context: Context?, attrs: AttributeSet?): Preference(
+class OpenAccessibilitySettingsPreference(context: Context, attrs: AttributeSet?): Preference(
     context,
     attrs
 ) {

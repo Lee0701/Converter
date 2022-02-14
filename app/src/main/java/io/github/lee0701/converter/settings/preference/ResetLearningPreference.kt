@@ -10,7 +10,7 @@ import io.github.lee0701.converter.R
 import io.github.lee0701.converter.history.HistoryDatabase
 import kotlinx.coroutines.*
 
-class ResetLearningPreference(context: Context?, attrs: AttributeSet?): Preference(context, attrs) {
+class ResetLearningPreference(context: Context, attrs: AttributeSet?): Preference(context, attrs) {
     override fun onClick() {
         AlertDialog.Builder(context)
             .setMessage(R.string.confirm_reset_learning)
