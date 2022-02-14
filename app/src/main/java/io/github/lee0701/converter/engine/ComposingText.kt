@@ -43,13 +43,13 @@ data class ComposingText(
         return this
     }
 
-    fun replaced(with: String, length: Int, format: OutputFormat?): ComposingText {
+    fun replaced(hangul: String, hanja: String, length: Int, format: OutputFormat?): ComposingText {
         val replace = composing.take(length)
-        val formatted = format?.getOutput(with, replace) ?: with
+        val formatted = format?.getOutput(hanja, hangul) ?: hanja
         val lengthDiff = formatted.length - length
         val fullText = TextUtils.concat(text.take(from), formatted, composing.drop(length), text.drop(to))
         return this.copy(text = fullText, from = from + formatted.length, to = to + lengthDiff,
-            unconverted = unconverted + replace, converted = converted + with)
+            unconverted = unconverted + replace, converted = converted + hanja)
     }
 
     fun inserted(with: CharSequence): ComposingText {

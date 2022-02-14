@@ -30,7 +30,7 @@ class VerticalCandidateListAdapter(
     }
 
     override fun onBindViewHolder(holder: CandidateItemViewHolder, position: Int) {
-        holder.view.text.text = data[position].text
+        holder.view.text.text = data[position].hanja
         holder.view.extra.text = data[position].extra
         holder.view.root.setOnClickListener { this.onItemClick(data[position]) }
     }

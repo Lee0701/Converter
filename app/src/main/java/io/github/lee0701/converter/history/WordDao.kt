@@ -22,6 +22,9 @@ interface WordDao {
     @Query("SELECT * FROM word WHERE input = :input")
     fun searchWords(input: String): Array<Word>
 
+    @Query("SELECT * FROM word WHERE input LIKE :input || '%'")
+    fun searchWordsPrefix(input: String): Array<Word>
+
     @Query("SELECT * FROM word WHERE lastUsed < :lastUsed")
     fun searchWordsOlderThan(lastUsed: Long): Array<Word>
 }

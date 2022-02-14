@@ -13,6 +13,8 @@ import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.view.VerticalCandidatesWindow
+import io.github.lee0701.converter.dictionary.CompoundDictionary
+import io.github.lee0701.converter.dictionary.HistoryDictionary
 import io.github.lee0701.converter.dictionary.UserDictionaryDictionary
 import io.github.lee0701.converter.engine.*
 import io.github.lee0701.converter.history.HistoryDatabase
@@ -93,7 +95,7 @@ class ConverterService: AccessibilityService() {
 
         val additional = preferences.getStringSet("additional_dictionaries", setOf())?.toList() ?: listOf()
         val dictionaries = DictionaryManager.loadCompoundDictionary(assets, listOf("base") + additional)
-        val dictionaryHanjaConverter = DictionaryHanjaConverter(dictionaries)
+        val dictionaryHanjaConverter: HanjaConverter = DictionaryHanjaConverter(dictionaries)
 
         if(tfLitePredictor != null && sortByContext) {
             converters += ContextSortingHanjaConverter(dictionaryHanjaConverter, tfLitePredictor)
@@ -101,7 +103,14 @@ class ConverterService: AccessibilityService() {
             converters += dictionaryHanjaConverter
         }
 
-        converter = Converter(CompoundHanjaConverter(converters.toList()))
+        var hanjaConverter: HanjaConverter
+        hanjaConverter = CompoundHanjaConverter(converters.toList())
+
+        if(BuildConfig.IS_DONATION && preferences.getBoolean("use_autocomplete", false)) {
+            hanjaConverter = PredictingHanjaConverter(hanjaConverter, dictionaries)
+        }
+
+        converter = Converter(hanjaConverter)
         if(tfLitePredictor != null && usePrediction) predictor = Predictor(tfLitePredictor)
         else predictor = null
 
@@ -163,11 +172,9 @@ class ConverterService: AccessibilityService() {
                 if(candidates.isNotEmpty()) {
                     withContext(Dispatchers.Main) {
                         candidatesWindow.show(candidates, rect) { candidate ->
-                            val hanja = candidate.text
-                            val hangul =
-                                if(candidate.input.isEmpty()) composingText.composing.take(hanja.length).toString()
-                                else candidate.input
-                            val replaced = composingText.replaced(hanja, hangul.length, outputFormat)
+                            val hanja = candidate.hanja
+                            val hangul = candidate.hangul.ifEmpty { composingText.composing.take(hanja.length).toString() }
+                            val replaced = composingText.replaced(hangul, hanja, candidate.input.length, outputFormat)
                             ignoreText = replaced.text
                             pasteFullText(source, replaced.text)
                             setSelection(source, replaced.to)
@@ -186,7 +193,7 @@ class ConverterService: AccessibilityService() {
                     val candidates = predictor?.predictAsync(scope, composingText)?.await()
                     if(candidates != null) withContext(Dispatchers.Main) {
                         candidatesWindow.show(candidates, rect) { candidate ->
-                            val prediction = candidate.text
+                            val prediction = candidate.hanja
                             val inserted = composingText.inserted(prediction)
                             ignoreText = inserted.text
                             pasteFullText(source, inserted.text)
