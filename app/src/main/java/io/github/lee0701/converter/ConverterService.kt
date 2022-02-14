@@ -13,6 +13,7 @@ import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.view.VerticalCandidatesWindow
+import io.github.lee0701.converter.dictionary.DiskDictionary
 import io.github.lee0701.converter.dictionary.UserDictionaryDictionary
 import io.github.lee0701.converter.engine.*
 import io.github.lee0701.converter.history.HistoryDatabase
@@ -93,7 +94,7 @@ class ConverterService: AccessibilityService() {
 
         val additional = preferences.getStringSet("additional_dictionaries", setOf())?.toList() ?: listOf()
         val dictionaries = DictionaryManager.loadCompoundDictionary(assets, listOf("base") + additional)
-        val dictionaryHanjaConverter = DictionaryHanjaConverter(dictionaries)
+        val dictionaryHanjaConverter = PredictingHanjaConverter(DiskDictionary(assets.open("dict/base.bin")))
 
         if(tfLitePredictor != null && sortByContext) {
             converters += ContextSortingHanjaConverter(dictionaryHanjaConverter, tfLitePredictor)
