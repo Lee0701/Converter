@@ -40,22 +40,23 @@ class InputAssistantWindow(private val context: Context) {
             binding.close.setOnClickListener { destroy() }
             binding.paste.setOnClickListener { onAccept(binding.text.text) }
 
-            try {
-                windowManager.addView(binding.root, layoutParams)
-            } catch(ex: WindowManager.BadTokenException) {
-                Toast.makeText(context, R.string.overlay_permission_required, Toast.LENGTH_LONG).show()
-            }
             this.binding = binding
         }
         // Close notification panel
         val intent = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
         context.sendBroadcast(intent)
-        binding?.text?.requestFocus()
+
+        val binding = this.binding ?: return
+        try {
+            windowManager.addView(binding.root, layoutParams)
+        } catch(ex: WindowManager.BadTokenException) {
+            Toast.makeText(context, R.string.overlay_permission_required, Toast.LENGTH_LONG).show()
+        }
+        binding.text.requestFocus()
     }
 
     fun destroy() {
         binding?.root?.let { windowManager.removeView(it) }
-        binding = null
     }
 
 }
