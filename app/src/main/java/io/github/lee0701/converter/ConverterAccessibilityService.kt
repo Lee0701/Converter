@@ -135,22 +135,60 @@ class ConverterAccessibilityService: AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if(event == null) return
 
-        val packageNames = listOf("org.mozilla.firefox", "com.android.chrome")
-        val inputAssistantMode = event.packageName in packageNames
-        if(inputAssistantMode) onInputAssistant(event)
-
         when(event.eventType) {
+            AccessibilityEvent.TYPE_VIEW_CLICKED -> {
+                if(event.source != null && !isEditText(event.source.className)) inputAssistantLauncherWindow.hide()
+            }
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
+                if(event.source != null && !isEditText(event.source.className)) inputAssistantLauncherWindow.hide()
                 val isHideEvent = CandidatesWindowHider.of(event.packageName?.toString() ?: "")?.isHideEvent(event)
                 if(enableAutoHiding && isHideEvent == true) {
                     candidatesWindow.destroy()
                 }
             }
-            AccessibilityEvent.TYPE_VIEW_FOCUSED -> {
+            AccessibilityEvent.TYPE_VIEW_FOCUSED,
+            AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
                 // Update paste target.
                 // Prevent from input assistant window itself being targeted as paste target
-                if(event.packageName != this.packageName) this.source = event.source
+                if(event.packageName != this.packageName
+                    && event.source != null && isEditText(event.source.className)) {
+                        this.source = event.source
+                }
             }
+            else -> {}
+        }
+
+        val packageNames = listOf("org.mozilla.firefox", "com.android.chrome")
+        val inputAssistantMode = event.packageName in packageNames
+
+        if(inputAssistantMode) onInputAssistant(event)
+        else onNormalConversion(event)
+    }
+
+    private fun onInputAssistant(event: AccessibilityEvent) {
+        when(event.eventType) {
+            AccessibilityEvent.TYPE_VIEW_FOCUSED -> {
+                if(event.source != null && isEditText(event.source.className)) {
+                    showInputAssistantLauncherWindow(event.source)
+                } else {
+                    inputAssistantLauncherWindow.hide()
+                }
+            }
+            AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
+                if(event.source != null && isEditText(event.source.className)) {
+                    val rect = Rect().apply { event.source.getBoundsInScreen(this) }
+                    inputAssistantLauncherWindow.apply {
+                        xPos = rect.left
+                        yPos = rect.top
+                    }.updateLayout()
+                }
+            }
+            else -> {}
+        }
+    }
+
+    private fun onNormalConversion(event: AccessibilityEvent) {
+        when(event.eventType) {
             AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> {
                 val source = event.source ?: return
                 source.getBoundsInScreen(rect)
@@ -183,40 +221,6 @@ class ConverterAccessibilityService: AccessibilityService() {
                 }
             }
             else -> {}
-        }
-    }
-
-    private fun onInputAssistant(event: AccessibilityEvent) {
-        when(event.eventType) {
-            AccessibilityEvent.TYPE_VIEW_FOCUSED -> {
-                if(event.source != null && event.source.className == "android.widget.EditText") {
-                    val rect = Rect().apply { event.source.getBoundsInScreen(this) }
-                    inputAssistantLauncherWindow.apply {
-                        xPos = rect.left
-                        yPos = rect.top
-                    }.show {
-                        inputAssistantLauncherWindow.hide()
-                        inputAssistantWindow.show { text ->
-                            val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                            val clip = ClipData.newPlainText(text, text)
-                            inputAssistantWindow.hide()
-                            clipboard.setPrimaryClip(clip)
-                            handler.postDelayed({ pasteClipboard() }, 300)
-                        }
-                    }
-                } else {
-                    inputAssistantLauncherWindow.hide()
-                }
-            }
-            AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
-                if(event.source != null && event.source.className == "android.widget.EditText") {
-                    val rect = Rect().apply { event.source.getBoundsInScreen(this) }
-                    inputAssistantLauncherWindow.apply {
-                        xPos = rect.left
-                        yPos = rect.top
-                    }.updateLayout()
-                }
-            }
         }
     }
 
@@ -265,6 +269,32 @@ class ConverterAccessibilityService: AccessibilityService() {
                 candidatesWindow.destroy()
             }
         }
+    }
+
+    private fun showInputAssistantLauncherWindow(source: AccessibilityNodeInfo) {
+        val rect = Rect().apply { source.getBoundsInScreen(this) }
+        inputAssistantLauncherWindow.apply {
+            xPos = rect.left
+            yPos = rect.top
+        }.show {
+            inputAssistantLauncherWindow.hide()
+            inputAssistantWindow.show { text ->
+                val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText(text, text)
+                inputAssistantWindow.hide()
+                candidatesWindow.destroy()
+                clipboard.setPrimaryClip(clip)
+                val postClose = {
+                    pasteClipboard()
+                    showInputAssistantLauncherWindow(source)
+                }
+                handler.postDelayed(postClose, 300)
+            }
+        }
+    }
+
+    private fun isEditText(className: CharSequence): Boolean {
+        return className == "android.widget.EditText"
     }
 
     fun pasteClipboard() {
