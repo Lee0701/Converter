@@ -23,9 +23,7 @@ class InputAssistantLauncherWindow(
     var xPos: Int = 0
     var yPos: Int = 0
 
-    private val type =
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        else WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
+    private val type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
     private val flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
             WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
             WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH

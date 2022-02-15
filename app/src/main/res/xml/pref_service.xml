@@ -8,9 +8,6 @@
             app:title="@string/enable_service_title"
             android:summary="@string/enable_service_summary" />
 
-        <io.github.lee0701.converter.settings.preference.EnableOverlayPermissionsPreference
-            app:title="@string/enable_overlay_permission_title" />
-
     </PreferenceCategory>
 
 </PreferenceScreen>

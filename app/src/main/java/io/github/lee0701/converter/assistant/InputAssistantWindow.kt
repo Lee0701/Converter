@@ -20,9 +20,7 @@ class InputAssistantWindow(private val context: Context) {
 
     private var binding: InputAssistantViewBinding? = null
 
-    private val type =
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        else WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
+    private val type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
     private val flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
     private val layoutParams: WindowManager.LayoutParams get() = WindowManager.LayoutParams(
         TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 320f, context.resources.displayMetrics).toInt(),
@@ -43,9 +41,6 @@ class InputAssistantWindow(private val context: Context) {
 
             this.binding = binding
         }
-        // Close notification panel
-        val intent = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
-        context.sendBroadcast(intent)
 
         val binding = this.binding ?: return
         binding.text.text.clear()

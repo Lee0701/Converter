@@ -293,6 +293,11 @@ class ConverterAccessibilityService: AccessibilityService() {
         }
     }
 
+    fun closeInputAssistantWindow() {
+        inputAssistantWindow.hide()
+        inputAssistantLauncherWindow.hide()
+    }
+
     private fun isEditText(className: CharSequence): Boolean {
         return className == "android.widget.EditText"
     }

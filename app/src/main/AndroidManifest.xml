@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="io.github.lee0701.converter">
-
-    <uses-permission android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS"
-        tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
 
     <application
         android:allowBackup="true"
@@ -53,16 +47,6 @@
                 android:resource="@xml/service" />
         </service>
 
-        <service
-            android:name=".ConverterTileService"
-            android:icon="@drawable/ic_launcher_foreground"
-            android:label="@string/tile_name"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.service.quicksettings.action.QS_TILE" />
-            </intent-filter>
-        </service>
     </application>
 
 </manifest>
