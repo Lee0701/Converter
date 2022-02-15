@@ -91,6 +91,8 @@
     <!-- Behavior Preferences -->
     <string name="enable_auto_hiding_title">Auto-Hide Conversion Window</string>
     <string name="enable_auto_hiding_summary">Automatically hide conversion window on keyboard close if supported.</string>
+    <string name="assistant_enabled_apps_title">Enable Hanja Input Assistant</string>
+    <string name="assistant_enabled_apps_summary">Select normal-conversion-incompatible apps to enable Hanja Input Assistant.</string>
     <!-- About Preferences -->
     <string name="about_app_info_title">Hanja Converter</string>
     <string name="about_app_info_summary">Developer contact: hgl1002@naver.com</string>

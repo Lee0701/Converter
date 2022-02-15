@@ -44,10 +44,11 @@ class ConverterAccessibilityService: AccessibilityService() {
     private var composingText = ComposingText("", 0)
 
     private var outputFormat: OutputFormat? = null
+    private var enableAutoHiding = false
+    private var assistantEnabledApps: Set<String> = setOf()
+
     private val rect = Rect()
     private var ignoreText: CharSequence? = null
-
-    private var enableAutoHiding = false
 
     override fun onCreate() {
         super.onCreate()
@@ -74,9 +75,8 @@ class ConverterAccessibilityService: AccessibilityService() {
 
         outputFormat = preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
         enableAutoHiding = preferences.getBoolean("enable_auto_hiding", false)
+        assistantEnabledApps = preferences.getStringSet("assistant_enabled_apps", setOf()) ?: setOf()
 
-        outputFormat =
-            preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
         val sortByContext = preferences.getBoolean("sort_by_context", false)
         val usePrediction = preferences.getBoolean("use_prediction", false)
 
@@ -158,8 +158,7 @@ class ConverterAccessibilityService: AccessibilityService() {
             else -> {}
         }
 
-        val packageNames = listOf("org.mozilla.firefox", "com.android.chrome")
-        val inputAssistantMode = event.packageName in packageNames
+        val inputAssistantMode = event.packageName in assistantEnabledApps
 
         if(inputAssistantMode) onInputAssistant(event)
         else onNormalConversion(event)
