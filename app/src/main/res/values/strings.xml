@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Hanja Converter</string>
     <string name="assistant_title">Hanja Input Assistant</string>
-    <string name="open_assistant" translatable="false">漢字</string>
+    <string name="open_assistant">Open Hanja Input Assistant</string>
     <string name="settings_saved">Saved.</string>
     <string name="candidates_count_format" translatable="false">%1$s / %2$s</string>
     <string name="paste">Paste</string>
