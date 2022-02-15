@@ -1,14 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.github.lee0701.converter.assistant.InputAssistantLauncherView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="20dp"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:layout_margin="10dp"
     android:elevation="10dp"
-    android:background="@drawable/input_assistant_launcher_background">
+    android:background="@android:color/background_light">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/ic_launcher_foreground" />
-</io.github.lee0701.converter.assistant.InputAssistantLauncherView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="@string/open_assistant"
+        android:background="?android:selectableItemBackground" />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/close"
+            android:layout_width="32sp"
+            android:layout_height="32sp"
+            android:layout_gravity="center"
+            android:background="@drawable/ic_baseline_close_24"
+            android:backgroundTint="@android:color/black"
+            android:contentDescription="@string/close" />
+    </FrameLayout>
+
+</LinearLayout>

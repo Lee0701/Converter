@@ -48,6 +48,7 @@ class InputAssistantWindow(private val context: Context) {
         context.sendBroadcast(intent)
 
         val binding = this.binding ?: return
+        binding.text.text.clear()
         try {
             windowManager.addView(binding.root, layoutParams)
         } catch(ex: WindowManager.BadTokenException) {

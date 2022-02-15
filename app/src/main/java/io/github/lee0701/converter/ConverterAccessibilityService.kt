@@ -1,14 +1,20 @@
 package io.github.lee0701.converter
 
 import android.accessibilityservice.AccessibilityService
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.preference.PreferenceManager
 import androidx.room.Room
 import io.github.lee0701.converter.CharacterSet.isHangul
+import io.github.lee0701.converter.assistant.InputAssistantLauncherWindow
+import io.github.lee0701.converter.assistant.InputAssistantWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow
@@ -24,12 +30,15 @@ import kotlin.math.min
 
 class ConverterAccessibilityService: AccessibilityService() {
 
+    private val handler = Handler(Looper.getMainLooper())
     private val scope = CoroutineScope(Dispatchers.IO)
     private var job: Job? = null
 
     private lateinit var converter: Converter
     private var predictor: Predictor? = null
     private lateinit var candidatesWindow: CandidatesWindow
+    private lateinit var inputAssistantWindow: InputAssistantWindow
+    private lateinit var inputAssistantLauncherWindow: InputAssistantLauncherWindow
     private var source: AccessibilityNodeInfo? = null
 
     private var composingText = ComposingText("", 0)
@@ -118,10 +127,18 @@ class ConverterAccessibilityService: AccessibilityService() {
             else -> VerticalCandidatesWindow(this@ConverterAccessibilityService)
         }
 
+        inputAssistantWindow = InputAssistantWindow(this)
+        inputAssistantLauncherWindow = InputAssistantLauncherWindow(this)
+
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if(event == null) return
+
+        val packageNames = listOf("org.mozilla.firefox", "com.android.chrome")
+        val inputAssistantMode = event.packageName in packageNames
+        if(inputAssistantMode) onInputAssistant(event)
+
         when(event.eventType) {
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
                 val isHideEvent = CandidatesWindowHider.of(event.packageName?.toString() ?: "")?.isHideEvent(event)
@@ -130,7 +147,9 @@ class ConverterAccessibilityService: AccessibilityService() {
                 }
             }
             AccessibilityEvent.TYPE_VIEW_FOCUSED -> {
-                this.source = event.source
+                // Update paste target.
+                // Prevent from input assistant window itself being targeted as paste target
+                if(event.packageName != this.packageName) this.source = event.source
             }
             AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> {
                 val source = event.source ?: return
@@ -164,6 +183,40 @@ class ConverterAccessibilityService: AccessibilityService() {
                 }
             }
             else -> {}
+        }
+    }
+
+    private fun onInputAssistant(event: AccessibilityEvent) {
+        when(event.eventType) {
+            AccessibilityEvent.TYPE_VIEW_FOCUSED -> {
+                if(event.source != null && event.source.className == "android.widget.EditText") {
+                    val rect = Rect().apply { event.source.getBoundsInScreen(this) }
+                    inputAssistantLauncherWindow.apply {
+                        xPos = rect.left
+                        yPos = rect.top
+                    }.show {
+                        inputAssistantLauncherWindow.hide()
+                        inputAssistantWindow.show { text ->
+                            val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                            val clip = ClipData.newPlainText(text, text)
+                            inputAssistantWindow.hide()
+                            clipboard.setPrimaryClip(clip)
+                            handler.postDelayed({ pasteClipboard() }, 300)
+                        }
+                    }
+                } else {
+                    inputAssistantLauncherWindow.hide()
+                }
+            }
+            AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
+                if(event.source != null && event.source.className == "android.widget.EditText") {
+                    val rect = Rect().apply { event.source.getBoundsInScreen(this) }
+                    inputAssistantLauncherWindow.apply {
+                        xPos = rect.left
+                        yPos = rect.top
+                    }.updateLayout()
+                }
+            }
         }
     }
 

@@ -52,10 +52,6 @@ class ConverterTileService: TileService() {
         inputAssistantWindow.hide()
     }
 
-    fun updateLayout() {
-        inputAssistantLauncherWindow.updateLayout()
-    }
-
     companion object {
         var INSTANCE: ConverterTileService? = null
     }
