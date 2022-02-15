@@ -12,6 +12,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import io.github.lee0701.converter.R
 import io.github.lee0701.converter.databinding.InputAssistantViewBinding
+import java.lang.IllegalArgumentException
 
 class InputAssistantWindow(private val context: Context) {
 
@@ -37,7 +38,7 @@ class InputAssistantWindow(private val context: Context) {
     fun show(onAccept: (CharSequence) -> Unit) {
         if(this.binding == null) {
             val binding = InputAssistantViewBinding.inflate(LayoutInflater.from(context))
-            binding.close.setOnClickListener { destroy() }
+            binding.close.setOnClickListener { hide() }
             binding.paste.setOnClickListener { onAccept(binding.text.text) }
 
             this.binding = binding
@@ -55,8 +56,10 @@ class InputAssistantWindow(private val context: Context) {
         binding.text.requestFocus()
     }
 
-    fun destroy() {
-        binding?.root?.let { windowManager.removeView(it) }
+    fun hide() {
+        try {
+            binding?.root?.let { windowManager.removeView(it) }
+        } catch (ex: IllegalArgumentException) {}
     }
 
 }

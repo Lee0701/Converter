@@ -9,7 +9,10 @@ import androidx.annotation.RequiresApi
 import io.github.lee0701.converter.ConverterTileService
 
 @RequiresApi(Build.VERSION_CODES.N)
-class InputAssistantView(context: Context, attributeSet: AttributeSet): LinearLayout(context, attributeSet) {
+class InputAssistantView(
+    context: Context,
+    attributeSet: AttributeSet,
+): LinearLayout(context, attributeSet) {
 
     // Back button Handling
     override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
