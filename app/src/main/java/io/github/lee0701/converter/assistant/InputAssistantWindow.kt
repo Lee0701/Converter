@@ -30,6 +30,7 @@ class InputAssistantWindow(private val context: Context) {
         type, flags, PixelFormat.TRANSLUCENT
     ).apply {
         gravity = Gravity.CENTER
+        // Required for keyboard to show initially
         softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
     }
 
@@ -46,10 +47,10 @@ class InputAssistantWindow(private val context: Context) {
             }
             this.binding = binding
         }
+        // Close notification panel
         val intent = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
         context.sendBroadcast(intent)
-        val binding = this.binding ?: return
-        binding.text.requestFocus()
+        binding?.text?.requestFocus()
     }
 
     fun destroy() {

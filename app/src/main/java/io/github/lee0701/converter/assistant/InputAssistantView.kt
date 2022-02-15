@@ -11,6 +11,7 @@ import io.github.lee0701.converter.ConverterTileService
 @RequiresApi(Build.VERSION_CODES.N)
 class InputAssistantView(context: Context, attributeSet: AttributeSet): LinearLayout(context, attributeSet) {
 
+    // Back button Handling
     override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
         if(event != null) {
             if(event.keyCode == KeyEvent.KEYCODE_BACK) {
@@ -21,6 +22,7 @@ class InputAssistantView(context: Context, attributeSet: AttributeSet): LinearLa
         return super.dispatchKeyEvent(event)
     }
 
+    // Home button | Apps button Handling
     fun onCloseSystemDialogs(reason: String) {
         ConverterTileService.INSTANCE?.closeWindow()
     }
