@@ -7,7 +7,7 @@ import io.github.lee0701.converter.history.Word
 class HistoryHanjaConverter(
     private val database: HistoryDatabase,
     private val freezeLearning: Boolean,
-): HanjaConverter {
+): LearningHanjaConverter {
 
     override fun convert(composingText: ComposingText): List<Candidate> {
         val word = composingText.composing.toString()

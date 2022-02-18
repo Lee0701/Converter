@@ -3,6 +3,7 @@ package io.github.lee0701.converter
 import io.github.lee0701.converter.candidates.Candidate
 import io.github.lee0701.converter.engine.ComposingText
 import io.github.lee0701.converter.engine.HanjaConverter
+import io.github.lee0701.converter.engine.LearningHanjaConverter
 import kotlinx.coroutines.*
 
 class Converter(
@@ -16,7 +17,7 @@ class Converter(
     }
 
     fun learn(input: String, result: String) {
-        hanjaConverter.learn(input, result)
+        if(hanjaConverter is LearningHanjaConverter) hanjaConverter.learn(input, result)
     }
 
     private fun getExtraCandidates(hangul: CharSequence): List<Candidate> {

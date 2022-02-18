@@ -4,7 +4,7 @@ import io.github.lee0701.converter.candidates.Candidate
 
 class CompoundHanjaConverter(
     val converters: List<HanjaConverter>,
-): HanjaConverter {
+): LearningHanjaConverter, PredictingHanjaConverter {
 
     override fun convert(composingText: ComposingText): List<Candidate> {
         val converted = converters.flatMap { it.convert(composingText) }
@@ -29,6 +29,11 @@ class CompoundHanjaConverter(
     }
 
     override fun learn(input: String, result: String) {
-        converters.forEach { it.learn(input, result) }
+        converters.forEach { if(it is LearningHanjaConverter) it.learn(input, result) }
     }
+
+    override fun predict(composingText: ComposingText): List<Candidate> {
+        return converters.filterIsInstance<PredictingHanjaConverter>().flatMap { it.predict(composingText) }
+    }
+
 }

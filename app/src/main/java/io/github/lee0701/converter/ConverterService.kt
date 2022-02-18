@@ -13,8 +13,6 @@ import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.view.VerticalCandidatesWindow
-import io.github.lee0701.converter.dictionary.CompoundDictionary
-import io.github.lee0701.converter.dictionary.HistoryDictionary
 import io.github.lee0701.converter.dictionary.UserDictionaryDictionary
 import io.github.lee0701.converter.engine.*
 import io.github.lee0701.converter.history.HistoryDatabase
@@ -95,7 +93,12 @@ class ConverterService: AccessibilityService() {
 
         val additional = preferences.getStringSet("additional_dictionaries", setOf())?.toList() ?: listOf()
         val dictionaries = DictionaryManager.loadCompoundDictionary(assets, listOf("base") + additional)
-        val dictionaryHanjaConverter: HanjaConverter = DictionaryHanjaConverter(dictionaries)
+        val dictionaryHanjaConverter: HanjaConverter =
+            if(BuildConfig.IS_DONATION && preferences.getBoolean("use_autocomplete", false)) {
+                PredictingDictionaryHanjaConverter(dictionaries)
+            } else {
+                DictionaryHanjaConverter(dictionaries)
+            }
 
         if(tfLitePredictor != null && sortByContext) {
             converters += ContextSortingHanjaConverter(dictionaryHanjaConverter, tfLitePredictor)
@@ -103,12 +106,7 @@ class ConverterService: AccessibilityService() {
             converters += dictionaryHanjaConverter
         }
 
-        var hanjaConverter: HanjaConverter
-        hanjaConverter = CompoundHanjaConverter(converters.toList())
-
-        if(BuildConfig.IS_DONATION && preferences.getBoolean("use_autocomplete", false)) {
-            hanjaConverter = PredictingHanjaConverter(hanjaConverter, dictionaries)
-        }
+        val hanjaConverter: HanjaConverter = CompoundHanjaConverter(converters.toList())
 
         converter = Converter(hanjaConverter)
         if(tfLitePredictor != null && usePrediction) predictor = Predictor(tfLitePredictor)

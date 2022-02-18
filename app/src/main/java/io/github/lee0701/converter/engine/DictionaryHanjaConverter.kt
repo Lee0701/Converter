@@ -4,7 +4,7 @@ import io.github.lee0701.converter.candidates.Candidate
 import io.github.lee0701.converter.dictionary.HanjaDictionary
 import io.github.lee0701.converter.dictionary.ListDictionary
 
-class DictionaryHanjaConverter(
+open class DictionaryHanjaConverter(
     private val dictionary: ListDictionary<HanjaDictionary.Entry>,
 ): HanjaConverter {
 
@@ -24,6 +24,4 @@ class DictionaryHanjaConverter(
         }
     }
 
-    override fun learn(input: String, result: String) {
-    }
 }

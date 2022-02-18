@@ -42,6 +42,4 @@ class ContextSortingHanjaConverter(
         }
     }
 
-    override fun learn(input: String, result: String) {
-    }
 }
