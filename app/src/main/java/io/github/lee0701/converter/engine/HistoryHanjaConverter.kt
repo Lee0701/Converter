@@ -7,7 +7,7 @@ import io.github.lee0701.converter.history.Word
 class HistoryHanjaConverter(
     private val database: HistoryDatabase,
     private val freezeLearning: Boolean,
-): LearningHanjaConverter {
+): LearningHanjaConverter, PredictingHanjaConverter {
 
     override fun convert(composingText: ComposingText): List<Candidate> {
         val word = composingText.composing.toString()
@@ -23,6 +23,10 @@ class HistoryHanjaConverter(
                 .sortedByDescending { it.count }
                 .map { Candidate(slicedWord, it.result, "") }
         }
+    }
+
+    override fun predict(composingText: ComposingText): List<Candidate> {
+        TODO("Not yet implemented")
     }
 
     override fun learn(input: String, result: String) {

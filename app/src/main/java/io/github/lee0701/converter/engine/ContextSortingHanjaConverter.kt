@@ -8,17 +8,18 @@ class ContextSortingHanjaConverter(
 ): HanjaConverter {
 
     private var predictionContext: String = ""
-    private var prediction: FloatArray = floatArrayOf()
+    private var prediction: Predictor.Result? = null
 
     override fun convert(composingText: ComposingText): List<Candidate> {
         return hanjaConverter.convert(composingText).let { converted ->
             if(converted.isNotEmpty()) {
                 if(predictionContext != composingText.textBeforeComposing.toString()) {
                     predictionContext = composingText.textBeforeComposing.toString()
-                    prediction = predictor.predict(predictor.tokenize(predictionContext))
+                    prediction = predictor.predict(predictionContext)
                 }
-                if(prediction.isNotEmpty()) {
-                    return@let converted.sortedByDescending { predictor.getConfidence(prediction, it.hanja) }
+                val prediction = this.prediction
+                if(prediction != null) {
+                    return@let converted.sortedByDescending { prediction.score(it.hanja) }
                 }
             }
             return@let converted
@@ -30,11 +31,12 @@ class ContextSortingHanjaConverter(
             if(converted.any { it.isNotEmpty() }) {
                 if(predictionContext != composingText.textBeforeComposing.toString()) {
                     predictionContext = composingText.textBeforeComposing.toString()
-                    prediction = predictor.predict(predictor.tokenize(predictionContext))
+                    prediction = predictor.predict(predictionContext)
                 }
-                if(prediction.isNotEmpty()) {
+                val prediction = this.prediction
+                if(prediction != null) {
                     return@let converted.map { list ->
-                        list.sortedByDescending { predictor.getConfidence(prediction, it.hanja) }
+                        list.sortedByDescending { prediction.score(it.hanja) }
                     }
                 }
             }

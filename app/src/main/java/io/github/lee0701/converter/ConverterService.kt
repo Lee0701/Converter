@@ -9,6 +9,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.preference.PreferenceManager
 import androidx.room.Room
 import io.github.lee0701.converter.CharacterSet.isHangul
+import io.github.lee0701.converter.candidates.Candidate
 import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow
@@ -28,7 +29,7 @@ class ConverterService: AccessibilityService() {
     private var job: Job? = null
 
     private lateinit var converter: Converter
-    private var predictor: Predictor? = null
+    private var predictor: TFLitePredictor? = null
     private lateinit var candidatesWindow: CandidatesWindow
 
     private var composingText = ComposingText("", 0)
@@ -72,7 +73,6 @@ class ConverterService: AccessibilityService() {
 
         val tfLitePredictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
                 TFLitePredictor(
-                    this@ConverterService,
                     assets.open("ml/wordlist.txt"),
                     assets.openFd("ml/model.tflite")
                 )
@@ -109,7 +109,7 @@ class ConverterService: AccessibilityService() {
         val hanjaConverter: HanjaConverter = CompoundHanjaConverter(converters.toList())
 
         converter = Converter(hanjaConverter)
-        if(tfLitePredictor != null && usePrediction) predictor = Predictor(tfLitePredictor)
+        if(tfLitePredictor != null && usePrediction) predictor = tfLitePredictor
         else predictor = null
 
         candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
@@ -165,6 +165,7 @@ class ConverterService: AccessibilityService() {
     private fun convert(source: AccessibilityNodeInfo) {
         job?.cancel()
         job = scope.launch {
+            val predictor = predictor
             if(composingText.composing.isNotEmpty()) {
                 val candidates = converter.convertAsync(scope, composingText).await()
                 if(candidates.isNotEmpty()) {
@@ -188,8 +189,9 @@ class ConverterService: AccessibilityService() {
                 learnConverted()
                 val anyHangul = composingText.textBeforeCursor.any { isHangul(it) }
                 if(anyHangul) {
-                    val candidates = predictor?.predictAsync(scope, composingText)?.await()
-                    if(candidates != null) withContext(Dispatchers.Main) {
+                    val candidates = predictor.predict(composingText.textBeforeComposing.toString()).top(10)
+                        .map { Candidate("", it, "") }
+                    withContext(Dispatchers.Main) {
                         candidatesWindow.show(candidates, rect) { candidate ->
                             val prediction = candidate.hanja
                             val inserted = composingText.inserted(prediction)

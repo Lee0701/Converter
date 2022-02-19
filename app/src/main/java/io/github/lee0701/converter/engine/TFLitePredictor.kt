@@ -1,30 +1,28 @@
 package io.github.lee0701.converter.engine
 
-import android.content.Context
 import android.content.res.AssetFileDescriptor
-import io.github.lee0701.converter.candidates.Candidate
 import org.tensorflow.lite.Interpreter
-import java.io.FileInputStream
 import java.io.InputStream
-import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 
-class TFLitePredictor(context: Context, wordList: InputStream, model: AssetFileDescriptor) {
+class TFLitePredictor(
+    wordList: InputStream,
+    modelDescriptor: AssetFileDescriptor,
+): Predictor {
 
     private val indexToWord = wordList.bufferedReader().readLines()
         .map { it.split("\t") }.map { (_, word, _) -> word }
     private val wordToIndex = indexToWord.mapIndexed { i, w -> w to i }.toMap()
 
     private val seqLength = 99
-    private val interpreter = Interpreter(model.createInputStream().channel.map(
-        FileChannel.MapMode.READ_ONLY, model.startOffset, model.declaredLength))
+    private val interpreter = Interpreter(modelDescriptor.createInputStream().channel.map(
+        FileChannel.MapMode.READ_ONLY, modelDescriptor.startOffset, modelDescriptor.declaredLength))
 
-    fun predict(input: List<Int>, topn: Int = 10): List<Candidate> {
-        if(topn <= 0) return emptyList()
-        return output(predict(input), topn)
+    override fun predict(context: String): Predictor.Result {
+        return Result(predict(tokenize(context)))
     }
 
-    fun predict(input: List<Int>): FloatArray {
+    private fun predict(input: List<Int>): FloatArray {
         try {
             val inputArray = ((0 until seqLength).map { indexToWord.size } + input).takeLast(seqLength).map { it.toFloat() }.toFloatArray()
             val outputArray = arrayOf((0 until indexToWord.size + 1).map { 0f }.toFloatArray())
@@ -34,16 +32,6 @@ class TFLitePredictor(context: Context, wordList: InputStream, model: AssetFileD
             ex.printStackTrace()
             return floatArrayOf()
         }
-    }
-
-    fun output(prediction: FloatArray, topn: Int = 10): List<Candidate> {
-        if(topn <= 0) return emptyList()
-        return prediction.mapIndexed { i, value -> i to value }.sortedByDescending { it.second }.take(topn)
-            .map { (index, _) -> Candidate("", indexToWord[index], "") }
-    }
-
-    fun getConfidence(prediction: FloatArray, word: String): Float? {
-        return wordToIndex[word]?.let { prediction[it] }
     }
 
     fun tokenize(text: String): List<Int> {
@@ -65,4 +53,18 @@ class TFLitePredictor(context: Context, wordList: InputStream, model: AssetFileD
         return result.filter { it != -1 }
     }
 
+    inner class Result(
+        private val prediction: FloatArray,
+    ): Predictor.Result {
+        override fun top(n: Int): List<String> {
+            if(n <= 0) return emptyList()
+            return prediction.mapIndexed { i, value -> i to value }
+                .sortedByDescending { it.second }.take(n)
+                .map { (index, _) -> indexToWord[index] }
+        }
+
+        override fun score(candidate: String): Float {
+            return wordToIndex[candidate]?.let { prediction[it] } ?: 0f
+        }
+    }
 }
