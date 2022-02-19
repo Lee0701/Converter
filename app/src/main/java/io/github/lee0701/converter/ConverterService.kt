@@ -28,7 +28,7 @@ class ConverterService: AccessibilityService() {
     private val scope = CoroutineScope(Dispatchers.IO)
     private var job: Job? = null
 
-    private lateinit var converter: Converter
+    private lateinit var converter: HanjaConverter
     private var predictor: TFLitePredictor? = null
     private lateinit var candidatesWindow: CandidatesWindow
 
@@ -108,7 +108,7 @@ class ConverterService: AccessibilityService() {
 
         val hanjaConverter: HanjaConverter = CompoundHanjaConverter(converters.toList())
 
-        converter = Converter(hanjaConverter)
+        converter = hanjaConverter
         if(tfLitePredictor != null && usePrediction) predictor = tfLitePredictor
         else predictor = null
 
@@ -167,7 +167,7 @@ class ConverterService: AccessibilityService() {
         job = scope.launch {
             val predictor = predictor
             if(composingText.composing.isNotEmpty()) {
-                val candidates = converter.convertAsync(scope, composingText).await()
+                val candidates = getExtraCandidates(composingText.composing) + converter.convert(composingText)
                 if(candidates.isNotEmpty()) {
                     withContext(Dispatchers.Main) {
                         candidatesWindow.show(candidates, rect) { candidate ->
@@ -231,7 +231,18 @@ class ConverterService: AccessibilityService() {
     }
 
     private fun learn(input: String, result: String) {
+        val converter = converter
+        if(converter !is LearningHanjaConverter) return
         CoroutineScope(Dispatchers.IO).launch { converter.learn(input, result) }
+    }
+
+    private fun getExtraCandidates(hangul: CharSequence): List<Candidate> {
+        if(hangul.isEmpty()) return emptyList()
+        val list = mutableListOf<CharSequence>()
+        val nonHangulIndex = hangul.indexOfFirst { c -> !CharacterSet.isHangul(c) }
+        list += if(nonHangulIndex > 0) hangul.slice(0 until nonHangulIndex) else hangul
+        if(CharacterSet.isHangul(hangul[0])) list.add(0, hangul[0].toString())
+        return list.map { Candidate(it.toString(), it.toString(), "") }
     }
 
     private fun firstDifference(a: CharSequence, b: CharSequence): Int {
