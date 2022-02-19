@@ -19,7 +19,7 @@ class ContextSortingHanjaConverter(
                 }
                 val prediction = this.prediction
                 if(prediction != null) {
-                    return@let converted.sortedByDescending { prediction.score(it.hanja) }
+                    return@let converted.sortedByDescending { prediction.score(it) }
                 }
             }
             return@let converted
@@ -36,7 +36,7 @@ class ContextSortingHanjaConverter(
                 val prediction = this.prediction
                 if(prediction != null) {
                     return@let converted.map { list ->
-                        list.sortedByDescending { prediction.score(it.hanja) }
+                        list.sortedByDescending { prediction.score(it) }
                     }
                 }
             }

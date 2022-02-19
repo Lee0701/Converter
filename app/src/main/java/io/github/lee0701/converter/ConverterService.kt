@@ -29,7 +29,7 @@ class ConverterService: AccessibilityService() {
     private var job: Job? = null
 
     private lateinit var converter: HanjaConverter
-    private var predictor: TFLitePredictor? = null
+    private var predictor: Predictor? = null
     private lateinit var candidatesWindow: CandidatesWindow
 
     private var composingText = ComposingText("", 0)
@@ -70,6 +70,7 @@ class ConverterService: AccessibilityService() {
             preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
         val sortByContext = preferences.getBoolean("sort_by_context", false)
         val usePrediction = preferences.getBoolean("use_prediction", false)
+        val autoComplete = preferences.getBoolean("use_autocomplete", false)
 
         val tfLitePredictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
                 TFLitePredictor(
@@ -93,12 +94,7 @@ class ConverterService: AccessibilityService() {
 
         val additional = preferences.getStringSet("additional_dictionaries", setOf())?.toList() ?: listOf()
         val dictionaries = DictionaryManager.loadCompoundDictionary(assets, listOf("base") + additional)
-        val dictionaryHanjaConverter: HanjaConverter =
-            if(BuildConfig.IS_DONATION && preferences.getBoolean("use_autocomplete", false)) {
-                PredictingDictionaryHanjaConverter(dictionaries)
-            } else {
-                DictionaryHanjaConverter(dictionaries)
-            }
+        val dictionaryHanjaConverter: HanjaConverter = DictionaryHanjaConverter(dictionaries)
 
         if(tfLitePredictor != null && sortByContext) {
             converters += ContextSortingHanjaConverter(dictionaryHanjaConverter, tfLitePredictor)
@@ -109,8 +105,14 @@ class ConverterService: AccessibilityService() {
         val hanjaConverter: HanjaConverter = CompoundHanjaConverter(converters.toList())
 
         converter = hanjaConverter
-        if(tfLitePredictor != null && usePrediction) predictor = tfLitePredictor
-        else predictor = null
+        if(tfLitePredictor != null) {
+            predictor = ResortingPredictor(
+                DictionaryPredictor(dictionaries),
+                tfLitePredictor
+            )
+        } else {
+            predictor = null
+        }
 
         candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
             "horizontal" -> HorizontalCandidatesWindow(this@ConverterService)
@@ -166,47 +168,31 @@ class ConverterService: AccessibilityService() {
         job?.cancel()
         job = scope.launch {
             val predictor = predictor
-            if(composingText.composing.isNotEmpty()) {
-                val candidates = getExtraCandidates(composingText.composing) + converter.convert(composingText)
-                if(candidates.isNotEmpty()) {
-                    withContext(Dispatchers.Main) {
-                        candidatesWindow.show(candidates, rect) { candidate ->
-                            val hanja = candidate.hanja
-                            val hangul = candidate.hangul.ifEmpty { composingText.composing.take(hanja.length).toString() }
-                            val replaced = composingText.replaced(hangul, hanja, candidate.input.length, outputFormat)
-                            ignoreText = replaced.text
-                            pasteFullText(source, replaced.text)
-                            setSelection(source, replaced.to)
-                            composingText = replaced
-                            convert(source)
-                            if(hanja.all { CharacterSet.isHanja(it) }) learn(hangul, hanja)
+            val converted = converter.convertPrefix(composingText).flatten()
+            val predicted = predictor?.predict(composingText)?.top(10) ?: listOf()
+            val candidates = getExtraCandidates(composingText.composing) +
+                    (if(converted.isNotEmpty()) predicted.take(1) else predicted) +
+                    converted
+            if(candidates.isNotEmpty()) {
+                withContext(Dispatchers.Main) {
+                    candidatesWindow.show(candidates, rect) { candidate ->
+                        val hanja = candidate.hanja
+                        val hangul = candidate.hangul.ifEmpty { composingText.composing.take(hanja.length).toString() }
+                        val replaced = composingText.replaced(hangul, hanja, candidate.input.length, outputFormat)
+                        ignoreText = replaced.text
+                        pasteFullText(source, replaced.text)
+                        setSelection(source, replaced.to)
+                        composingText = replaced
+                        convert(source)
+                        if(!predicted.contains(candidate) && hanja.all { CharacterSet.isHanja(it) }) {
+                            learn(hangul, hanja)
                         }
                     }
-                } else {
-                    candidatesWindow.destroy()
-                }
-            } else if(predictor != null) {
-                learnConverted()
-                val anyHangul = composingText.textBeforeCursor.any { isHangul(it) }
-                if(anyHangul) {
-                    val candidates = predictor.predict(composingText.textBeforeComposing.toString()).top(10)
-                        .map { Candidate("", it, "") }
-                    withContext(Dispatchers.Main) {
-                        candidatesWindow.show(candidates, rect) { candidate ->
-                            val prediction = candidate.hanja
-                            val inserted = composingText.inserted(prediction)
-                            ignoreText = inserted.text
-                            pasteFullText(source, inserted.text)
-                            setSelection(source, inserted.to)
-                            composingText = inserted
-                            convert(source)
-                        }
-                    }
-                } else {
-                    candidatesWindow.destroy()
                 }
             } else {
-                candidatesWindow.destroy()
+                withContext(Dispatchers.Main) {
+                    candidatesWindow.destroy()
+                }
             }
         }
     }

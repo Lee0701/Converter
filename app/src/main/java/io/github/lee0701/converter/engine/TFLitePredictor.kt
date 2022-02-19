@@ -1,6 +1,7 @@
 package io.github.lee0701.converter.engine
 
 import android.content.res.AssetFileDescriptor
+import io.github.lee0701.converter.candidates.Candidate
 import org.tensorflow.lite.Interpreter
 import java.io.InputStream
 import java.nio.channels.FileChannel
@@ -18,7 +19,11 @@ class TFLitePredictor(
     private val interpreter = Interpreter(modelDescriptor.createInputStream().channel.map(
         FileChannel.MapMode.READ_ONLY, modelDescriptor.startOffset, modelDescriptor.declaredLength))
 
-    override fun predict(context: String): Predictor.Result {
+    override fun predict(composingText: ComposingText): Predictor.Result {
+        return Result(predict(tokenize(composingText.textBeforeComposing.toString())))
+    }
+
+    fun predict(context: String): Predictor.Result {
         return Result(predict(tokenize(context)))
     }
 
@@ -34,7 +39,7 @@ class TFLitePredictor(
         }
     }
 
-    fun tokenize(text: String): List<Int> {
+    private fun tokenize(text: String): List<Int> {
         val result = mutableListOf<Int>()
         text.indices.forEach { i ->
             if(result.sumOf { if(it == -1) 1 else indexToWord[it].length } <= i) {
@@ -56,15 +61,15 @@ class TFLitePredictor(
     inner class Result(
         private val prediction: FloatArray,
     ): Predictor.Result {
-        override fun top(n: Int): List<String> {
+        override fun top(n: Int): List<Candidate> {
             if(n <= 0) return emptyList()
             return prediction.mapIndexed { i, value -> i to value }
                 .sortedByDescending { it.second }.take(n)
-                .map { (index, _) -> indexToWord[index] }
+                .map { (index, _) -> Candidate("", indexToWord[index], "") }
         }
 
-        override fun score(candidate: String): Float {
-            return wordToIndex[candidate]?.let { prediction[it] } ?: 0f
+        override fun score(candidate: Candidate): Float {
+            return wordToIndex[candidate.hanja]?.let { prediction[it] } ?: 0f
         }
     }
 }

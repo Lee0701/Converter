@@ -6,15 +6,11 @@ import io.github.lee0701.converter.dictionary.HanjaDictionary
 import io.github.lee0701.converter.dictionary.PredictingDictionary
 import java.text.Normalizer
 
-class PredictingDictionaryHanjaConverter(
-    private val dictionary: PredictingDictionary<HanjaDictionary.Entry>,
-): DictionaryHanjaConverter(dictionary), PredictingHanjaConverter {
+class DictionaryPredictor(
+    val dictionary: PredictingDictionary<HanjaDictionary.Entry>
+): Predictor {
 
-    override fun convertPrefix(composingText: ComposingText): List<List<Candidate>> {
-        return listOf(predict(composingText)) + super.convertPrefix(composingText)
-    }
-
-    override fun predict(composingText: ComposingText): List<Candidate> {
+    override fun predict(composingText: ComposingText): Predictor.Result {
         val composing = composingText.composing.toString()
         val preprocessed = preprocess(composing)
         val predicted = preprocessed.flatMap { word ->
@@ -26,10 +22,11 @@ class PredictingDictionaryHanjaConverter(
             val predicted = dictionary.predict(input)
             return@flatMap predicted.filter { (k, _) -> word != k && match(word, k) }
         }
+        val maxFrequency = predicted.map { (_, result) -> result.frequency }.maxOrNull()?.toFloat() ?: 1f
         val sorted = predicted.sortedByDescending { (_, result) -> result.frequency }
-        val candidates = sorted.map { (key, value) -> Candidate(key, value.result, value.extra ?: "", composing) }
+        val candidates = sorted.map { (key, value) -> Candidate(key, value.result, value.extra ?: "", composing) to value.frequency / maxFrequency }
 
-        return candidates.take(1)
+        return Result(candidates)
     }
 
     private fun match(input: String, output: String): Boolean {
@@ -63,6 +60,21 @@ class PredictingDictionaryHanjaConverter(
         }
 
         return result.toList()
+    }
+
+    class Result(
+        candidates: List<Pair<Candidate, Float>>
+    ): Predictor.Result {
+
+        private val candidates = candidates.sortedByDescending { it.second }.toMap()
+
+        override fun top(n: Int): List<Candidate> {
+            return candidates.keys.take(n)
+        }
+
+        override fun score(candidate: Candidate): Float {
+            return candidates[candidate] ?: 0f
+        }
     }
 
 }
