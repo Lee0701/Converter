@@ -5,18 +5,21 @@
     <item
         android:id="@+id/action_clear_dictionary"
         android:icon="@drawable/ic_baseline_delete_sweep_24"
+        app:iconTint="?colorControlNormal"
         android:title="@string/clear_dictionary"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_import_dictionary"
         android:icon="@drawable/ic_baseline_file_download_24"
+        app:iconTint="?colorControlNormal"
         android:title="@string/import_dictionary"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_export_dictionary"
         android:icon="@drawable/ic_baseline_file_upload_24"
+        app:iconTint="?colorControlNormal"
         android:title="@string/export_dictionary"
         app:showAsAction="never" />
 

@@ -14,8 +14,12 @@
         <entry key="app/src/main/res/drawable/ic_baseline_file_download_24.xml" value="1.5125" />
         <entry key="app/src/main/res/drawable/ic_baseline_more_vert_24.xml" value="1.5125" />
         <entry key="app/src/main/res/drawable/ic_baseline_unfold_more_24.xml" value="2.2708333333333335" />
+        <entry key="app/src/main/res/drawable/input_assistant_button_background_down.xml" value="0.263" />
+        <entry key="app/src/main/res/drawable/input_assistant_button_background_up.xml" value="0.263" />
+        <entry key="app/src/main/res/drawable/input_assistant_launcher_background.xml" value="0.263" />
+        <entry key="app/src/main/res/drawable/input_assistant_title_background.xml" value="0.263" />
         <entry key="app/src/main/res/layout/activity_dictionary_license.xml" value="1.2708333333333333" />
-        <entry key="app/src/main/res/layout/activity_information.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_information.xml" value="0.75" />
         <entry key="app/src/main/res/layout/activity_settings.xml" value="0.29924242424242425" />
         <entry key="app/src/main/res/layout/activity_user_dictionary.xml" value="0.6515151515151515" />
         <entry key="app/src/main/res/layout/activity_user_dictionary_manager.xml" value="0.7166666666666667" />
