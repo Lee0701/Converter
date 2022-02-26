@@ -149,6 +149,7 @@ class ConverterAccessibilityService: AccessibilityService() {
                 val isHideEvent = CandidatesWindowHider.of(event.packageName?.toString() ?: "")?.isHideEvent(event)
                 if(enableAutoHiding && isHideEvent == true) {
                     candidatesWindow.destroy()
+                    inputAssistantLauncherWindow.hide()
                 }
             }
             AccessibilityEvent.TYPE_VIEW_FOCUSED,
