@@ -74,78 +74,73 @@ class ConverterAccessibilityService: AccessibilityService() {
     }
 
     fun restartService() {
-        scope.launch {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this@ConverterAccessibilityService)
 
-            val preferences = PreferenceManager.getDefaultSharedPreferences(this@ConverterAccessibilityService)
+        outputFormat = preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
+        enableAutoHiding = preferences.getBoolean("enable_auto_hiding", false)
+        assistantEnabledApps = preferences.getStringSet("assistant_enabled_apps", setOf()) ?: setOf()
 
-            outputFormat = preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
-            enableAutoHiding = preferences.getBoolean("enable_auto_hiding", false)
-            assistantEnabledApps = preferences.getStringSet("assistant_enabled_apps", setOf()) ?: setOf()
+        val sortByContext = preferences.getBoolean("sort_by_context", false)
+        val usePrediction = preferences.getBoolean("use_prediction", false)
+        val autoComplete = preferences.getBoolean("use_autocomplete", false)
 
-            val sortByContext = preferences.getBoolean("sort_by_context", false)
-            val usePrediction = preferences.getBoolean("use_prediction", false)
-            val autoComplete = preferences.getBoolean("use_autocomplete", false)
+        val tfLitePredictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
+            TFLitePredictor(
+                assets.open("ml/wordlist.txt"),
+                assets.openFd("ml/model.tflite"),
+            )
+        } else null
 
-            val tfLitePredictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
-                TFLitePredictor(
-                    assets.open("ml/wordlist.txt"),
-                    assets.openFd("ml/model.tflite"),
-                )
-            } else null
+        val converters = mutableListOf<HanjaConverter>()
 
-            val converters = mutableListOf<HanjaConverter>()
+        val userDictionaryDatabase = Room.databaseBuilder(applicationContext, UserDictionaryDatabase::class.java, DB_USER_DICTIONARY).build()
+        val userDictionaryHanjaConverter = DictionaryHanjaConverter(UserDictionaryDictionary(userDictionaryDatabase))
+        converters += userDictionaryHanjaConverter
 
-            val userDictionaryDatabase = Room.databaseBuilder(applicationContext, UserDictionaryDatabase::class.java, DB_USER_DICTIONARY).build()
-            val userDictionaryHanjaConverter = DictionaryHanjaConverter(InMemoryUserDictionaryDictionary(userDictionaryDatabase))
-            converters += userDictionaryHanjaConverter
-
-            if(BuildConfig.IS_DONATION && preferences.getBoolean("use_learned_word", false)) {
-                val historyDatabase = Room.databaseBuilder(applicationContext, HistoryDatabase::class.java, DB_HISTORY).build()
-                val historyHanjaConverter = HistoryHanjaConverter(historyDatabase, preferences.getBoolean("freeze_learning", false))
-                CoroutineScope(Dispatchers.IO).launch { historyHanjaConverter.deleteOldWords() }
-                converters += historyHanjaConverter
-            }
-
-            val additional = preferences.getStringSet("additional_dictionaries", setOf())?.toList() ?: listOf()
-            val dictionaries = DictionaryManager.loadCompoundDictionary(assets, listOf("base") + additional)
-            val dictionaryHanjaConverter: HanjaConverter = DictionaryHanjaConverter(dictionaries)
-
-            if(tfLitePredictor != null && sortByContext) {
-                converters += ContextSortingHanjaConverter(dictionaryHanjaConverter, CachingTFLitePredictor(tfLitePredictor))
-            } else {
-                converters += dictionaryHanjaConverter
-            }
-
-            val hanjaConverter: HanjaConverter = CompoundHanjaConverter(converters.toList())
-
-            converter = hanjaConverter
-            if(usePrediction && autoComplete && tfLitePredictor != null) {
-                predictor = ResortingPredictor(
-                    DictionaryPredictor(dictionaries),
-                    CachingTFLitePredictor(tfLitePredictor),
-                )
-            } else if(usePrediction && !autoComplete && tfLitePredictor != null) {
-                predictor = NextWordPredictor(CachingTFLitePredictor(tfLitePredictor))
-            } else if(!usePrediction && autoComplete) {
-                predictor = DictionaryPredictor(dictionaries)
-            } else {
-                predictor = null
-            }
-
-            withContext(Dispatchers.Main) {
-                candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
-                    "horizontal" -> HorizontalCandidatesWindow(this@ConverterAccessibilityService)
-                    else -> VerticalCandidatesWindow(this@ConverterAccessibilityService)
-                }
-
-                inputAssistantWindow = InputAssistantWindow(this@ConverterAccessibilityService)
-                inputAssistantLauncherWindow = when(preferences.getString("window_type", "horizontal")) {
-                    "horizontal" -> HorizontalInputAssistantLauncherWindow(this@ConverterAccessibilityService)
-                    else -> VerticalInputAssistantLauncherWindow(this@ConverterAccessibilityService)
-                }
-
-            }
+        if(BuildConfig.IS_DONATION && preferences.getBoolean("use_learned_word", false)) {
+            val historyDatabase = Room.databaseBuilder(applicationContext, HistoryDatabase::class.java, DB_HISTORY).build()
+            val historyHanjaConverter = HistoryHanjaConverter(historyDatabase, preferences.getBoolean("freeze_learning", false))
+            CoroutineScope(Dispatchers.IO).launch { historyHanjaConverter.deleteOldWords() }
+            converters += historyHanjaConverter
         }
+
+        val additional = preferences.getStringSet("additional_dictionaries", setOf())?.toList() ?: listOf()
+        val dictionaries = DictionaryManager.loadCompoundDictionary(assets, listOf("base") + additional)
+        val dictionaryHanjaConverter: HanjaConverter = DictionaryHanjaConverter(dictionaries)
+
+        if(tfLitePredictor != null && sortByContext) {
+            converters += ContextSortingHanjaConverter(dictionaryHanjaConverter, CachingTFLitePredictor(tfLitePredictor))
+        } else {
+            converters += dictionaryHanjaConverter
+        }
+
+        val hanjaConverter: HanjaConverter = CompoundHanjaConverter(converters.toList())
+
+        converter = hanjaConverter
+        if(usePrediction && autoComplete && tfLitePredictor != null) {
+            predictor = ResortingPredictor(
+                DictionaryPredictor(dictionaries),
+                CachingTFLitePredictor(tfLitePredictor),
+            )
+        } else if(usePrediction && !autoComplete && tfLitePredictor != null) {
+            predictor = NextWordPredictor(CachingTFLitePredictor(tfLitePredictor))
+        } else if(!usePrediction && autoComplete) {
+            predictor = DictionaryPredictor(dictionaries)
+        } else {
+            predictor = null
+        }
+
+        candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
+            "horizontal" -> HorizontalCandidatesWindow(this@ConverterAccessibilityService)
+            else -> VerticalCandidatesWindow(this@ConverterAccessibilityService)
+        }
+
+        inputAssistantWindow = InputAssistantWindow(this)
+        inputAssistantLauncherWindow = when(preferences.getString("window_type", "horizontal")) {
+            "horizontal" -> HorizontalInputAssistantLauncherWindow(this)
+            else -> VerticalInputAssistantLauncherWindow(this)
+        }
+
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
