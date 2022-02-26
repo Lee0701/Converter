@@ -65,26 +65,26 @@ class UserDictionaryManagerActivity: AppCompatActivity(), AdapterView.OnItemSele
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding.wordList.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
 
-        viewModel.dictionaries.observe(this, { list ->
+        viewModel.dictionaries.observe(this) { list ->
             val previousSelected = viewModel.selectedDictionary.value?.id
             dictionaryListAdapter.clear()
             dictionaryListAdapter.addAll(list)
             val dictionary =
-                if(previousSelected != null) list.find { it.id == previousSelected }
+                if (previousSelected != null) list.find { it.id == previousSelected }
                 else list.firstOrNull()
-            if(dictionary != null) viewModel.selectDictionary(dictionary)
-            if(!BuildConfig.IS_DONATION && list.isEmpty()) {
+            if (dictionary != null) viewModel.selectDictionary(dictionary)
+            if (!BuildConfig.IS_DONATION && list.isEmpty()) {
                 viewModel.insertDictionary(UserDictionary(name = "default"))
             }
-        })
+        }
 
-        viewModel.selectedDictionary.observe(this, { _ ->
+        viewModel.selectedDictionary.observe(this) {
             viewModel.loadAllWords()
-        })
+        }
 
-        viewModel.words.observe(this, { list ->
+        viewModel.words.observe(this) { list ->
             wordListAdapter.submitList(list)
-        })
+        }
 
         viewModel.loadAllDictionaries()
 
