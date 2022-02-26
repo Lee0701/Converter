@@ -111,4 +111,8 @@
     <string name="delete">削除</string>
     <string name="clear">비우기</string>
     <string name="person_name">人名</string>
+    <string name="assistant_title">漢字 入力 도우미</string>
+    <string name="open_assistant">漢字 入力 도우미 열기</string>
+    <string name="paste">붙여넣기</string>
+    <string name="expand">擴張</string>
 </resources>
