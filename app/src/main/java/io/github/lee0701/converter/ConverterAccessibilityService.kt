@@ -13,7 +13,9 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.preference.PreferenceManager
 import androidx.room.Room
 import io.github.lee0701.converter.CharacterSet.isHangul
+import io.github.lee0701.converter.assistant.HorizontalInputAssistantLauncherWindow
 import io.github.lee0701.converter.assistant.InputAssistantLauncherWindow
+import io.github.lee0701.converter.assistant.VerticalInputAssistantLauncherWindow
 import io.github.lee0701.converter.assistant.InputAssistantWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
@@ -128,7 +130,10 @@ class ConverterAccessibilityService: AccessibilityService() {
         }
 
         inputAssistantWindow = InputAssistantWindow(this)
-        inputAssistantLauncherWindow = InputAssistantLauncherWindow(this)
+        inputAssistantLauncherWindow = when(preferences.getString("window_type", "horizontal")) {
+            "horizontal" -> HorizontalInputAssistantLauncherWindow(this)
+            else -> VerticalInputAssistantLauncherWindow(this)
+        }
 
     }
 
