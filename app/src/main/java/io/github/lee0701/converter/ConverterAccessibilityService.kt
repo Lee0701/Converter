@@ -117,22 +117,17 @@ class ConverterAccessibilityService: AccessibilityService() {
         val hanjaConverter: HanjaConverter = CompoundHanjaConverter(converters.toList())
 
         converter = hanjaConverter
-        if(tfLitePredictor != null) {
-            if(usePrediction && autoComplete) {
-                predictor = ResortingPredictor(
-                    DictionaryPredictor(dictionaries),
-                    CachingTFLitePredictor(tfLitePredictor),
-                )
-            } else if(usePrediction) {
-                predictor = NextWordPredictor(CachingTFLitePredictor(tfLitePredictor))
-            } else {
-                predictor = null
-            }
+        if(usePrediction && autoComplete && tfLitePredictor != null) {
+            predictor = ResortingPredictor(
+                DictionaryPredictor(dictionaries),
+                CachingTFLitePredictor(tfLitePredictor),
+            )
+        } else if(usePrediction && !autoComplete && tfLitePredictor != null) {
+            predictor = NextWordPredictor(CachingTFLitePredictor(tfLitePredictor))
+        } else if(!usePrediction && autoComplete) {
+            predictor = DictionaryPredictor(dictionaries)
         } else {
             predictor = null
-        }
-        if(predictor == null && autoComplete) {
-            predictor = DictionaryPredictor(dictionaries)
         }
 
         candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
