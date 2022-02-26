@@ -218,7 +218,12 @@ class ConverterAccessibilityService: AccessibilityService() {
                 if(newComposingText.from != composingText.from) learnConverted()
                 composingText = newComposingText
 
-                convert(source)
+                if(addedCount == 0 && removedCount > 0) {
+                    // Do delayed conversion when character is only deleted (backspace)
+                    convert(source, 500)
+                } else {
+                    convert(source)
+                }
 
             }
             AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
@@ -235,9 +240,11 @@ class ConverterAccessibilityService: AccessibilityService() {
         }
     }
 
-    private fun convert(source: AccessibilityNodeInfo) {
+    private fun convert(source: AccessibilityNodeInfo, delay: Long = 0) {
         job?.cancel()
         job = scope.launch {
+            if(delay > 0) delay(delay)
+            if(!isActive) return@launch
             val predictor = predictor
             val converted = converter.convertPrefix(composingText).flatten()
             val predicted = predictor?.predict(composingText)?.top(10) ?: listOf()
