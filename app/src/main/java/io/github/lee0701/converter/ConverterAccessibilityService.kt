@@ -1,20 +1,26 @@
 package io.github.lee0701.converter
 
 import android.accessibilityservice.AccessibilityService
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.preference.PreferenceManager
 import androidx.room.Room
 import io.github.lee0701.converter.CharacterSet.isHangul
+import io.github.lee0701.converter.assistant.HorizontalInputAssistantLauncherWindow
+import io.github.lee0701.converter.assistant.InputAssistantLauncherWindow
+import io.github.lee0701.converter.assistant.VerticalInputAssistantLauncherWindow
+import io.github.lee0701.converter.assistant.InputAssistantWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.view.VerticalCandidatesWindow
-import io.github.lee0701.converter.dictionary.CompoundDictionary
-import io.github.lee0701.converter.dictionary.HistoryDictionary
 import io.github.lee0701.converter.dictionary.UserDictionaryDictionary
 import io.github.lee0701.converter.engine.*
 import io.github.lee0701.converter.history.HistoryDatabase
@@ -24,22 +30,27 @@ import kotlinx.coroutines.*
 import kotlin.math.max
 import kotlin.math.min
 
-class ConverterService: AccessibilityService() {
+class ConverterAccessibilityService: AccessibilityService() {
 
+    private val handler = Handler(Looper.getMainLooper())
     private val scope = CoroutineScope(Dispatchers.IO)
     private var job: Job? = null
 
     private lateinit var converter: Converter
     private var predictor: Predictor? = null
     private lateinit var candidatesWindow: CandidatesWindow
+    private lateinit var inputAssistantWindow: InputAssistantWindow
+    private lateinit var inputAssistantLauncherWindow: InputAssistantLauncherWindow
+    private var source: AccessibilityNodeInfo? = null
 
     private var composingText = ComposingText("", 0)
 
     private var outputFormat: OutputFormat? = null
+    private var enableAutoHiding = false
+    private var assistantEnabledApps: Set<String> = setOf()
+
     private val rect = Rect()
     private var ignoreText: CharSequence? = null
-
-    private var enableAutoHiding = false
 
     override fun onCreate() {
         super.onCreate()
@@ -62,19 +73,18 @@ class ConverterService: AccessibilityService() {
     }
 
     fun restartService() {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(this@ConverterService)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this@ConverterAccessibilityService)
 
         outputFormat = preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
         enableAutoHiding = preferences.getBoolean("enable_auto_hiding", false)
+        assistantEnabledApps = preferences.getStringSet("assistant_enabled_apps", setOf()) ?: setOf()
 
-        outputFormat =
-            preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
         val sortByContext = preferences.getBoolean("sort_by_context", false)
         val usePrediction = preferences.getBoolean("use_prediction", false)
 
         val tfLitePredictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
                 TFLitePredictor(
-                    this@ConverterService,
+                    this@ConverterAccessibilityService,
                     assets.open("ml/wordlist.txt"),
                     assets.openFd("ml/model.tflite")
                 )
@@ -115,21 +125,75 @@ class ConverterService: AccessibilityService() {
         else predictor = null
 
         candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
-            "horizontal" -> HorizontalCandidatesWindow(this@ConverterService)
-            else -> VerticalCandidatesWindow(this@ConverterService)
+            "horizontal" -> HorizontalCandidatesWindow(this@ConverterAccessibilityService)
+            else -> VerticalCandidatesWindow(this@ConverterAccessibilityService)
+        }
+
+        inputAssistantWindow = InputAssistantWindow(this)
+        inputAssistantLauncherWindow = when(preferences.getString("window_type", "horizontal")) {
+            "horizontal" -> HorizontalInputAssistantLauncherWindow(this)
+            else -> VerticalInputAssistantLauncherWindow(this)
         }
 
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if(event == null) return
+
         when(event.eventType) {
+            AccessibilityEvent.TYPE_VIEW_CLICKED -> {
+                if(event.source != null && !isEditText(event.source.className)) inputAssistantLauncherWindow.hide()
+            }
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
+                if(event.source != null && !isEditText(event.source.className)) inputAssistantLauncherWindow.hide()
                 val isHideEvent = CandidatesWindowHider.of(event.packageName?.toString() ?: "")?.isHideEvent(event)
                 if(enableAutoHiding && isHideEvent == true) {
                     candidatesWindow.destroy()
+                    inputAssistantLauncherWindow.hide()
                 }
             }
+            AccessibilityEvent.TYPE_VIEW_FOCUSED,
+            AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
+                // Update paste target.
+                // Prevent from input assistant window itself being targeted as paste target
+                if(event.packageName != this.packageName
+                    && event.source != null && isEditText(event.source.className)) {
+                        this.source = event.source
+                }
+            }
+            else -> {}
+        }
+
+        val inputAssistantMode = event.packageName in assistantEnabledApps
+
+        if(inputAssistantMode) onInputAssistant(event)
+        else onNormalConversion(event)
+    }
+
+    private fun onInputAssistant(event: AccessibilityEvent) {
+        when(event.eventType) {
+            AccessibilityEvent.TYPE_VIEW_FOCUSED -> {
+                if(event.source != null && isEditText(event.source.className)) {
+                    showInputAssistantLauncherWindow(event.source)
+                } else {
+                    inputAssistantLauncherWindow.hide()
+                }
+            }
+            AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
+                if(event.source != null && isEditText(event.source.className)) {
+                    val rect = Rect().apply { event.source.getBoundsInScreen(this) }
+                    inputAssistantLauncherWindow.apply {
+                        xPos = rect.left
+                        yPos = rect.top
+                    }.updateLayout()
+                }
+            }
+            else -> {}
+        }
+    }
+
+    private fun onNormalConversion(event: AccessibilityEvent) {
+        when(event.eventType) {
             AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> {
                 val source = event.source ?: return
                 source.getBoundsInScreen(rect)
@@ -149,6 +213,7 @@ class ConverterService: AccessibilityService() {
                 composingText = newComposingText
 
                 convert(source)
+
             }
             AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
                 val source = event.source ?: return
@@ -211,6 +276,42 @@ class ConverterService: AccessibilityService() {
         }
     }
 
+    private fun showInputAssistantLauncherWindow(source: AccessibilityNodeInfo) {
+        val rect = Rect().apply { source.getBoundsInScreen(this) }
+        inputAssistantLauncherWindow.apply {
+            xPos = rect.left
+            yPos = rect.top
+        }.show {
+            inputAssistantLauncherWindow.hide()
+            inputAssistantWindow.show { text ->
+                val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText(text, text)
+                inputAssistantWindow.hide()
+                candidatesWindow.destroy()
+                clipboard.setPrimaryClip(clip)
+                val postClose = {
+                    pasteClipboard()
+                    showInputAssistantLauncherWindow(source)
+                }
+                handler.postDelayed(postClose, 300)
+            }
+        }
+    }
+
+    fun closeInputAssistantWindow() {
+        inputAssistantWindow.hide()
+        inputAssistantLauncherWindow.hide()
+    }
+
+    private fun isEditText(className: CharSequence): Boolean {
+        return className == "android.widget.EditText"
+    }
+
+    fun pasteClipboard() {
+        val source = this.source ?: return
+        source.performAction(AccessibilityNodeInfo.ACTION_PASTE)
+    }
+
     private fun pasteFullText(source: AccessibilityNodeInfo, fullText: CharSequence) {
         val arguments = Bundle()
         arguments.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, fullText)
@@ -243,7 +344,7 @@ class ConverterService: AccessibilityService() {
     }
 
     companion object {
-        var INSTANCE: ConverterService? = null
+        var INSTANCE: ConverterAccessibilityService? = null
 
         const val DB_HISTORY = "history"
         const val DB_USER_DICTIONARY = "user_dictionary"

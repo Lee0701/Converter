@@ -11,11 +11,10 @@ import android.util.TypedValue
 import android.view.*
 import android.widget.Toast
 import androidx.preference.PreferenceManager
-import io.github.lee0701.converter.ConverterService
+import io.github.lee0701.converter.ConverterAccessibilityService
 import io.github.lee0701.converter.R
 import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow.Key
 import io.github.lee0701.converter.databinding.AdjustCandidatesViewHorizontalBinding
-import java.util.*
 
 class HorizontalCandidatesWindowAdjuster(private val context: Context) {
 
@@ -124,7 +123,7 @@ class HorizontalCandidatesWindowAdjuster(private val context: Context) {
             editor.putInt(keyWindowHeight, windowHeight)
             editor.apply()
             Toast.makeText(context, R.string.settings_saved, Toast.LENGTH_SHORT).show()
-            ConverterService.INSTANCE?.restartService()
+            ConverterAccessibilityService.INSTANCE?.restartService()
         }
 
         window.discard.setOnClickListener {

@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Hanja Converter</string>
+    <string name="assistant_title">Hanja Input Assistant</string>
+    <string name="open_assistant">Open Hanja Input Assistant</string>
     <string name="settings_saved">Saved.</string>
     <string name="candidates_count_format" translatable="false">%1$s / %2$s</string>
+    <string name="paste">Paste</string>
     <string name="close">Close</string>
+    <string name="expand">Expand</string>
     <string name="save">Save</string>
     <string name="discard">Discard</string>
     <string name="move">Move</string>
@@ -87,6 +91,8 @@
     <!-- Behavior Preferences -->
     <string name="enable_auto_hiding_title">Auto-Hide Conversion Window</string>
     <string name="enable_auto_hiding_summary">Automatically hide conversion window on keyboard close if supported.</string>
+    <string name="assistant_enabled_apps_title">Enable Hanja Input Assistant</string>
+    <string name="assistant_enabled_apps_summary">Select normal-conversion-incompatible apps to enable Hanja Input Assistant.</string>
     <!-- About Preferences -->
     <string name="about_app_info_title">Hanja Converter</string>
     <string name="about_app_info_summary">Developer contact: hgl1002@naver.com</string>

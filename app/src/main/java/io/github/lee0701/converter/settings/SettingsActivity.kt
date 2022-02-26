@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
-import io.github.lee0701.converter.ConverterService
+import io.github.lee0701.converter.ConverterAccessibilityService
 import io.github.lee0701.converter.R
 import io.github.lee0701.converter.databinding.ActivitySettingsBinding
 import io.github.lee0701.converter.settings.preference.OpenAccessibilitySettingsPreference
@@ -42,7 +42,7 @@ class SettingsActivity : AppCompatActivity() {
                     pref.edit().putInt("custom_window_color", pref.getInt(key, 0)).apply()
                 }
             }
-            ConverterService.INSTANCE?.restartService()
+            ConverterAccessibilityService.INSTANCE?.restartService()
         }
     }
 
