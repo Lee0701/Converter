@@ -5,4 +5,5 @@ data class Candidate(
     val hanja: String,
     val extra: String,
     val input: String = hangul,
+    val learnable: Boolean = false,
 )

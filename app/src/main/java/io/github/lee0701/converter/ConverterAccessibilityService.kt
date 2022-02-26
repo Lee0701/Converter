@@ -215,7 +215,7 @@ class ConverterAccessibilityService: AccessibilityService() {
                 val removedCount = max(event.removedCount, 0)
 
                 val newComposingText = composingText.textChanged(text, fromIndex, addedCount, removedCount)
-                if(newComposingText.from != composingText.from) learnConverted()
+                if(newComposingText.from != composingText.from) learnPreviouslyConverted()
                 composingText = newComposingText
 
                 if(addedCount == 0 && removedCount > 0) {
@@ -254,16 +254,14 @@ class ConverterAccessibilityService: AccessibilityService() {
             if(candidates.isNotEmpty()) {
                 withContext(Dispatchers.Main) {
                     candidatesWindow.show(candidates, rect) { candidate ->
-                        val hanja = candidate.hanja
-                        val hangul = candidate.hangul.ifEmpty { composingText.composing.take(hanja.length).toString() }
-                        val replaced = composingText.replaced(hangul, hanja, candidate.input.length, outputFormat)
+                        val replaced = composingText.replaced(candidate, outputFormat)
                         ignoreText = replaced.text
                         pasteFullText(source, replaced.text)
                         setSelection(source, replaced.to)
                         composingText = replaced
                         convert(source)
-                        if(!predicted.contains(candidate) && hanja.all { CharacterSet.isHanja(it) }) {
-                            learn(hangul, hanja)
+                        if(candidate.learnable) {
+                            learn(candidate.hangul, candidate.hanja)
                         }
                     }
                 }
@@ -324,8 +322,8 @@ class ConverterAccessibilityService: AccessibilityService() {
         source.performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, arguments)
     }
 
-    private fun learnConverted() {
-        if(composingText.converted.isNotEmpty() && !composingText.converted.all { isHangul(it) }) {
+    private fun learnPreviouslyConverted() {
+        if(composingText.selected.isNotEmpty() && composingText.selected.all { it.learnable }) {
             learn(composingText.unconverted, composingText.converted)
         }
     }

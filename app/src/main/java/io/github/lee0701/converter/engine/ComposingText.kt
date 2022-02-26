@@ -2,6 +2,7 @@ package io.github.lee0701.converter.engine
 
 import android.text.TextUtils
 import io.github.lee0701.converter.CharacterSet
+import io.github.lee0701.converter.candidates.Candidate
 import kotlin.math.abs
 
 data class ComposingText(
@@ -9,7 +10,8 @@ data class ComposingText(
     val from: Int,
     val to: Int = from,
     val unconverted: String = "",
-    val converted: String = ""
+    val converted: String = "",
+    val selected: List<Candidate> = listOf(),
 ) {
     val composing: CharSequence = text.slice(from until to)
     val textBeforeCursor: CharSequence = text.take(to)
@@ -43,13 +45,16 @@ data class ComposingText(
         return this
     }
 
-    fun replaced(hangul: String, hanja: String, length: Int, format: OutputFormat?): ComposingText {
+    fun replaced(candidate: Candidate, format: OutputFormat?): ComposingText {
+        val length = candidate.input.length
         val replace = composing.take(length)
-        val formatted = format?.getOutput(hanja, hangul) ?: hanja
+        val formatted = format?.getOutput(candidate.hanja, candidate.hangul) ?: candidate.hanja
         val lengthDiff = formatted.length - length
         val fullText = TextUtils.concat(text.take(from), formatted, composing.drop(length), text.drop(to))
         return this.copy(text = fullText, from = from + formatted.length, to = to + lengthDiff,
-            unconverted = unconverted + replace, converted = converted + hanja)
+            unconverted = unconverted + replace, converted = converted + candidate.hanja,
+            selected = selected + candidate
+        )
     }
 
     fun inserted(with: CharSequence): ComposingText {

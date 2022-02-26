@@ -12,7 +12,7 @@ class HistoryHanjaConverter(
     override fun convert(composingText: ComposingText): List<Candidate> {
         val word = composingText.composing.toString()
         val result = database.wordDao().searchWords(word)
-        return result.sortedByDescending { it.count }.map { Candidate(word, it.result, "") }
+        return result.sortedByDescending { it.count }.map { Candidate(word, it.result, "", learnable = true) }
     }
 
     override fun convertPrefix(composingText: ComposingText): List<List<Candidate>> {
@@ -21,7 +21,7 @@ class HistoryHanjaConverter(
             val slicedWord = word.slice(0 .. i)
             database.wordDao().searchWords(slicedWord)
                 .sortedByDescending { it.count }
-                .map { Candidate(slicedWord, it.result, "") }
+                .map { Candidate(slicedWord, it.result, "", learnable = true) }
         }
     }
 

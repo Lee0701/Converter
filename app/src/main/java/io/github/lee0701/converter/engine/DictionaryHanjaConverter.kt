@@ -11,7 +11,7 @@ open class DictionaryHanjaConverter(
     override fun convert(composingText: ComposingText): List<Candidate> {
         val word = composingText.composing.toString()
         val result = dictionary.search(word) ?: emptyList()
-        return result.map { Candidate(word, it.result, it.extra ?: "") }
+        return result.map { Candidate(word, it.result, it.extra ?: "", learnable = true) }
     }
 
     override fun convertPrefix(composingText: ComposingText): List<List<Candidate>> {
@@ -20,7 +20,7 @@ open class DictionaryHanjaConverter(
             val slicedWord = word.slice(0 .. i)
             dictionary.search(slicedWord)
                 ?.sortedByDescending { it.frequency }
-                ?.map { Candidate(slicedWord, it.result, it.extra ?: "") } ?: emptyList()
+                ?.map { Candidate(slicedWord, it.result, it.extra ?: "", learnable = true) } ?: emptyList()
         }
     }
 
