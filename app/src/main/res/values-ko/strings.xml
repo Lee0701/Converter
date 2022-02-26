@@ -34,7 +34,7 @@
     <string name="output_format_title">變換 出力 포맷</string>
     <!-- Prediction Preferences -->
     <string name="use_prediction_title">豫測 機能 使用</string>
-    <string name="use_prediction_summary">入力 中에 다음 單語를 豫測합니다.</string>
+    <string name="use_prediction_summary">다음에 入力할 單語를 豫測합니다.</string>
     <string name="sort_by_context_title">文脈 基盤 變換</string>
     <string name="sort_by_context_summary">文脈에 따라 候補 順序를 整列합니다.</string>
     <string name="use_learned_word_title">學習 機能 使用</string>
@@ -115,4 +115,8 @@
     <string name="open_assistant">漢字 入力 도우미 열기</string>
     <string name="paste">붙여넣기</string>
     <string name="expand">擴張</string>
+    <string name="use_autocomplete_summary">入力 中인 單語를 豫測합니다.</string>
+    <string name="assistant_enabled_apps_title">漢字 入力 도우미 活性化</string>
+    <string name="use_autocomplete_title">自動完成 使用</string>
+    <string name="assistant_enabled_apps_summary">漢字 入力 도우미를 켤 一般 變換 未支援 앱을 선택합니다.</string>
 </resources>
