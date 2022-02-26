@@ -38,18 +38,17 @@ class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(c
             val candidatesView = CandidatesViewVerticalBinding.inflate(LayoutInflater.from(context))
             candidatesView.root.setBackgroundColor(windowColor)
             candidatesView.close.setOnClickListener { destroy() }
-            candidatesView.close.backgroundTintList = ColorStateList.valueOf(textColor)
+            candidatesView.close.imageTintList = ColorStateList.valueOf(textColor)
             candidatesView.close.alpha = textAlpha
             candidatesView.count.setTextColor(textColor)
             candidatesView.count.alpha = textAlpha
             candidatesView.list.layoutManager = GridLayoutManager(context, columnCount)
             candidatesView.list.addOnScrollListener(object: RecyclerView.OnScrollListener() {
-                @SuppressLint("SetTextI18n")
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
                     val p = (candidatesView.list.layoutManager as GridLayoutManager).findFirstVisibleItemPosition()
                     val count = candidatesView.list.adapter?.itemCount ?: 0
-                    candidatesView.count.text = "$p / $count"
+                    candidatesView.count.text = context.getString(R.string.candidates_count_format).format(p, count)
                 }
             })
 

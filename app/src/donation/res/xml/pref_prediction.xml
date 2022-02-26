@@ -10,11 +10,11 @@
             app:summary="@string/use_prediction_summary"
             app:defaultValue="true" />
 
-        <CheckBoxPreference
-            app:key="use_autocomplete"
-            app:title="@string/use_autocomplete_title"
-            app:summary="@string/use_autocomplete_summary"
-            android:defaultValue="true" />
+<!--        <CheckBoxPreference-->
+<!--            app:key="use_autocomplete"-->
+<!--            app:title="@string/use_autocomplete_title"-->
+<!--            app:summary="@string/use_autocomplete_summary"-->
+<!--            android:defaultValue="true" />-->
 
         <CheckBoxPreference
             app:key="sort_by_context"

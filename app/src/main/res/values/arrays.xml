@@ -1,4 +1,14 @@
 <resources>
+
+    <string-array name="input_assistant_defaults">
+        <item>com.opera.browser</item>
+        <item>org.mozilla.firefox</item>
+        <item>com.naver.whale</item>
+        <item>com.sec.android.app.sbrowser</item>
+        <item>com.android.chrome</item>
+        <item>com.microsoft.emmx</item>
+    </string-array>
+
     <string-array name="output_format_entries">
         <item>@string/hanja_only</item>
         <item>@string/hanjahangul</item>

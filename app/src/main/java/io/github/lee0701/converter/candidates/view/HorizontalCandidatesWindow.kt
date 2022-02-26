@@ -8,8 +8,8 @@ import android.graphics.Rect
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
-import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
@@ -44,16 +44,16 @@ class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow
 
             candidatesView.root.setBackgroundColor(windowColor)
 
-            val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, windowHeight)
+            val params = LinearLayoutCompat.LayoutParams(LinearLayoutCompat.LayoutParams.WRAP_CONTENT, windowHeight)
             candidatesView.expandWrapper.layoutParams = params
             candidatesView.closeWrapper.layoutParams = params
 
             candidatesView.expand.setOnClickListener { toggleExpand() }
-            candidatesView.expand.backgroundTintList = ColorStateList.valueOf(textColor)
+            candidatesView.expand.imageTintList = ColorStateList.valueOf(textColor)
             candidatesView.expand.alpha = textAlpha
 
             candidatesView.close.setOnClickListener { destroy() }
-            candidatesView.close.backgroundTintList = ColorStateList.valueOf(textColor)
+            candidatesView.close.imageTintList = ColorStateList.valueOf(textColor)
             candidatesView.close.alpha = textAlpha
 
             candidatesView.list.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)

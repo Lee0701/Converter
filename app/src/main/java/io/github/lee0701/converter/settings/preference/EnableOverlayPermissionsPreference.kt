@@ -7,7 +7,7 @@ import android.provider.Settings
 import android.util.AttributeSet
 import androidx.preference.Preference
 
-class EnableOverlayPermissionsPreference(context: Context?, attrs: AttributeSet?)
+class EnableOverlayPermissionsPreference(context: Context, attrs: AttributeSet?)
     : Preference(context, attrs) {
 
     override fun onClick() {

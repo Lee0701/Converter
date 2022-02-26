@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.github.lee0701.converter">
+
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 
     <application
         android:allowBackup="true"
@@ -34,7 +37,7 @@
         </activity>
 
         <service
-            android:name=".ConverterService"
+            android:name=".ConverterAccessibilityService"
             android:exported="false"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
@@ -46,6 +49,7 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/service" />
         </service>
+
     </application>
 
 </manifest>
