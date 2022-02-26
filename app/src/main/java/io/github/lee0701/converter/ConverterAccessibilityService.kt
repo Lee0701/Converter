@@ -118,16 +118,21 @@ class ConverterAccessibilityService: AccessibilityService() {
 
         converter = hanjaConverter
         if(tfLitePredictor != null) {
-            predictor = ResortingPredictor(
-                DictionaryPredictor(dictionaries),
-                CachingTFLitePredictor(tfLitePredictor),
-            )
+            if(usePrediction && autoComplete) {
+                predictor = ResortingPredictor(
+                    DictionaryPredictor(dictionaries),
+                    CachingTFLitePredictor(tfLitePredictor),
+                )
+            } else if(usePrediction) {
+                predictor = NextWordPredictor(CachingTFLitePredictor(tfLitePredictor))
+            } else {
+                predictor = null
+            }
         } else {
             predictor = null
         }
-
-        if(BuildConfig.IS_DONATION && preferences.getBoolean("use_autocomplete", false)) {
-//            hanjaConverter = PredictingHanjaConverter(hanjaConverter, dictionaries)
+        if(predictor == null && autoComplete) {
+            predictor = DictionaryPredictor(dictionaries)
         }
 
         candidatesWindow = when(preferences.getString("window_type", "horizontal")) {
