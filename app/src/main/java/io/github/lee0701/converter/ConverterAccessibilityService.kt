@@ -148,10 +148,16 @@ class ConverterAccessibilityService: AccessibilityService() {
 
         when(event.eventType) {
             AccessibilityEvent.TYPE_VIEW_CLICKED -> {
-                if(event.source != null && !isEditText(event.source.className)) inputAssistantLauncherWindow.hide()
+                if(event.source != null && !isEditText(event.source.className)) {
+                    inputAssistantLauncherWindow.hide()
+                    if(enableAutoHiding) candidatesWindow.destroy()
+                }
             }
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
-                if(event.source != null && !isEditText(event.source.className)) inputAssistantLauncherWindow.hide()
+                if(event.source != null && !isEditText(event.source.className)) {
+                    inputAssistantLauncherWindow.hide()
+                    if(enableAutoHiding) candidatesWindow.destroy()
+                }
                 val isHideEvent = CandidatesWindowHider.of(event.packageName?.toString() ?: "")?.isHideEvent(event)
                 if(enableAutoHiding && isHideEvent == true) {
                     candidatesWindow.destroy()
