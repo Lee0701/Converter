@@ -23,7 +23,6 @@
     <string name="enable">Enable</string>
     <string name="accessibility_service_required">Please allow the accessibility service to use HanjaConverter.</string>
     <string name="overlay_permission_required">Please allow the overlay permission in settings app to use HanjaConverter.</string>
-    <string name="asset_pack_load_failed">Unable to load prediction asset pack.</string>
     <!-- Settings Activity -->
     <string name="title_activity_settings">Hanja Converter Settings</string>
     <string name="system_overlay_not_enabled">System Overlay is not enabled</string>
