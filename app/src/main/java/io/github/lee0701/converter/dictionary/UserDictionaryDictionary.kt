@@ -5,6 +5,7 @@ import io.github.lee0701.converter.userdictionary.UserDictionaryDatabase
 class UserDictionaryDictionary(
     private val database: UserDictionaryDatabase,
 ): ListDictionary<HanjaDictionary.Entry>, PredictingDictionary<HanjaDictionary.Entry> {
+
     override fun search(key: String): List<HanjaDictionary.Entry> {
         return database.dictionaryDao().getAllDictionaries().filter { it.enabled }.flatMap { dict ->
             database.wordDao().searchWords(dictionaryId = dict.id, hangul = key).toList()
