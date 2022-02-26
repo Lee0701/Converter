@@ -13,7 +13,8 @@
         <io.github.lee0701.converter.settings.preference.MultiSelectAppListPreference
             android:key="assistant_enabled_apps"
             android:title="@string/assistant_enabled_apps_title"
-            android:summary="@string/assistant_enabled_apps_summary" />
+            android:summary="@string/assistant_enabled_apps_summary"
+            android:defaultValue="@array/input_assistant_defaults" />
 
     </PreferenceCategory>
 
