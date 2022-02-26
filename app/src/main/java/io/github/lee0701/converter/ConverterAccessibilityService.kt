@@ -87,7 +87,7 @@ class ConverterAccessibilityService: AccessibilityService() {
         val tfLitePredictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
                 TFLitePredictor(
                     assets.open("ml/wordlist.txt"),
-                    assets.openFd("ml/model.tflite")
+                    assets.openFd("ml/model.tflite"),
                 )
         } else null
 
@@ -109,7 +109,7 @@ class ConverterAccessibilityService: AccessibilityService() {
         val dictionaryHanjaConverter: HanjaConverter = DictionaryHanjaConverter(dictionaries)
 
         if(tfLitePredictor != null && sortByContext) {
-            converters += ContextSortingHanjaConverter(dictionaryHanjaConverter, tfLitePredictor)
+            converters += ContextSortingHanjaConverter(dictionaryHanjaConverter, CachingTFLitePredictor(tfLitePredictor))
         } else {
             converters += dictionaryHanjaConverter
         }
@@ -120,7 +120,7 @@ class ConverterAccessibilityService: AccessibilityService() {
         if(tfLitePredictor != null) {
             predictor = ResortingPredictor(
                 DictionaryPredictor(dictionaries),
-                tfLitePredictor
+                CachingTFLitePredictor(tfLitePredictor),
             )
         } else {
             predictor = null
