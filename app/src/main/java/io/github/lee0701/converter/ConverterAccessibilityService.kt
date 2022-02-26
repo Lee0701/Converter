@@ -117,7 +117,7 @@ class ConverterAccessibilityService: AccessibilityService() {
         hanjaConverter = CompoundHanjaConverter(converters.toList())
 
         if(BuildConfig.IS_DONATION && preferences.getBoolean("use_autocomplete", false)) {
-            hanjaConverter = PredictingHanjaConverter(hanjaConverter, dictionaries)
+//            hanjaConverter = PredictingHanjaConverter(hanjaConverter, dictionaries)
         }
 
         converter = Converter(hanjaConverter)
