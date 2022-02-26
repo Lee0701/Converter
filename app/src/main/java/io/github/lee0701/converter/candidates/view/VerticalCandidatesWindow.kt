@@ -38,7 +38,7 @@ class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(c
             val candidatesView = CandidatesViewVerticalBinding.inflate(LayoutInflater.from(context))
             candidatesView.root.setBackgroundColor(windowColor)
             candidatesView.close.setOnClickListener { destroy() }
-            candidatesView.close.backgroundTintList = ColorStateList.valueOf(textColor)
+            candidatesView.close.imageTintList = ColorStateList.valueOf(textColor)
             candidatesView.close.alpha = textAlpha
             candidatesView.count.setTextColor(textColor)
             candidatesView.count.alpha = textAlpha

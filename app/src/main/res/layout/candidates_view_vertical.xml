@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:colorBackground">
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -16,15 +18,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textSize="16sp" />
-        <ImageButton
+
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/close"
             android:layout_width="16sp"
             android:layout_height="16sp"
             android:layout_gravity="center"
-            android:background="@drawable/ic_baseline_close_24"
-            android:backgroundTint="@android:color/black"
+            android:src="@drawable/ic_baseline_close_24"
+            app:tint="@android:color/black"
             android:contentDescription="@string/close" />
-    </LinearLayout>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
@@ -32,4 +36,5 @@
         android:layout_height="match_parent"
         android:layout_marginHorizontal="4dp"
         android:scrollbars="vertical" />
-</LinearLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

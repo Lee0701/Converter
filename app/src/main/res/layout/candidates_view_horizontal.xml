@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -10,14 +12,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <ImageButton
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/expand"
             android:layout_width="32sp"
             android:layout_height="32sp"
             android:layout_gravity="center"
-            android:background="@drawable/ic_baseline_arrow_drop_down_24"
-            android:backgroundTint="@android:color/black"
+            android:background="?android:attr/selectableItemBackground"
+            android:src="@drawable/ic_baseline_arrow_drop_down_24"
+            app:tint="@android:color/black"
             android:contentDescription="@string/expand" />
+
     </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -32,14 +36,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <ImageButton
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/close"
             android:layout_width="32sp"
             android:layout_height="32sp"
             android:layout_gravity="center"
-            android:background="@drawable/ic_baseline_close_24"
-            android:backgroundTint="@android:color/black"
+            android:background="?android:attr/selectableItemBackground"
+            android:src="@drawable/ic_baseline_close_24"
+            app:tint="@android:color/black"
             android:contentDescription="@string/close" />
     </FrameLayout>
 
-</LinearLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

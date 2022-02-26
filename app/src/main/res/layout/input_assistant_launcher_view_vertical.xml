@@ -20,7 +20,7 @@
         android:id="@+id/close"
         android:layout_width="32sp"
         android:layout_height="32sp"
-        android:background="?android:selectableItemBackground"
+        android:background="?android:attr/selectableItemBackground"
         android:src="@drawable/ic_baseline_close_24"
         app:tint="@android:color/black"
         android:contentDescription="@string/close" />
