@@ -12,6 +12,7 @@
         <item name="android:statusBarColor" tools:targetApi="l">@color/gray_100</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="actionBarStyle">@style/Theme.Converter.ActionBar</item>
+
     </style>
 
     <style name="Theme.Converter.NoActionBar" parent="Theme.Converter">
@@ -22,6 +23,11 @@
     <style name="Theme.Converter.ActionBar" parent="Widget.MaterialComponents.ActionBar.Primary">
         <item name="background">@color/white</item>
         <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="Theme.Converter.Information" parent="Theme.Converter">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/black</item>
     </style>
 
 </resources>
