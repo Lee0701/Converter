@@ -40,10 +40,10 @@
     <string name="enable_service_summary">「漢字変換器」を有効にしてください。</string>
     <string name="enable_overlay_permission_title">重ねて表示する権限の有効化</string>
     <string name="output_format_title">変換の出力形式</string>
-    <string name="use_prediction_title">予測機能使用</string>
+    <string name="use_prediction_title">予測機能を使用</string>
     <string name="sort_by_context_title">文脈基盤変換</string>
     <string name="sort_by_context_summary">文脈に応じて候補を並べ替える。</string>
-    <string name="use_learned_word_title">学習機能使用</string>
+    <string name="use_learned_word_title">学習機能を使用</string>
     <string name="use_learned_word_summary">学習された単語を変換候補に表示する。</string>
     <string name="use_prediction_summary">入力中に次の単語を予測する。</string>
     <string name="show_extra_summary">変換候補ごとに追加情報（訓など）を表示する。</string>
@@ -101,4 +101,12 @@
     <string name="delete_dictionary">辞書を削除する</string>
     <string name="delete">削除</string>
     <string name="additional_dictionaries_title">拡張辞書</string>
+    <string name="assistant_enabled_apps_title">漢字入力アシスタントを有効にする</string>
+    <string name="assistant_enabled_apps_summary">漢字入力アシスタントを有効にする通常変換に非対応のアプリを選ぶ。</string>
+    <string name="assistant_title">漢字入力アシスタント</string>
+    <string name="open_assistant">漢字入力アシスタントを開く</string>
+    <string name="paste">貼り付け</string>
+    <string name="expand">展開</string>
+    <string name="use_autocomplete_title">自動補完を使用</string>
+    <string name="use_autocomplete_summary">入力中の単語を予測する。</string>
 </resources>
