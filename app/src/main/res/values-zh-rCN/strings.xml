@@ -101,4 +101,12 @@
     <string name="input_description">说明</string>
     <string name="confirm_delete_dictionary">确定要删除此词典吗？</string>
     <string name="confirm_clear_dictionary">确定要清除词典中所有条目吗？</string>
+    <string name="assistant_enabled_apps_title">激活汉字输入助手</string>
+    <string name="assistant_enabled_apps_summary">选择不支持正常转换的应用，以激活汉字输入助手。</string>
+    <string name="assistant_title">汉字输入助手</string>
+    <string name="open_assistant">打开汉字输入助手</string>
+    <string name="paste">粘贴</string>
+    <string name="expand">扩大</string>
+    <string name="use_autocomplete_title">使用自动补全</string>
+    <string name="use_autocomplete_summary">激活词组预测。</string>
 </resources>
