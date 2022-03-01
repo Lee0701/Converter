@@ -15,6 +15,9 @@ class VerticalInputAssistantLauncherWindow(
     private var binding: InputAssistantLauncherViewVerticalBinding? = null
     override val view: View? get() = binding?.root
 
+    var xPos: Int = 0
+    var yPos: Int = 0
+
     private val type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY
     private val flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
             WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or

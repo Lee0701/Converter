@@ -199,8 +199,10 @@ class ConverterAccessibilityService: AccessibilityService() {
                 if(event.source != null && isEditText(event.source.className)) {
                     val rect = Rect().apply { event.source.getBoundsInScreen(this) }
                     inputAssistantLauncherWindow.apply {
-                        xPos = rect.left
-                        yPos = rect.top
+                        if(this is VerticalInputAssistantLauncherWindow) {
+                            xPos = rect.left
+                            yPos = rect.top
+                        }
                     }.updateLayout()
                 }
             }
@@ -286,8 +288,10 @@ class ConverterAccessibilityService: AccessibilityService() {
     private fun showInputAssistantLauncherWindow(source: AccessibilityNodeInfo) {
         val rect = Rect().apply { source.getBoundsInScreen(this) }
         inputAssistantLauncherWindow.apply {
-            xPos = rect.left
-            yPos = rect.top
+            if(this is VerticalInputAssistantLauncherWindow) {
+                xPos = rect.left
+                yPos = rect.top
+            }
         }.show {
             inputAssistantLauncherWindow.hide()
             inputAssistantWindow.show { text ->
@@ -314,6 +318,7 @@ class ConverterAccessibilityService: AccessibilityService() {
         return className == "android.widget.EditText"
     }
 
+    // Does not take AccessibilityNodeInfo as parameter because the node info before launching input assistant should be used
     fun pasteClipboard() {
         val source = this.source ?: return
         source.performAction(AccessibilityNodeInfo.ACTION_PASTE)

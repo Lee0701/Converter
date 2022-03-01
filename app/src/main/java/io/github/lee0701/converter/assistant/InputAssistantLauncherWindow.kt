@@ -15,9 +15,6 @@ abstract class InputAssistantLauncherWindow(
     abstract val layoutParams: WindowManager.LayoutParams
     abstract val view: View?
 
-    var xPos: Int = 0
-    var yPos: Int = 0
-
     open fun show(onClick: () -> Unit) {
         hide()
         try {
