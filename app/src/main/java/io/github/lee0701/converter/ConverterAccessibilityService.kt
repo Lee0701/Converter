@@ -195,6 +195,11 @@ class ConverterAccessibilityService: AccessibilityService() {
                     inputAssistantLauncherWindow.hide()
                 }
             }
+            AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> {
+                if(event.source != null && isEditText(event.source.className)) {
+                    showInputAssistantLauncherWindow(event.source)
+                }
+            }
             AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
                 if(event.source != null && isEditText(event.source.className)) {
                     val rect = Rect().apply { event.source.getBoundsInScreen(this) }
@@ -286,6 +291,7 @@ class ConverterAccessibilityService: AccessibilityService() {
     }
 
     private fun showInputAssistantLauncherWindow(source: AccessibilityNodeInfo) {
+        if(inputAssistantLauncherWindow.shown) return
         val rect = Rect().apply { source.getBoundsInScreen(this) }
         inputAssistantLauncherWindow.apply {
             if(this is VerticalInputAssistantLauncherWindow) {
@@ -302,7 +308,6 @@ class ConverterAccessibilityService: AccessibilityService() {
                 clipboard.setPrimaryClip(clip)
                 val postClose = {
                     pasteClipboard()
-                    showInputAssistantLauncherWindow(source)
                 }
                 handler.postDelayed(postClose, 300)
             }

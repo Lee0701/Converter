@@ -12,6 +12,7 @@ abstract class InputAssistantLauncherWindow(
 ) {
 
     private val windowManager = context.getSystemService(AccessibilityService.WINDOW_SERVICE) as WindowManager
+    var shown: Boolean = false
     abstract val layoutParams: WindowManager.LayoutParams
     abstract val view: View?
 
@@ -19,6 +20,7 @@ abstract class InputAssistantLauncherWindow(
         hide()
         try {
             windowManager.addView(view ?: return, layoutParams)
+            shown = true
         } catch(ex: WindowManager.BadTokenException) {
             Toast.makeText(context, R.string.overlay_permission_required, Toast.LENGTH_LONG).show()
         }
@@ -26,6 +28,7 @@ abstract class InputAssistantLauncherWindow(
 
     open fun hide() {
         try {
+            shown = false
             windowManager.removeView(view ?: return)
         } catch(ex: IllegalArgumentException) {}
     }
