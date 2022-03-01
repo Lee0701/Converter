@@ -39,13 +39,17 @@ class ConverterAccessibilityService: AccessibilityService() {
 
     private lateinit var converter: HanjaConverter
     private var predictor: Predictor? = null
+
     private lateinit var candidatesWindow: CandidatesWindow
     private lateinit var inputAssistantWindow: InputAssistantWindow
     private lateinit var inputAssistantLauncherWindow: InputAssistantLauncherWindow
+
+    // Accessibility Node where text from input assistant is pasted to
     private var source: AccessibilityNodeInfo? = null
 
     private var composingText = ComposingText("", 0)
 
+    // Preference vars
     private var outputFormat: OutputFormat? = null
     private var enableAutoHiding = false
     private var assistantEnabledApps: Set<String> = setOf()
