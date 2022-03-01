@@ -10,5 +10,6 @@
 
     <color name="black">#FF000000</color>
     <color name="gray_100">#eeeeee</color>
+    <color name="gray_200">#cccccc</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

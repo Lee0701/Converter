@@ -30,4 +30,8 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
+    <style name="Theme.Converter.AgreeButton">
+        <item name="android:backgroundTint">?colorPrimary</item>
+        <item name="android:textColor">?colorOnPrimary</item>
+    </style>
 </resources>
