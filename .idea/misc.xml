@@ -14,12 +14,14 @@
         <entry key="app/src/main/res/drawable/ic_baseline_file_download_24.xml" value="1.5125" />
         <entry key="app/src/main/res/drawable/ic_baseline_more_vert_24.xml" value="1.5125" />
         <entry key="app/src/main/res/drawable/ic_baseline_unfold_more_24.xml" value="2.2708333333333335" />
+        <entry key="app/src/main/res/drawable/input_assistant_launcher_background.xml" value="0.201" />
         <entry key="app/src/main/res/layout/activity_dictionary_license.xml" value="1.2708333333333333" />
         <entry key="app/src/main/res/layout/activity_information.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_settings.xml" value="0.29924242424242425" />
         <entry key="app/src/main/res/layout/activity_user_dictionary.xml" value="0.6515151515151515" />
         <entry key="app/src/main/res/layout/activity_user_dictionary_manager.xml" value="0.7166666666666667" />
         <entry key="app/src/main/res/layout/candidate_item_horizontal.xml" value="1.909375" />
+        <entry key="app/src/main/res/layout/candidate_item_vertical.xml" value="0.8917112299465241" />
         <entry key="app/src/main/res/layout/candidates_view_horizontal.xml" value="1.0" />
         <entry key="app/src/main/res/layout/candidates_view_vertical.xml" value="0.48947368421052634" />
         <entry key="app/src/main/res/layout/content_information.xml" value="0.7219251336898396" />
@@ -28,11 +30,13 @@
         <entry key="app/src/main/res/layout/input_assistant_launcher_view.xml" value="0.6764705882352942" />
         <entry key="app/src/main/res/layout/input_assistant_launcher_view_horizontal.xml" value="1.2575757575757576" />
         <entry key="app/src/main/res/layout/input_assistant_launcher_view_vertical.xml" value="1.2575757575757576" />
+        <entry key="app/src/main/res/layout/input_assistant_view.xml" value="1.3143939393939394" />
         <entry key="app/src/main/res/layout/settings_activity.xml" value="1.2708333333333333" />
         <entry key="app/src/main/res/layout/user_dictionary_list_item.xml" value="0.5815508021390374" />
         <entry key="app/src/main/res/layout/user_dictionary_word_list_item.xml" value="0.7166666666666667" />
         <entry key="app/src/main/res/menu/user_dictionary_manager_action.xml" value="1.1" />
         <entry key="app/src/main/res/menu/user_dictionary_manager_action_donation.xml" value="0.6583333333333333" />
+        <entry key="app/src/main/res/xml/pref_service.xml" value="0.6711229946524064" />
       </map>
     </option>
   </component>

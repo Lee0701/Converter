@@ -44,7 +44,8 @@
         android:layout_weight="1"
         android:gravity="top"
         android:padding="10dp"
-        android:inputType="text" />
+        android:inputType="text"
+        android:textColor="@android:color/black" />
 
     <Button
         android:id="@+id/paste"
