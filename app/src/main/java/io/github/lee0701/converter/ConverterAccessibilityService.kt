@@ -157,16 +157,17 @@ class ConverterAccessibilityService: AccessibilityService() {
                     if(enableAutoHiding) candidatesWindow.destroy()
                 }
             }
+            AccessibilityEvent.TYPE_WINDOWS_CHANGED,
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
                 if(event.source != null && !isEditText(event.source.className)) {
                     inputAssistantLauncherWindow.hide()
                     if(enableAutoHiding) candidatesWindow.destroy()
                 }
                 val isHideEvent = CandidatesWindowHider.of(event.packageName?.toString() ?: "")?.isHideEvent(event)
-                if(enableAutoHiding && isHideEvent == true) {
-                    candidatesWindow.destroy()
-                    inputAssistantLauncherWindow.hide()
-                }
+//                if(enableAutoHiding && isHideEvent == true) {
+//                    candidatesWindow.destroy()
+//                    inputAssistantLauncherWindow.hide()
+//                }
             }
             AccessibilityEvent.TYPE_VIEW_FOCUSED,
             AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
@@ -312,6 +313,10 @@ class ConverterAccessibilityService: AccessibilityService() {
                 handler.postDelayed(postClose, 300)
             }
         }
+    }
+
+    fun closeCandidatesWindow() {
+        candidatesWindow.destroy()
     }
 
     fun closeInputAssistantWindow() {
