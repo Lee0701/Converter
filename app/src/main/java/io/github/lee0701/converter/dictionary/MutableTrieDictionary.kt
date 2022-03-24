@@ -1,6 +1,6 @@
 package io.github.lee0701.converter.dictionary
 
-abstract class WritableTrieDictionary<T>: TrieDictionary<T>(), WritableDictionary<T> {
+abstract class MutableTrieDictionary<T>: TrieDictionary<T>(), MutableDictionary<T> {
 
     override val root: Node<T> = Node()
 

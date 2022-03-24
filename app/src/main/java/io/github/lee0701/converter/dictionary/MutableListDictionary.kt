@@ -1,6 +1,6 @@
 package io.github.lee0701.converter.dictionary
 
-interface WritableListDictionary<T>: WritableDictionary<List<T>>, ListDictionary<T> {
+interface MutableListDictionary<T>: MutableDictionary<List<T>>, ListDictionary<T> {
 
     fun insert(key: String, item: T) {
         put(key, (search(key) ?: listOf()) + item)
