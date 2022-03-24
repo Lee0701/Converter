@@ -10,11 +10,14 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.view.ContextThemeWrapper
 import io.github.lee0701.converter.R
 import io.github.lee0701.converter.databinding.InputAssistantViewBinding
 import java.lang.IllegalArgumentException
 
-class InputAssistantWindow(private val context: Context) {
+class InputAssistantWindow(context: Context) {
+
+    private val context = ContextThemeWrapper(context, R.style.Theme_Converter)
 
     private val windowManager = context.getSystemService(AccessibilityService.WINDOW_SERVICE) as WindowManager
 

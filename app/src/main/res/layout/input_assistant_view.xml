@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:layout_margin="20dp"
     android:background="@drawable/input_assistant_background"
+    android:backgroundTint="?android:colorBackground"
     android:elevation="10dp">
 
     <LinearLayout
