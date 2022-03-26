@@ -4,12 +4,14 @@ import android.accessibilityservice.AccessibilityService
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.core.content.res.ResourcesCompat
 import androidx.preference.PreferenceManager
 import androidx.room.Room
 import io.github.lee0701.converter.CharacterSet.isHangul
@@ -97,10 +99,24 @@ class ConverterAccessibilityService: AccessibilityService() {
 
         val converters = mutableListOf<HanjaConverter>()
 
+        // Add Converters with Specialized Dictionaries
+        if(BuildConfig.IS_DONATION && preferences.getBoolean("search_by_translation", false)) {
+            val dictionary = DictionaryManager.loadDictionary(assets, "translation")
+            val color = ResourcesCompat.getColor(resources, R.color.searched_by_translation, theme)
+            if(dictionary != null) converters += SpecializedHanjaConverter(dictionary, color)
+        }
+        if(BuildConfig.IS_DONATION && preferences.getBoolean("search_by_composition", false)) {
+            val dictionary = DictionaryManager.loadDictionary(assets, "composition")
+            val color = ResourcesCompat.getColor(resources, R.color.searched_by_composition, theme)
+            if(dictionary != null) converters += SpecializedHanjaConverter(dictionary, color)
+        }
+
+        // Add Converter with User Dictionary
         val userDictionaryDatabase = Room.databaseBuilder(applicationContext, UserDictionaryDatabase::class.java, DB_USER_DICTIONARY).build()
         val userDictionaryHanjaConverter = DictionaryHanjaConverter(UserDictionaryDictionary(userDictionaryDatabase))
         converters += userDictionaryHanjaConverter
 
+        // Add Converter with User Input History
         if(BuildConfig.IS_DONATION && preferences.getBoolean("use_learned_word", false)) {
             val historyDatabase = Room.databaseBuilder(applicationContext, HistoryDatabase::class.java, DB_HISTORY).build()
             val historyHanjaConverter = HistoryHanjaConverter(historyDatabase, preferences.getBoolean("freeze_learning", false))
@@ -108,6 +124,7 @@ class ConverterAccessibilityService: AccessibilityService() {
             converters += historyHanjaConverter
         }
 
+        // Add Converter with Main Compound Dictionary
         val additional = preferences.getStringSet("additional_dictionaries", setOf())?.toList() ?: listOf()
         val dictionaries = DictionaryManager.loadCompoundDictionary(assets, listOf("base") + additional)
         val dictionaryHanjaConverter: HanjaConverter = DictionaryHanjaConverter(dictionaries)
@@ -116,18 +133,6 @@ class ConverterAccessibilityService: AccessibilityService() {
             converters += ContextSortingHanjaConverter(dictionaryHanjaConverter, CachingTFLitePredictor(tfLitePredictor))
         } else {
             converters += dictionaryHanjaConverter
-        }
-
-        val searchByTranslation = BuildConfig.IS_DONATION && preferences.getBoolean("search_by_translation", false)
-        val searchByComposition = BuildConfig.IS_DONATION && preferences.getBoolean("search_by_composition", false)
-
-        if(searchByTranslation) {
-            val dictionary = DictionaryManager.loadDictionary(assets, "translation")
-            if(dictionary != null) converters += DictionaryHanjaConverter(dictionary)
-        }
-        if(searchByComposition) {
-            val dictionary = DictionaryManager.loadDictionary(assets, "composition")
-            if(dictionary != null) converters += DictionaryHanjaConverter(dictionary)
         }
 
         val hanjaConverter: HanjaConverter = CompoundHanjaConverter(converters.toList())

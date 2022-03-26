@@ -19,7 +19,6 @@ class VerticalCandidateListAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CandidateItemViewHolder {
         val view = CandidateItemVerticalBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        view.text.setTextColor(textColor)
         view.text.alpha = textAlpha
         if(!showExtra) view.root.removeView(view.extra)
         else {
@@ -30,6 +29,7 @@ class VerticalCandidateListAdapter(
     }
 
     override fun onBindViewHolder(holder: CandidateItemViewHolder, position: Int) {
+        holder.view.text.setTextColor(data[position].color ?: textColor)
         holder.view.text.text = data[position].hanja
         holder.view.extra.text = data[position].extra
         holder.view.root.setOnClickListener { this.onItemClick(data[position]) }
