@@ -99,18 +99,6 @@ class ConverterAccessibilityService: AccessibilityService() {
 
         val converters = mutableListOf<HanjaConverter>()
 
-        // Add Converters with Specialized Dictionaries
-        if(BuildConfig.IS_DONATION && preferences.getBoolean("search_by_translation", false)) {
-            val dictionary = DictionaryManager.loadDictionary(assets, "translation")
-            val color = ResourcesCompat.getColor(resources, R.color.searched_by_translation, theme)
-            if(dictionary != null) converters += SpecializedHanjaConverter(dictionary, color)
-        }
-        if(BuildConfig.IS_DONATION && preferences.getBoolean("search_by_composition", false)) {
-            val dictionary = DictionaryManager.loadDictionary(assets, "composition")
-            val color = ResourcesCompat.getColor(resources, R.color.searched_by_composition, theme)
-            if(dictionary != null) converters += SpecializedHanjaConverter(dictionary, color)
-        }
-
         // Add Converter with User Dictionary
         val userDictionaryDatabase = Room.databaseBuilder(applicationContext, UserDictionaryDatabase::class.java, DB_USER_DICTIONARY).build()
         val userDictionaryHanjaConverter = DictionaryHanjaConverter(UserDictionaryDictionary(userDictionaryDatabase))
@@ -133,6 +121,18 @@ class ConverterAccessibilityService: AccessibilityService() {
             converters += ContextSortingHanjaConverter(dictionaryHanjaConverter, CachingTFLitePredictor(tfLitePredictor))
         } else {
             converters += dictionaryHanjaConverter
+        }
+
+        // Add Converters with Specialized Dictionaries
+        if(BuildConfig.IS_DONATION && preferences.getBoolean("search_by_translation", false)) {
+            val dictionary = DictionaryManager.loadDictionary(assets, "translation")
+            val color = ResourcesCompat.getColor(resources, R.color.searched_by_translation, theme)
+            if(dictionary != null) converters += SpecializedHanjaConverter(dictionary, color)
+        }
+        if(BuildConfig.IS_DONATION && preferences.getBoolean("search_by_composition", false)) {
+            val dictionary = DictionaryManager.loadDictionary(assets, "composition")
+            val color = ResourcesCompat.getColor(resources, R.color.searched_by_composition, theme)
+            if(dictionary != null) converters += SpecializedHanjaConverter(dictionary, color)
         }
 
         val hanjaConverter: HanjaConverter = CompoundHanjaConverter(converters.toList())
