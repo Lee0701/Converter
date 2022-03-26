@@ -118,6 +118,18 @@ class ConverterAccessibilityService: AccessibilityService() {
             converters += dictionaryHanjaConverter
         }
 
+        val searchByTranslation = BuildConfig.IS_DONATION && preferences.getBoolean("search_by_translation", false)
+        val searchByComposition = BuildConfig.IS_DONATION && preferences.getBoolean("search_by_composition", false)
+
+        if(searchByTranslation) {
+            val dictionary = DictionaryManager.loadDictionary(assets, "translation")
+            if(dictionary != null) converters += DictionaryHanjaConverter(dictionary)
+        }
+        if(searchByComposition) {
+            val dictionary = DictionaryManager.loadDictionary(assets, "composition")
+            if(dictionary != null) converters += DictionaryHanjaConverter(dictionary)
+        }
+
         val hanjaConverter: HanjaConverter = CompoundHanjaConverter(converters.toList())
 
         converter = hanjaConverter

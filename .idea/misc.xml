@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/donation/res/menu/user_dictionary_manager_action.xml" value="0.6583333333333333" />
+        <entry key="app/src/donation/res/xml/pref_conversion.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/baseline_file_download_24.xml" value="1.5125" />
         <entry key="app/src/main/res/drawable/baseline_file_upload_24.xml" value="1.5125" />
         <entry key="app/src/main/res/drawable/bg_divider.xml" value="2.00625" />
@@ -33,6 +34,7 @@
         <entry key="app/src/main/res/layout/user_dictionary_word_list_item.xml" value="0.7166666666666667" />
         <entry key="app/src/main/res/menu/user_dictionary_manager_action.xml" value="1.1" />
         <entry key="app/src/main/res/menu/user_dictionary_manager_action_donation.xml" value="0.6583333333333333" />
+        <entry key="app/src/main/res/xml/pref_behavior.xml" value="0.5666666666666667" />
         <entry key="app/src/main/res/xml/pref_conversion.xml" value="0.1" />
       </map>
     </option>
