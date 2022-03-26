@@ -17,7 +17,7 @@
             app:title="@string/additional_dictionaries_title"
             app:entries="@array/additional_dictionaries_entries"
             android:entryValues="@array/additional_dictionaries_values"
-            android:defaultValue="@array/additional_dictionaries_values" />
+            android:defaultValue="@array/additional_dictionaries_values_default" />
 
         <io.github.lee0701.converter.settings.preference.UserDictionaryManagerPreference
             app:title="@string/user_dictionary_manager_title" />

@@ -12,6 +12,7 @@ object DictionaryManager {
             try {
                 return@mapNotNull DiskDictionary(assetManager.open("dict/$name.bin"))
             } catch (ex: IOException) {
+                ex.printStackTrace()
                 return@mapNotNull null
             }
         }

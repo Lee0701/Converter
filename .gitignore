@@ -1,6 +1,6 @@
 output.apks
 
-app/src/main/assets/dict/*
+app/src/*/assets/dict/*
 **/model.tflite
 **/wordlist.txt
 

@@ -49,6 +49,8 @@
     <string name="person_name">Person Names</string>
     <string name="metro_station">Metro Station Names</string>
     <string name="newly_coined">Newly-coined Words</string>
+    <string name="translation">Search by Translation</string>
+    <string name="composition">Search by Composition</string>
     <string name="user_dictionary_manager_title">User Dictionary Manager</string>
     <!-- Prediction Preferences -->
     <string name="use_prediction_title">Use Prediction</string>

@@ -37,6 +37,12 @@
         <item>newly-coined</item>
     </string-array>
 
+    <string-array name="additional_dictionaries_values_default">
+        <item>person-name</item>
+        <item>metro-station</item>
+        <item>newly-coined</item>
+    </string-array>
+
     <string-array name="window_type_entries">
         <item>@string/horizontal_list</item>
         <item>@string/vertical_list</item>
