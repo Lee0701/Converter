@@ -109,4 +109,8 @@
     <string name="expand">扩大</string>
     <string name="use_autocomplete_title">使用自动补全</string>
     <string name="use_autocomplete_summary">激活词组预测。</string>
+    <string name="search_by_composition_title">通过构件搜索</string>
+    <string name="search_by_composition_summary">通过构件组合搜索汉字。</string>
+    <string name="search_by_translation_summary">通过韩语训读检索汉字。</string>
+    <string name="search_by_translation_title">通过训读搜索</string>
 </resources>
