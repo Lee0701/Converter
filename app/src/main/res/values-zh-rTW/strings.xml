@@ -109,4 +109,8 @@
     <string name="expand">展開</string>
     <string name="use_autocomplete_title">使用自動完成</string>
     <string name="use_autocomplete_summary">啟動字詞預測。</string>
+    <string name="search_by_translation_title">以翻譯搜尋</string>
+    <string name="search_by_composition_title">以部件搜尋</string>
+    <string name="search_by_composition_summary">以部件搜尋漢字。</string>
+    <string name="search_by_translation_summary">以韓語翻譯搜尋漢字。</string>
 </resources>
