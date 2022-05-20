@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/common/res/xml/pref_about.xml" value="0.25677083333333334" />
         <entry key="app/src/donation/res/xml/pref_about.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/input_assistant_view.xml" value="0.25677083333333334" />
         <entry key="app/src/main/res/xml/pref_about.xml" value="0.2817028985507246" />
         <entry key="app/src/main/res/xml/pref_service.xml" value="0.2817028985507246" />
       </map>

@@ -44,7 +44,9 @@
         android:layout_weight="1"
         android:gravity="top"
         android:padding="10dp"
-        android:inputType="text"
+        android:scrollHorizontally="false"
+        android:inputType="text|textMultiLine"
+        android:typeface="monospace"
         android:textColor="@android:color/black" />
 
     <Button
