@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/about_header">
+
+        <Preference
+            android:title="@string/about_app_info_title"
+            android:summary="@string/about_app_info_summary" />
+        <io.github.lee0701.converter.settings.preference.OpenStorePreference
+            android:title="@string/about_donate_title"
+            android:summary="@string/about_donate_summary"
+            uri="https://play.google.com/store/apps/details?id=io.github.lee0701.converter.donation"/>
+        <io.github.lee0701.converter.settings.preference.OpenStorePreference
+            android:title="@string/about_more_apps_title"
+            android:summary="@string/about_more_apps_summary"
+            uri="https://play.google.com/store/search?q=pub:%E6%9D%8E%EF%BC%81&amp;c=apps"/>
+        <io.github.lee0701.converter.settings.preference.OssLicensesMenuPreference
+            android:title="@string/about_oss_licenses_title" />
+        <io.github.lee0701.converter.settings.preference.DictionaryLicensePreference
+            android:title="@string/about_dictionary_license_title" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
