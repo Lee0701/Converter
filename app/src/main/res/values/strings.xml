@@ -101,6 +101,8 @@
     <string name="about_app_info_summary">Developer contact: hgl1002@naver.com</string>
     <string name="about_donate_title">Donate</string>
     <string name="about_donate_summary">Support the developer by buying a donation version.</string>
+    <string name="about_donation_version_title">Donation Version</string>
+    <string name="about_donation_version_summary">Thank you for supporting the developer.</string>
     <string name="about_more_apps_title">More Apps</string>
     <string name="about_more_apps_summary">Discover more apps from this app\'s developer.</string>
     <string name="about_oss_licenses_title">Open source Licenses</string>
