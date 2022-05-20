@@ -123,4 +123,10 @@
     <string name="search_by_translation_title">訓으로 檢索</string>
     <string name="search_by_translation_summary">漢字를 訓으로 檢索합니다.</string>
     <string name="search_by_composition_summary">漢字를 組合의 構成要素로 檢索합니다.</string>
+    <string name="about_donation_version_title">後援版</string>
+    <string name="about_donation_version_summary">開發者를 後援해주셔서 感謝합니다.</string>
+    <string name="about_more_apps_title">앱 더보기</string>
+    <string name="about_more_apps_summary">開發者의 다른 앱을 確認해 보세요.</string>
+    <string name="about_donate_title">後援하기</string>
+    <string name="about_donate_summary">後援版을 購買하셔서 開發者를 後援하실 수 있습니다.</string>
 </resources>
