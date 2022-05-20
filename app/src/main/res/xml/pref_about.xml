@@ -7,6 +7,10 @@
         <Preference
             android:title="@string/about_app_info_title"
             android:summary="@string/about_app_info_summary" />
+        <io.github.lee0701.converter.settings.preference.OpenStorePreference
+            android:title="@string/about_more_apps_title"
+            android:summary="@string/about_more_apps_summary"
+            uri="https://play.google.com/store/search?q=pub:%E6%9D%8E%EF%BC%81&amp;c=apps"/>
         <io.github.lee0701.converter.settings.preference.OssLicensesMenuPreference
             android:title="@string/about_oss_licenses_title" />
         <io.github.lee0701.converter.settings.preference.DictionaryLicensePreference

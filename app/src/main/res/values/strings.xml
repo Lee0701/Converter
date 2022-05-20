@@ -99,6 +99,8 @@
     <!-- About Preferences -->
     <string name="about_app_info_title">Hanja Converter</string>
     <string name="about_app_info_summary">Developer contact: hgl1002@naver.com</string>
+    <string name="about_more_apps_title">More Apps</string>
+    <string name="about_more_apps_summary">Discover more apps from this app\'s developer</string>
     <string name="about_oss_licenses_title">Open source Licenses</string>
     <string name="about_dictionary_license_title">Hanja Dictionary License</string>
     <!-- Information Activity -->
