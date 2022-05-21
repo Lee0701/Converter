@@ -69,7 +69,7 @@
     <string name="enable_auto_hiding_title">變換視窗自動隱藏</string>
     <string name="enable_auto_hiding_summary">關閉鍵盤時自動隱藏變換視窗（如有支援）。</string>
     <string name="about_app_info_title">漢字變換器</string>
-    <string name="about_app_info_summary">聯絡開發者：hgl1002@naver.com</string>
+    <string name="about_app_info_summary">聯絡開發人員：hgl1002@naver.com</string>
     <string name="about_oss_licenses_title">開放原始碼授權條款</string>
     <string name="about_dictionary_license_title">漢字辭典授權條款</string>
     <string name="title_activity_information">漢字變換器資訊</string>
@@ -113,4 +113,10 @@
     <string name="search_by_composition_title">以部件搜尋</string>
     <string name="search_by_composition_summary">以部件搜尋漢字。</string>
     <string name="search_by_translation_summary">以韓語翻譯搜尋漢字。</string>
+    <string name="about_donate_title">贊助</string>
+    <string name="about_donation_version_title">贊助版</string>
+    <string name="about_donate_summary">購買贊助版以支持開發人員。</string>
+    <string name="about_donation_version_summary">感謝您支持開發人員。</string>
+    <string name="about_more_apps_title">更多應用程式</string>
+    <string name="about_more_apps_summary">探索更多來自這位開發人員的應用程式。</string>
 </resources>
