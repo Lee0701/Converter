@@ -198,10 +198,13 @@ class ConverterAccessibilityService: AccessibilityService() {
             else -> {}
         }
 
+        val isPasswordField = this.source?.isPassword ?: false
         val inputAssistantMode = event.packageName in assistantEnabledApps
 
-        if(inputAssistantMode) onInputAssistant(event)
-        else onNormalConversion(event)
+        if(!isPasswordField) {
+            if(inputAssistantMode) onInputAssistant(event)
+            else onNormalConversion(event)
+        }
     }
 
     private fun onInputAssistant(event: AccessibilityEvent) {
