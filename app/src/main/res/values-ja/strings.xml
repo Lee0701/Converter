@@ -113,4 +113,10 @@
     <string name="search_by_composition_title">組み合わせで検索</string>
     <string name="search_by_composition_summary">部品で漢字を検索する。</string>
     <string name="search_by_translation_summary">韓国語の訓読みで漢字を検索する。</string>
+    <string name="about_donate_title">寄付する</string>
+    <string name="about_donate_summary">寄付版を購入して開発者を支援することができます。</string>
+    <string name="about_donation_version_title">寄付版</string>
+    <string name="about_more_apps_title">他のアプリを見る</string>
+    <string name="about_more_apps_summary">この開発者の他のアプリも見てみましょう。</string>
+    <string name="about_donation_version_summary">開発者を支援していただいてありがとうございます。</string>
 </resources>
