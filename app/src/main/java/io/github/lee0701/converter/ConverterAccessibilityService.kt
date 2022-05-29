@@ -344,7 +344,7 @@ class ConverterAccessibilityService: AccessibilityService() {
         inputAssistantLauncherWindow.hide()
     }
 
-    private fun isEditText(className: CharSequence): Boolean {
+    private fun isEditText(className: CharSequence?): Boolean {
         return className == "android.widget.EditText"
     }
 
