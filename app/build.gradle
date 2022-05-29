@@ -49,7 +49,7 @@ android {
         donation {
             dimension "version"
             applicationIdSuffix ".donation"
-            versionCode 22
+            versionCode 23
             versionName "0.4.1"
             buildConfigField 'boolean', 'IS_DONATION', 'true'
             manifestPlaceholders = [
