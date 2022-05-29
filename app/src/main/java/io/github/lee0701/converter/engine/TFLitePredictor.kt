@@ -69,7 +69,7 @@ class TFLitePredictor(
         }
 
         override fun score(candidate: Candidate): Float {
-            return wordToIndex[candidate.hanja]?.let { prediction[it] } ?: 0f
+            return wordToIndex[candidate.hanja]?.let { prediction.getOrNull(it) } ?: 0f
         }
     }
 }
