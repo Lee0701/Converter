@@ -5,7 +5,13 @@
       <map>
         <entry key="app/src/common/res/xml/pref_about.xml" value="0.25677083333333334" />
         <entry key="app/src/donation/res/xml/pref_about.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ripple.xml" value="0.27" />
+        <entry key="app/src/main/res/layout/activity_information.xml" value="0.37907608695652173" />
+        <entry key="app/src/main/res/layout/candidate_item_horizontal.xml" value="0.1793478260869565" />
+        <entry key="app/src/main/res/layout/candidate_item_vertical.xml" value="0.1793478260869565" />
+        <entry key="app/src/main/res/layout/candidates_view_horizontal.xml" value="0.1793478260869565" />
         <entry key="app/src/main/res/layout/input_assistant_view.xml" value="0.25677083333333334" />
+        <entry key="app/src/main/res/layout/user_dictionary_word_list_item.xml" value="0.26614583333333336" />
         <entry key="app/src/main/res/xml/pref_about.xml" value="0.2817028985507246" />
         <entry key="app/src/main/res/xml/pref_service.xml" value="0.2817028985507246" />
       </map>
