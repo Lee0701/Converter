@@ -38,7 +38,7 @@ android {
         common {
             dimension "version"
             applicationIdSuffix ""
-            versionCode 18
+            versionCode 19
             versionName "0.4.1"
             buildConfigField 'boolean', 'IS_DONATION', 'false'
             manifestPlaceholders = [
