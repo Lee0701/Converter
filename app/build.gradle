@@ -39,7 +39,7 @@ android {
             dimension "version"
             applicationIdSuffix ""
             versionCode 18
-            versionName "0.4.0"
+            versionName "0.4.1"
             buildConfigField 'boolean', 'IS_DONATION', 'false'
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher",
