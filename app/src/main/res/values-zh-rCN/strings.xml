@@ -113,4 +113,10 @@
     <string name="search_by_composition_summary">通过构件组合搜索汉字。</string>
     <string name="search_by_translation_summary">通过韩语训读检索汉字。</string>
     <string name="search_by_translation_title">通过训读搜索</string>
+    <string name="about_donation_version_title">赞助版</string>
+    <string name="about_donation_version_summary">感谢您支持开发人员。</string>
+    <string name="about_more_apps_title">更多应用程序</string>
+    <string name="about_more_apps_summary">探索更多来自开发者的应用程序。</string>
+    <string name="about_donate_title">赞助</string>
+    <string name="about_donate_summary">购买赞助版以支持开发人员。</string>
 </resources>
