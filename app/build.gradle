@@ -4,13 +4,13 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "io.github.lee0701.converter"
         minSdkVersion 22
-        targetSdkVersion 32
+        targetSdkVersion 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -85,7 +85,7 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.2'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
@@ -93,8 +93,8 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview-selection:1.1.0'
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'com.github.skydoves:colorpickerpreference:2.0.6'
-    implementation 'org.tensorflow:tensorflow-lite-support:0.4.0'
-    implementation 'org.tensorflow:tensorflow-lite-metadata:0.4.0'
+    implementation 'org.tensorflow:tensorflow-lite-support:0.4.2'
+    implementation 'org.tensorflow:tensorflow-lite-metadata:0.4.2'
     implementation "com.google.android.gms:play-services-oss-licenses:17.0.0"
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
