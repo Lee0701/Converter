@@ -166,17 +166,18 @@ class ConverterAccessibilityService: AccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if(event == null) return
+        val source = event.source
 
         when(event.eventType) {
             AccessibilityEvent.TYPE_VIEW_CLICKED -> {
-                if(event.source != null && !isEditText(event.source.className)) {
+                if(source != null && !isEditText(source.className)) {
                     inputAssistantLauncherWindow.hide()
                     if(enableAutoHiding) candidatesWindow.destroy()
                 }
             }
             AccessibilityEvent.TYPE_WINDOWS_CHANGED,
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
-                if(event.source != null && !isEditText(event.source.className)) {
+                if(source != null && !isEditText(source.className)) {
                     inputAssistantLauncherWindow.hide()
                     if(enableAutoHiding) candidatesWindow.destroy()
                 }
@@ -191,8 +192,8 @@ class ConverterAccessibilityService: AccessibilityService() {
                 // Update paste target.
                 // Prevent from input assistant window itself being targeted as paste target
                 if(event.packageName != this.packageName
-                    && event.source != null && isEditText(event.source.className)) {
-                        this.source = event.source
+                    && source != null && isEditText(source.className)) {
+                        this.source = source
                 }
             }
             else -> {}
@@ -208,22 +209,23 @@ class ConverterAccessibilityService: AccessibilityService() {
     }
 
     private fun onInputAssistant(event: AccessibilityEvent) {
+        val source = event.source
         when(event.eventType) {
             AccessibilityEvent.TYPE_VIEW_FOCUSED -> {
-                if(event.source != null && isEditText(event.source.className)) {
-                    showInputAssistantLauncherWindow(event.source)
+                if(source != null && isEditText(source.className)) {
+                    showInputAssistantLauncherWindow(source)
                 } else {
                     inputAssistantLauncherWindow.hide()
                 }
             }
             AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> {
-                if(event.source != null && isEditText(event.source.className)) {
-                    showInputAssistantLauncherWindow(event.source)
+                if(source != null && isEditText(source.className)) {
+                    showInputAssistantLauncherWindow(source)
                 }
             }
             AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
-                if(event.source != null && isEditText(event.source.className)) {
-                    val rect = Rect().apply { event.source.getBoundsInScreen(this) }
+                if(source != null && isEditText(source.className)) {
+                    val rect = Rect().apply { source.getBoundsInScreen(this) }
                     inputAssistantLauncherWindow.apply {
                         if(this is VerticalInputAssistantLauncherWindow) {
                             xPos = rect.left
