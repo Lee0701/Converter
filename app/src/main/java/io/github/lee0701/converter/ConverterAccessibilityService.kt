@@ -4,7 +4,6 @@ import android.accessibilityservice.AccessibilityService
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
@@ -14,12 +13,11 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.PreferenceManager
 import androidx.room.Room
-import io.github.lee0701.converter.CharacterSet.isHangul
-import io.github.lee0701.converter.candidates.Candidate
 import io.github.lee0701.converter.assistant.HorizontalInputAssistantLauncherWindow
 import io.github.lee0701.converter.assistant.InputAssistantLauncherWindow
-import io.github.lee0701.converter.assistant.VerticalInputAssistantLauncherWindow
 import io.github.lee0701.converter.assistant.InputAssistantWindow
+import io.github.lee0701.converter.assistant.VerticalInputAssistantLauncherWindow
+import io.github.lee0701.converter.candidates.Candidate
 import io.github.lee0701.converter.candidates.view.CandidatesWindow
 import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow
@@ -170,14 +168,14 @@ class ConverterAccessibilityService: AccessibilityService() {
 
         when(event.eventType) {
             AccessibilityEvent.TYPE_VIEW_CLICKED -> {
-                if(source != null && !isEditText(source.className)) {
+                if(source != null && !isEditText(source.className, source.packageName)) {
                     inputAssistantLauncherWindow.hide()
                     if(enableAutoHiding) candidatesWindow.destroy()
                 }
             }
             AccessibilityEvent.TYPE_WINDOWS_CHANGED,
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
-                if(source != null && !isEditText(source.className)) {
+                if(source != null && !isEditText(source.className, source.packageName)) {
                     inputAssistantLauncherWindow.hide()
                     if(enableAutoHiding) candidatesWindow.destroy()
                 }
@@ -192,7 +190,7 @@ class ConverterAccessibilityService: AccessibilityService() {
                 // Update paste target.
                 // Prevent from input assistant window itself being targeted as paste target
                 if(event.packageName != this.packageName
-                    && source != null && isEditText(source.className)) {
+                    && source != null && isEditText(source.className, source.packageName)) {
                         this.source = source
                 }
             }
@@ -212,19 +210,19 @@ class ConverterAccessibilityService: AccessibilityService() {
         val source = event.source
         when(event.eventType) {
             AccessibilityEvent.TYPE_VIEW_FOCUSED -> {
-                if(source != null && isEditText(source.className)) {
+                if(source != null && isEditText(source.className, source.packageName)) {
                     showInputAssistantLauncherWindow(source)
                 } else {
                     inputAssistantLauncherWindow.hide()
                 }
             }
             AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> {
-                if(source != null && isEditText(source.className)) {
+                if(source != null && isEditText(source.className, source.packageName)) {
                     showInputAssistantLauncherWindow(source)
                 }
             }
             AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
-                if(source != null && isEditText(source.className)) {
+                if(source != null && isEditText(source.className, source.packageName)) {
                     val rect = Rect().apply { source.getBoundsInScreen(this) }
                     inputAssistantLauncherWindow.apply {
                         if(this is VerticalInputAssistantLauncherWindow) {
@@ -346,7 +344,8 @@ class ConverterAccessibilityService: AccessibilityService() {
         inputAssistantLauncherWindow.hide()
     }
 
-    private fun isEditText(className: CharSequence?): Boolean {
+    private fun isEditText(className: CharSequence?, packageName: CharSequence?): Boolean {
+        if(packageName in NO_EDITTEXT_FILTER) return true
         return className == "android.widget.EditText"
     }
 
@@ -400,6 +399,10 @@ class ConverterAccessibilityService: AccessibilityService() {
 
     companion object {
         var INSTANCE: ConverterAccessibilityService? = null
+
+        val NO_EDITTEXT_FILTER = setOf(
+            "com.samsung.android.app.notes"
+        )
 
         const val DB_HISTORY = "history"
         const val DB_USER_DICTIONARY = "user_dictionary"

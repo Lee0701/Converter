@@ -7,6 +7,8 @@
         <item>com.sec.android.app.sbrowser</item>
         <item>com.android.chrome</item>
         <item>com.microsoft.emmx</item>
+
+        <item>com.samsung.android.app.notes</item>
     </string-array>
 
     <string-array name="output_format_entries">
