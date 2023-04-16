@@ -9,7 +9,7 @@ data class ComposingText(
     val to: Int = from,
     val unconverted: String = "",
     val converted: String = "",
-    val selected: List<io.github.lee0701.converter.library.engine.Candidate> = listOf(),
+    val selected: List<Candidate> = listOf(),
 ) {
     val composing: CharSequence = text.slice(from until to)
     val textBeforeCursor: CharSequence = text.take(to)
@@ -43,7 +43,7 @@ data class ComposingText(
         return this
     }
 
-    fun replaced(candidate: io.github.lee0701.converter.library.engine.Candidate, format: OutputFormat?): ComposingText {
+    fun replaced(candidate: Candidate, format: OutputFormat?): ComposingText {
         val length = candidate.input.length
         val replace = composing.take(length)
         val formatted = format?.getOutput(candidate.hanja, candidate.hangul) ?: candidate.hanja

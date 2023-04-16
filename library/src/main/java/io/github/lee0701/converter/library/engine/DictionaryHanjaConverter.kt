@@ -1,14 +1,17 @@
 package io.github.lee0701.converter.library.engine
 
+import io.github.lee0701.converter.library.dictionary.HanjaDictionary
+import io.github.lee0701.converter.library.dictionary.ListDictionary
+
 open class DictionaryHanjaConverter(
-    private val dictionary: io.github.lee0701.converter.library.dictionary.ListDictionary<io.github.lee0701.converter.library.dictionary.HanjaDictionary.Entry>,
+    private val dictionary: ListDictionary<HanjaDictionary.Entry>,
 ): HanjaConverter {
 
-    override fun convert(composingText: io.github.lee0701.converter.library.engine.ComposingText): List<io.github.lee0701.converter.library.engine.Candidate> {
+    override fun convert(composingText: ComposingText): List<Candidate> {
         val word = composingText.composing.toString()
         val result = dictionary.search(word) ?: emptyList()
         return result.map {
-            io.github.lee0701.converter.library.engine.Candidate(
+            Candidate(
                 word,
                 it.result,
                 it.extra ?: "",
@@ -17,14 +20,14 @@ open class DictionaryHanjaConverter(
         }
     }
 
-    override fun convertPrefix(composingText: io.github.lee0701.converter.library.engine.ComposingText): List<List<io.github.lee0701.converter.library.engine.Candidate>> {
+    override fun convertPrefix(composingText: ComposingText): List<List<Candidate>> {
         val word = composingText.composing.toString()
         return word.indices.reversed().map { i ->
             val slicedWord = word.slice(0 .. i)
             dictionary.search(slicedWord)
                 ?.sortedByDescending { it.frequency }
                 ?.map {
-                    io.github.lee0701.converter.library.engine.Candidate(
+                    Candidate(
                         slicedWord,
                         it.result,
                         it.extra ?: "",

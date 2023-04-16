@@ -12,8 +12,8 @@ import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.R
-import io.github.lee0701.converter.library.engine.Candidate
 import io.github.lee0701.converter.databinding.CandidatesViewVerticalBinding
+import io.github.lee0701.converter.library.engine.Candidate
 
 class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(context) {
 
@@ -32,7 +32,7 @@ class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(c
     private var candidatesView: CandidatesViewVerticalBinding? = null
     private var windowShown = false
 
-    override fun show(candidates: List<io.github.lee0701.converter.library.engine.Candidate>, rect: Rect, onItemClick: (io.github.lee0701.converter.library.engine.Candidate) -> Unit) {
+    override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (Candidate) -> Unit) {
         if(candidatesView == null) {
             val candidatesView = CandidatesViewVerticalBinding.inflate(LayoutInflater.from(context))
             candidatesView.root.setBackgroundColor(windowColor)

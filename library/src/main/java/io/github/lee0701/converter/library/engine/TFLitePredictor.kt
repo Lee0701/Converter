@@ -18,7 +18,7 @@ class TFLitePredictor(
     private val interpreter = Interpreter(modelDescriptor.createInputStream().channel.map(
         FileChannel.MapMode.READ_ONLY, modelDescriptor.startOffset, modelDescriptor.declaredLength))
 
-    override fun predict(composingText: io.github.lee0701.converter.library.engine.ComposingText): Predictor.Result {
+    override fun predict(composingText: ComposingText): Predictor.Result {
         return Result(predict(tokenize(composingText.textBeforeComposing.toString())))
     }
 
@@ -60,12 +60,12 @@ class TFLitePredictor(
     inner class Result(
         private val prediction: FloatArray,
     ): Predictor.Result {
-        override fun top(n: Int): List<io.github.lee0701.converter.library.engine.Candidate> {
+        override fun top(n: Int): List<Candidate> {
             if(n <= 0) return emptyList()
             return prediction.mapIndexed { i, value -> i to value }
                 .sortedByDescending { it.second }.take(n)
                 .map { (index, _) ->
-                    io.github.lee0701.converter.library.engine.Candidate(
+                    Candidate(
                         "",
                         indexToWord[index],
                         ""
@@ -73,7 +73,7 @@ class TFLitePredictor(
                 }
         }
 
-        override fun score(candidate: io.github.lee0701.converter.library.engine.Candidate): Float {
+        override fun score(candidate: Candidate): Float {
             return wordToIndex[candidate.hanja]?.let { prediction.getOrNull(it) } ?: 0f
         }
     }

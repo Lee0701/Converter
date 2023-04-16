@@ -13,6 +13,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.PreferenceManager
 import androidx.room.Room
+import engine.DictionaryPredictor
 import io.github.lee0701.converter.assistant.HorizontalInputAssistantLauncherWindow
 import io.github.lee0701.converter.assistant.InputAssistantLauncherWindow
 import io.github.lee0701.converter.assistant.InputAssistantWindow
@@ -24,6 +25,21 @@ import io.github.lee0701.converter.candidates.view.VerticalCandidatesWindow
 import io.github.lee0701.converter.dictionary.UserDictionaryDictionary
 import io.github.lee0701.converter.engine.HistoryHanjaConverter
 import io.github.lee0701.converter.history.HistoryDatabase
+import io.github.lee0701.converter.library.engine.CachingTFLitePredictor
+import io.github.lee0701.converter.library.engine.Candidate
+import io.github.lee0701.converter.library.engine.ComposingText
+import io.github.lee0701.converter.library.engine.CompoundHanjaConverter
+import io.github.lee0701.converter.library.engine.ContextSortingHanjaConverter
+import io.github.lee0701.converter.library.engine.DictionaryHanjaConverter
+import io.github.lee0701.converter.library.engine.DictionaryManager
+import io.github.lee0701.converter.library.engine.HanjaConverter
+import io.github.lee0701.converter.library.engine.LearningHanjaConverter
+import io.github.lee0701.converter.library.engine.NextWordPredictor
+import io.github.lee0701.converter.library.engine.OutputFormat
+import io.github.lee0701.converter.library.engine.Predictor
+import io.github.lee0701.converter.library.engine.ResortingPredictor
+import io.github.lee0701.converter.library.engine.SpecializedHanjaConverter
+import io.github.lee0701.converter.library.engine.TFLitePredictor
 import io.github.lee0701.converter.settings.SettingsActivity
 import io.github.lee0701.converter.userdictionary.UserDictionaryDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -42,8 +58,8 @@ class ConverterAccessibilityService: AccessibilityService() {
     private val scope = CoroutineScope(Dispatchers.IO)
     private var job: Job? = null
 
-    private lateinit var converter: io.github.lee0701.converter.library.engine.HanjaConverter
-    private var predictor: io.github.lee0701.converter.library.engine.Predictor? = null
+    private lateinit var converter: HanjaConverter
+    private var predictor: Predictor? = null
 
     private lateinit var candidatesWindow: CandidatesWindow
     private lateinit var inputAssistantWindow: InputAssistantWindow
@@ -52,10 +68,10 @@ class ConverterAccessibilityService: AccessibilityService() {
     // Accessibility Node where text from input assistant is pasted to
     private var source: AccessibilityNodeInfo? = null
 
-    private var composingText = io.github.lee0701.converter.library.engine.ComposingText("", 0)
+    private var composingText = ComposingText("", 0)
 
     // Preference vars
-    private var outputFormat: io.github.lee0701.converter.library.engine.OutputFormat? = null
+    private var outputFormat: OutputFormat? = null
     private var enableAutoHiding = false
     private var assistantEnabledApps: Set<String> = setOf()
 
@@ -85,7 +101,7 @@ class ConverterAccessibilityService: AccessibilityService() {
     fun restartService() {
         val preferences = PreferenceManager.getDefaultSharedPreferences(this@ConverterAccessibilityService)
 
-        outputFormat = preferences.getString("output_format", "hanja_only")?.let { io.github.lee0701.converter.library.engine.OutputFormat.of(it) }
+        outputFormat = preferences.getString("output_format", "hanja_only")?.let { OutputFormat.of(it) }
         enableAutoHiding = preferences.getBoolean("enable_auto_hiding", false)
         assistantEnabledApps = preferences.getStringSet("assistant_enabled_apps", setOf()) ?: setOf()
 
@@ -94,18 +110,18 @@ class ConverterAccessibilityService: AccessibilityService() {
         val autoComplete = preferences.getBoolean("use_autocomplete", false)
 
         val tfLitePredictor = if(BuildConfig.IS_DONATION && (usePrediction || sortByContext)) {
-            io.github.lee0701.converter.library.engine.TFLitePredictor(
+            TFLitePredictor(
                 assets.open("ml/wordlist.txt"),
                 assets.openFd("ml/model.tflite"),
             )
         } else null
 
-        val converters = mutableListOf<io.github.lee0701.converter.library.engine.HanjaConverter>()
+        val converters: MutableList<HanjaConverter> = mutableListOf()
 
         // Add Converter with User Dictionary
-        val userDictionaryDatabase = Room.databaseBuilder(applicationContext, UserDictionaryDatabase::class.java, DB_USER_DICTIONARY).build()
+        val userDictionaryDatabase: UserDictionaryDatabase = Room.databaseBuilder(applicationContext, UserDictionaryDatabase::class.java, DB_USER_DICTIONARY).build()
         val userDictionaryHanjaConverter =
-            io.github.lee0701.converter.library.engine.DictionaryHanjaConverter(
+            DictionaryHanjaConverter(
                 UserDictionaryDictionary(userDictionaryDatabase)
             )
         converters += userDictionaryHanjaConverter
@@ -120,14 +136,14 @@ class ConverterAccessibilityService: AccessibilityService() {
 
         // Add Converter with Main Compound Dictionary
         val additional = preferences.getStringSet("additional_dictionaries", setOf())?.toList() ?: listOf()
-        val dictionaries = io.github.lee0701.converter.library.engine.DictionaryManager.loadCompoundDictionary(assets, listOf("base") + additional)
-        val dictionaryHanjaConverter: io.github.lee0701.converter.library.engine.HanjaConverter =
-            io.github.lee0701.converter.library.engine.DictionaryHanjaConverter(dictionaries)
+        val dictionaries = DictionaryManager.loadCompoundDictionary(assets, listOf("base") + additional)
+        val dictionaryHanjaConverter: HanjaConverter =
+            DictionaryHanjaConverter(dictionaries)
 
         if(tfLitePredictor != null && sortByContext) {
-            converters += io.github.lee0701.converter.library.engine.ContextSortingHanjaConverter(
+            converters += ContextSortingHanjaConverter(
                 dictionaryHanjaConverter,
-                io.github.lee0701.converter.library.engine.CachingTFLitePredictor(tfLitePredictor)
+                CachingTFLitePredictor(tfLitePredictor)
             )
         } else {
             converters += dictionaryHanjaConverter
@@ -135,37 +151,37 @@ class ConverterAccessibilityService: AccessibilityService() {
 
         // Add Converters with Specialized Dictionaries
         if(BuildConfig.IS_DONATION && preferences.getBoolean("search_by_translation", false)) {
-            val dictionary = io.github.lee0701.converter.library.engine.DictionaryManager.loadDictionary(assets, "translation")
+            val dictionary = DictionaryManager.loadDictionary(assets, "translation")
             val color = ResourcesCompat.getColor(resources, R.color.searched_by_translation, theme)
-            if(dictionary != null) converters += io.github.lee0701.converter.library.engine.SpecializedHanjaConverter(
+            if(dictionary != null) converters += SpecializedHanjaConverter(
                 dictionary,
                 color
             )
         }
         if(BuildConfig.IS_DONATION && preferences.getBoolean("search_by_composition", false)) {
-            val dictionary = io.github.lee0701.converter.library.engine.DictionaryManager.loadDictionary(assets, "composition")
+            val dictionary = DictionaryManager.loadDictionary(assets, "composition")
             val color = ResourcesCompat.getColor(resources, R.color.searched_by_composition, theme)
-            if(dictionary != null) converters += io.github.lee0701.converter.library.engine.SpecializedHanjaConverter(
+            if(dictionary != null) converters += SpecializedHanjaConverter(
                 dictionary,
                 color
             )
         }
 
-        val hanjaConverter: io.github.lee0701.converter.library.engine.HanjaConverter =
-            io.github.lee0701.converter.library.engine.CompoundHanjaConverter(converters.toList())
+        val hanjaConverter: HanjaConverter =
+            CompoundHanjaConverter(converters.toList())
 
         converter = hanjaConverter
         if(usePrediction && autoComplete && tfLitePredictor != null) {
-            predictor = io.github.lee0701.converter.library.engine.ResortingPredictor(
-                io.github.lee0701.converter.library.engine.DictionaryPredictor(dictionaries),
-                io.github.lee0701.converter.library.engine.CachingTFLitePredictor(tfLitePredictor),
+            predictor = ResortingPredictor(
+                DictionaryPredictor(dictionaries),
+                CachingTFLitePredictor(tfLitePredictor),
             )
         } else if(usePrediction && !autoComplete && tfLitePredictor != null) {
-            predictor = io.github.lee0701.converter.library.engine.NextWordPredictor(
-                io.github.lee0701.converter.library.engine.CachingTFLitePredictor(tfLitePredictor)
+            predictor = NextWordPredictor(
+                CachingTFLitePredictor(tfLitePredictor)
             )
         } else if(!usePrediction && autoComplete) {
-            predictor = io.github.lee0701.converter.library.engine.DictionaryPredictor(dictionaries)
+            predictor = DictionaryPredictor(dictionaries)
         } else {
             predictor = null
         }
@@ -397,18 +413,18 @@ class ConverterAccessibilityService: AccessibilityService() {
 
     private fun learn(input: String, result: String) {
         val converter = converter
-        if(converter !is io.github.lee0701.converter.library.engine.LearningHanjaConverter) return
+        if(converter !is LearningHanjaConverter) return
         CoroutineScope(Dispatchers.IO).launch { converter.learn(input, result) }
     }
 
-    private fun getExtraCandidates(hangul: CharSequence): List<io.github.lee0701.converter.library.engine.Candidate> {
+    private fun getExtraCandidates(hangul: CharSequence): List<Candidate> {
         if(hangul.isEmpty()) return emptyList()
         val list = mutableListOf<CharSequence>()
         val nonHangulIndex = hangul.indexOfFirst { c -> !io.github.lee0701.converter.library.CharacterSet.isHangul(c) }
         list += if(nonHangulIndex > 0) hangul.slice(0 until nonHangulIndex) else hangul
         if(io.github.lee0701.converter.library.CharacterSet.isHangul(hangul[0])) list.add(0, hangul[0].toString())
         return list.map {
-            io.github.lee0701.converter.library.engine.Candidate(
+            Candidate(
                 it.toString(),
                 it.toString(),
                 ""

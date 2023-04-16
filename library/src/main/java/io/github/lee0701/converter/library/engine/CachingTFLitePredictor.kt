@@ -7,7 +7,7 @@ class CachingTFLitePredictor(
     var context: String = ""
     var result: Predictor.Result? = null
 
-    override fun predict(composingText: io.github.lee0701.converter.library.engine.ComposingText): Predictor.Result {
+    override fun predict(composingText: ComposingText): Predictor.Result {
         val result = result
         if(context == composingText.textBeforeComposing.toString() && result != null) {
             return result

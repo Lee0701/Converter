@@ -5,7 +5,7 @@ class ContextSortingHanjaConverter(
     private val predictor: Predictor,
 ): HanjaConverter {
 
-    override fun convert(composingText: io.github.lee0701.converter.library.engine.ComposingText): List<io.github.lee0701.converter.library.engine.Candidate> {
+    override fun convert(composingText: ComposingText): List<Candidate> {
         return hanjaConverter.convert(composingText).let { converted ->
             if(converted.isNotEmpty()) {
                 val prediction = predictor.predict(composingText)
@@ -15,7 +15,7 @@ class ContextSortingHanjaConverter(
         }
     }
 
-    override fun convertPrefix(composingText: io.github.lee0701.converter.library.engine.ComposingText): List<List<io.github.lee0701.converter.library.engine.Candidate>> {
+    override fun convertPrefix(composingText: ComposingText): List<List<Candidate>> {
         return hanjaConverter.convertPrefix(composingText).let { converted ->
             if(converted.any { it.isNotEmpty() }) {
                 val prediction = predictor.predict(composingText)

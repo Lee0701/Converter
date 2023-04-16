@@ -3,8 +3,8 @@ package io.github.lee0701.converter.candidates.view
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import io.github.lee0701.converter.library.engine.Candidate
 import io.github.lee0701.converter.databinding.CandidateItemHorizontalBinding
+import io.github.lee0701.converter.library.engine.Candidate
 
 class HorizontalCandidateListAdapter(
     private val showExtra: Boolean,
@@ -12,8 +12,8 @@ class HorizontalCandidateListAdapter(
     private val extraColor: Int,
     private val textAlpha: Float,
     private val windowHeight: Int,
-    private val data: Array<io.github.lee0701.converter.library.engine.Candidate>,
-    private val onItemClick: (io.github.lee0701.converter.library.engine.Candidate) -> Unit
+    private val data: Array<Candidate>,
+    private val onItemClick: (Candidate) -> Unit
 ): RecyclerView.Adapter<HorizontalCandidateListAdapter.CandidateItemViewHolder>() {
 
     class CandidateItemViewHolder(val view: CandidateItemHorizontalBinding): RecyclerView.ViewHolder(view.root)
