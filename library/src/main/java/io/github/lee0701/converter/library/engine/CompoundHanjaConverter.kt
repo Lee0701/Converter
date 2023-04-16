@@ -1,12 +1,10 @@
-package io.github.lee0701.converter.engine
-
-import io.github.lee0701.converter.candidates.Candidate
+package io.github.lee0701.converter.library.engine
 
 class CompoundHanjaConverter(
     val converters: List<HanjaConverter>,
 ): LearningHanjaConverter, PredictingHanjaConverter {
 
-    override fun convert(composingText: ComposingText): List<Candidate> {
+    override fun convert(composingText: io.github.lee0701.converter.library.engine.ComposingText): List<io.github.lee0701.converter.library.engine.Candidate> {
         val converted = converters.flatMap { it.convert(composingText) }
         val labeled = converted.map { word ->
             if(word.extra.isNotEmpty()) word
@@ -15,7 +13,7 @@ class CompoundHanjaConverter(
         return labeled.distinctBy { it.hanja }
     }
 
-    override fun convertPrefix(composingText: ComposingText): List<List<Candidate>> {
+    override fun convertPrefix(composingText: io.github.lee0701.converter.library.engine.ComposingText): List<List<io.github.lee0701.converter.library.engine.Candidate>> {
         return converters.map { it.convertPrefix(composingText) }       // Per-length list of list of candidates
             .reduce { acc, list -> acc.zip(list).map { (l1, l2) ->
                 val merged = l1 + l2                                    // Merge same-length candidates
@@ -32,7 +30,7 @@ class CompoundHanjaConverter(
         converters.forEach { if(it is LearningHanjaConverter) it.learn(input, result) }
     }
 
-    override fun predict(composingText: ComposingText): List<Candidate> {
+    override fun predict(composingText: io.github.lee0701.converter.library.engine.ComposingText): List<io.github.lee0701.converter.library.engine.Candidate> {
         return converters.filterIsInstance<PredictingHanjaConverter>().flatMap { it.predict(composingText) }
     }
 

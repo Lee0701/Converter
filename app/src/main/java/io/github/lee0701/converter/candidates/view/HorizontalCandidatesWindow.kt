@@ -16,7 +16,7 @@ import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import io.github.lee0701.converter.R
-import io.github.lee0701.converter.candidates.Candidate
+import io.github.lee0701.converter.library.engine.Candidate
 import io.github.lee0701.converter.databinding.CandidatesViewHorizontalBinding
 
 class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow(context) {
@@ -38,7 +38,7 @@ class HorizontalCandidatesWindow(private val context: Context): CandidatesWindow
         type, flags, PixelFormat.TRANSLUCENT
     ).apply { gravity = Gravity.TOP or Gravity.START }
 
-    override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (Candidate) -> Unit) {
+    override fun show(candidates: List<io.github.lee0701.converter.library.engine.Candidate>, rect: Rect, onItemClick: (io.github.lee0701.converter.library.engine.Candidate) -> Unit) {
         if(candidatesView == null) {
             val candidatesView = CandidatesViewHorizontalBinding.inflate(LayoutInflater.from(context))
 

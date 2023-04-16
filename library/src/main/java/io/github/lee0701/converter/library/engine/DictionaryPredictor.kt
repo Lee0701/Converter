@@ -1,16 +1,12 @@
-package io.github.lee0701.converter.engine
+package io.github.lee0701.converter.library.engine
 
-import io.github.lee0701.converter.Hangul
-import io.github.lee0701.converter.candidates.Candidate
-import io.github.lee0701.converter.dictionary.HanjaDictionary
-import io.github.lee0701.converter.dictionary.PredictingDictionary
 import java.text.Normalizer
 
 class DictionaryPredictor(
-    val dictionary: PredictingDictionary<HanjaDictionary.Entry>
-): Predictor {
+    val dictionary: io.github.lee0701.converter.library.dictionary.PredictingDictionary<io.github.lee0701.converter.library.dictionary.HanjaDictionary.Entry>
+): io.github.lee0701.converter.library.engine.Predictor {
 
-    override fun predict(composingText: ComposingText): Predictor.Result {
+    override fun predict(composingText: io.github.lee0701.converter.library.engine.ComposingText): io.github.lee0701.converter.library.engine.Predictor.Result {
         val composing = composingText.composing.toString()
         val preprocessed = preprocess(composing)
         val predicted = preprocessed.flatMap { word ->
@@ -24,7 +20,12 @@ class DictionaryPredictor(
         }
         val maxFrequency = predicted.map { (_, result) -> result.frequency }.maxOrNull()?.toFloat() ?: 1f
         val sorted = predicted.sortedByDescending { (_, result) -> result.frequency }
-        val candidates = sorted.map { (key, value) -> Candidate(key, value.result, value.extra ?: "", composing) to value.frequency / maxFrequency }
+        val candidates = sorted.map { (key, value) -> io.github.lee0701.converter.library.engine.Candidate(
+            key,
+            value.result,
+            value.extra ?: "",
+            composing
+        ) to value.frequency / maxFrequency }
 
         return Result(candidates)
     }
@@ -47,15 +48,16 @@ class DictionaryPredictor(
         val lastJamo = lastDecomposed.last()
 
         if(lastJamo in '\u11a8' .. '\u11c2') {
-            val split = Hangul.splitJamo(lastJamo)
+            val split = io.github.lee0701.converter.library.Hangul.splitJamo(lastJamo)
             val combined = if(split != null) {
-                lastFirst + split.first + Hangul.toStandardInitial(Hangul.toCompat(split.second))
+                lastFirst + split.first + io.github.lee0701.converter.library.Hangul.toStandardInitial(
+                    io.github.lee0701.converter.library.Hangul.toCompat(split.second))
             } else {
-                lastFirst + Hangul.toStandardInitial(Hangul.toCompat(lastJamo))
+                lastFirst + io.github.lee0701.converter.library.Hangul.toStandardInitial(io.github.lee0701.converter.library.Hangul.toCompat(lastJamo))
             }
             result += first + Normalizer.normalize(combined, Normalizer.Form.NFC)
         } else if(last in 'ㄱ' .. 'ㅎ') {
-            val combined = Hangul.toStandardInitial(last)?.toString() ?: ""
+            val combined = io.github.lee0701.converter.library.Hangul.toStandardInitial(last)?.toString() ?: ""
             result += first + Normalizer.normalize(combined, Normalizer.Form.NFC)
         }
 
@@ -63,16 +65,16 @@ class DictionaryPredictor(
     }
 
     class Result(
-        candidates: List<Pair<Candidate, Float>>
-    ): Predictor.Result {
+        candidates: List<Pair<io.github.lee0701.converter.library.engine.Candidate, Float>>
+    ): io.github.lee0701.converter.library.engine.Predictor.Result {
 
         private val candidates = candidates.sortedByDescending { it.second }.toMap()
 
-        override fun top(n: Int): List<Candidate> {
+        override fun top(n: Int): List<io.github.lee0701.converter.library.engine.Candidate> {
             return candidates.keys.take(n)
         }
 
-        override fun score(candidate: Candidate): Float {
+        override fun score(candidate: io.github.lee0701.converter.library.engine.Candidate): Float {
             return candidates[candidate] ?: 0f
         }
     }

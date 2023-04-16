@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 import android.graphics.Rect
 import android.view.WindowManager
 import androidx.preference.PreferenceManager
-import io.github.lee0701.converter.candidates.Candidate
+import io.github.lee0701.converter.library.engine.Candidate
 
 abstract class CandidatesWindow(context: Context) {
 
@@ -29,7 +29,7 @@ abstract class CandidatesWindow(context: Context) {
 
     protected val showExtra = preferences.getBoolean("show_extra", true)
 
-    abstract fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (Candidate) -> Unit)
+    abstract fun show(candidates: List<io.github.lee0701.converter.library.engine.Candidate>, rect: Rect, onItemClick: (io.github.lee0701.converter.library.engine.Candidate) -> Unit)
     abstract fun destroy()
 
 }

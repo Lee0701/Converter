@@ -1,8 +1,6 @@
-package io.github.lee0701.converter.engine
+package io.github.lee0701.converter.library.engine
 
 import android.text.TextUtils
-import io.github.lee0701.converter.CharacterSet
-import io.github.lee0701.converter.candidates.Candidate
 import kotlin.math.abs
 
 data class ComposingText(
@@ -11,7 +9,7 @@ data class ComposingText(
     val to: Int = from,
     val unconverted: String = "",
     val converted: String = "",
-    val selected: List<Candidate> = listOf(),
+    val selected: List<io.github.lee0701.converter.library.engine.Candidate> = listOf(),
 ) {
     val composing: CharSequence = text.slice(from until to)
     val textBeforeCursor: CharSequence = text.take(to)
@@ -22,7 +20,7 @@ data class ComposingText(
         val addedText = text.drop(fromIndex).take(addedCount)
         val toIndex = fromIndex + addedCount
 
-        if(addedText.isNotEmpty() && addedText.all { CharacterSet.isHangul(it) }) {
+        if(addedText.isNotEmpty() && addedText.all { io.github.lee0701.converter.library.CharacterSet.isHangul(it) }) {
             if(composing.isEmpty()) {
                 // Create composing text if not exists
                 return ComposingText(text, fromIndex, toIndex)
@@ -45,7 +43,7 @@ data class ComposingText(
         return this
     }
 
-    fun replaced(candidate: Candidate, format: OutputFormat?): ComposingText {
+    fun replaced(candidate: io.github.lee0701.converter.library.engine.Candidate, format: OutputFormat?): ComposingText {
         val length = candidate.input.length
         val replace = composing.take(length)
         val formatted = format?.getOutput(candidate.hanja, candidate.hangul) ?: candidate.hanja

@@ -1,6 +1,5 @@
 package io.github.lee0701.converter.candidates.view
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.PixelFormat
@@ -13,7 +12,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.R
-import io.github.lee0701.converter.candidates.Candidate
+import io.github.lee0701.converter.library.engine.Candidate
 import io.github.lee0701.converter.databinding.CandidatesViewVerticalBinding
 
 class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(context) {
@@ -33,7 +32,7 @@ class VerticalCandidatesWindow(private val context: Context): CandidatesWindow(c
     private var candidatesView: CandidatesViewVerticalBinding? = null
     private var windowShown = false
 
-    override fun show(candidates: List<Candidate>, rect: Rect, onItemClick: (Candidate) -> Unit) {
+    override fun show(candidates: List<io.github.lee0701.converter.library.engine.Candidate>, rect: Rect, onItemClick: (io.github.lee0701.converter.library.engine.Candidate) -> Unit) {
         if(candidatesView == null) {
             val candidatesView = CandidatesViewVerticalBinding.inflate(LayoutInflater.from(context))
             candidatesView.root.setBackgroundColor(windowColor)

@@ -1,7 +1,6 @@
-package io.github.lee0701.converter.engine
+package io.github.lee0701.converter.library.engine
 
 import android.content.res.AssetFileDescriptor
-import io.github.lee0701.converter.candidates.Candidate
 import org.tensorflow.lite.Interpreter
 import java.io.InputStream
 import java.nio.channels.FileChannel
@@ -19,7 +18,7 @@ class TFLitePredictor(
     private val interpreter = Interpreter(modelDescriptor.createInputStream().channel.map(
         FileChannel.MapMode.READ_ONLY, modelDescriptor.startOffset, modelDescriptor.declaredLength))
 
-    override fun predict(composingText: ComposingText): Predictor.Result {
+    override fun predict(composingText: io.github.lee0701.converter.library.engine.ComposingText): Predictor.Result {
         return Result(predict(tokenize(composingText.textBeforeComposing.toString())))
     }
 
@@ -61,14 +60,20 @@ class TFLitePredictor(
     inner class Result(
         private val prediction: FloatArray,
     ): Predictor.Result {
-        override fun top(n: Int): List<Candidate> {
+        override fun top(n: Int): List<io.github.lee0701.converter.library.engine.Candidate> {
             if(n <= 0) return emptyList()
             return prediction.mapIndexed { i, value -> i to value }
                 .sortedByDescending { it.second }.take(n)
-                .map { (index, _) -> Candidate("", indexToWord[index], "") }
+                .map { (index, _) ->
+                    io.github.lee0701.converter.library.engine.Candidate(
+                        "",
+                        indexToWord[index],
+                        ""
+                    )
+                }
         }
 
-        override fun score(candidate: Candidate): Float {
+        override fun score(candidate: io.github.lee0701.converter.library.engine.Candidate): Float {
             return wordToIndex[candidate.hanja]?.let { prediction.getOrNull(it) } ?: 0f
         }
     }
