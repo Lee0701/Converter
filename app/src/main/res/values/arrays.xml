@@ -1,5 +1,20 @@
 <resources>
 
+    <string-array name="display_locale_entries">
+        <item>@string/display_locale_ko_Kore_KR</item>
+        <item>@string/display_locale_ko</item>
+        <item>@string/display_locale_zh_CN</item>
+        <item>@string/display_locale_zh_TW</item>
+        <item>@string/display_locale_ja</item>
+        <item>@string/display_locale_en</item>
+    </string-array>
+
+    <string-array name="display_locale_values">
+        <item>ko-Kore-KR</item>
+        <item>ko-Hang-KR</item>
+        <item>en</item>
+    </string-array>
+
     <string-array name="input_assistant_defaults">
         <item>com.opera.browser</item>
         <item>org.mozilla.firefox</item>

@@ -1,7 +1,10 @@
 package io.github.lee0701.converter.settings
 
 import android.accessibilityservice.AccessibilityServiceInfo
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.view.accessibility.AccessibilityManager
 import androidx.appcompat.app.AppCompatActivity
@@ -9,12 +12,13 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import io.github.lee0701.converter.ConverterAccessibilityService
+import io.github.lee0701.converter.ConverterApplication
 import io.github.lee0701.converter.R
 import io.github.lee0701.converter.databinding.ActivitySettingsBinding
 import io.github.lee0701.converter.settings.preference.OpenAccessibilitySettingsPreference
 import io.github.lee0701.converter.settings.preference.ShowCandidateWindowAdjusterPreference
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity(), OnSharedPreferenceChangeListener {
 
     private lateinit var binding: ActivitySettingsBinding
 
@@ -44,6 +48,7 @@ class SettingsActivity : AppCompatActivity() {
             }
             ConverterAccessibilityService.INSTANCE?.restartService()
         }
+        preferences.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onStart() {
@@ -55,6 +60,18 @@ class SettingsActivity : AppCompatActivity() {
             Snackbar.make(binding.root, R.string.accessibility_service_not_enabled, Snackbar.LENGTH_INDEFINITE)
                 .setAction(R.string.enable) { OpenAccessibilitySettingsPreference.openAccessibilitySettings(this) }
                 .show()
+        }
+    }
+
+    @SuppressLint("ApplySharedPref")
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        val displayLocaleKey = "display_locale"
+        if(key == displayLocaleKey) {
+            if(sharedPreferences != null) {
+                val value = sharedPreferences.getString(key, "ko-Kore-KR")
+                sharedPreferences.edit().putString(displayLocaleKey, value).commit()
+            }
+            ConverterApplication.restart(this)
         }
     }
 

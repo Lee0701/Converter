@@ -38,6 +38,13 @@
     <string name="enable_service_title">Enable Accessibility Service</string>
     <string name="enable_service_summary">Please enable \'Hanja Converter\'.</string>
     <string name="enable_overlay_permission_title">Enable Overlay Permission</string>
+    <string name="display_locale_title">Language and Script</string>
+    <string name="display_locale_ko">Korean Hangul-only Script</string>
+    <string name="display_locale_ko_Kore_KR">Korean Mixed Script</string>
+    <string name="display_locale_zh_CN">Simplified Chinese</string>
+    <string name="display_locale_zh_TW">Traditional Chinese</string>
+    <string name="display_locale_ja">Japanese</string>
+    <string name="display_locale_en">English</string>
     <!-- Conversion Preferences -->
     <string name="output_format_title">Conversion Output Format</string>
     <string name="hanja_only" translatable="false">漢字</string>

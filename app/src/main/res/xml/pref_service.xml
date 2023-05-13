@@ -8,6 +8,14 @@
             app:title="@string/enable_service_title"
             android:summary="@string/enable_service_summary" />
 
+        <ListPreference
+            app:key="display_locale"
+            app:defaultValue="ko-Kore-KR"
+            app:entries="@array/display_locale_entries"
+            app:entryValues="@array/display_locale_values"
+            app:title="@string/display_locale_title"
+            app:useSimpleSummaryProvider="true" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>
