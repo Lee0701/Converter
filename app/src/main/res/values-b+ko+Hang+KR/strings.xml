@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">漢字變換器</string>
+    <string name="settings_saved">설정을 저장했습니다.</string>
+    <string name="close">닫기</string>
+    <string name="save">저장</string>
+    <string name="discard">취소</string>
+    <string name="move">이동</string>
+    <string name="up">위</string>
+    <string name="down">아래</string>
+    <string name="larger">크게</string>
+    <string name="smaller">작게</string>
+    <string name="agree">동의</string>
+    <string name="disagree">동의 안함</string>
+    <string name="enable">활성화</string>
+    <string name="accessibility_service_required">漢字變換器를 사용하시려면 접근성 서비스를 활성화해 주세요.</string>
+    <string name="overlay_permission_required">漢字變換器를 使用하시려면 설정 앱에서 오버레이 권한을 허용해 주세요.</string>
+    <!-- Settings Activity -->
+    <string name="title_activity_settings">漢字變換器 설정</string>
+    <string name="system_overlay_not_enabled">시스템 오버레이가 비활성 상태입니다</string>
+    <string name="accessibility_service_not_enabled">접근성 서비스가 비활성 상태입니다</string>
+    <!-- Preference Titles -->
+    <string name="service_header">서비스</string>
+    <string name="conversion_header">변환</string>
+    <string name="prediction_header">예측</string>
+    <string name="visuals_header">시각</string>
+    <string name="behavior_header">동작</string>
+    <string name="about_header">정보</string>
+    <!-- Service Preferences -->
+    <string name="enable_service_title">접근성 서비스 활성화</string>
+    <string name="enable_service_summary">\'漢字變換器\'를 켜 주세요.</string>
+    <string name="enable_overlay_permission_title">오버레이 권한 활성화</string>
+    <!-- Conversion Preferences -->
+    <string name="output_format_title">변환 출력 포맷</string>
+    <!-- Prediction Preferences -->
+    <string name="use_prediction_title">예측 기능 사용</string>
+    <string name="use_prediction_summary">다음에 입력할 단어를 예측합니다.</string>
+    <string name="sort_by_context_title">문맥 기반 변환</string>
+    <string name="sort_by_context_summary">문맥에 따라 후보 순서를 정렬합니다.</string>
+    <string name="use_learned_word_title">학습 기능 사용</string>
+    <string name="use_learned_word_summary">학습된 단어를 변환 후보로 표시합니다.</string>
+    <string name="freeze_learning_title">학습 정지</string>
+    <string name="freeze_learning_summary">새로운 한자어를 학습하지 않습니다.</string>
+    <string name="reset_learning_title">학습된 단어 삭제</string>
+    <string name="confirm_reset_learning">학습된 단어를 모두 삭제하시겠습니까\?</string>
+    <!-- Visuals Preferences -->
+    <string name="window_type_title">변환 결과창 종류</string>
+    <string name="adjust_window_title">변환 결과창 (가로) 조정</string>
+    <string name="adjust_window_summary">키보드의 단어 추천란에 맞게 조정해 주세요. (현재 화면 방향 기준)</string>
+    <string name="adjust_window_information">설정을 저장하고 이 창은 닫아주세요.</string>
+    <string name="window_width_title">변환 결과창 (세로) 너비</string>
+    <string name="window_height_title">변환 결과창 (세로) 높이</string>
+    <string name="column_count_title">변환 결과창 (세로) 열 수</string>
+    <string name="window_color_title">변환 결과창 색상</string>
+    <string name="show_extra_title">추가 정보 표시</string>
+    <string name="show_extra_summary">변환 후보별로 추가 정보(훈 등)를 표시합니다.</string>
+    <string name="custom_window_color_title">사용자 색상</string>
+    <string name="custom_window_color_summary">변환 결과창의 \'사용자\' 색상을 변경합니다.</string>
+    <string name="custom_window_color_text_title">사용자 색상 (직접 입력)</string>
+    <string name="horizontal_list">가로 목록</string>
+    <string name="vertical_list">세로 목록</string>
+    <string name="color_default">기본</string>
+    <string name="color_gboard_light_flat">Gboard 라이트 플랫</string>
+    <string name="color_gboard_dark_flat">Gboard 다크 플랫</string>
+    <string name="color_gboard_light_border">Gboard 라이트 테두리</string>
+    <string name="color_gboard_dark_border">Gboard 다크 테두리</string>
+    <string name="color_samsung_light">삼성 라이트</string>
+    <string name="color_samsung_dark">삼성 다크</string>
+    <string name="color_custom">사용자</string>
+    <!-- Behavior Preferences -->
+    <string name="enable_auto_hiding_title">변환 결과창 자동 닫기</string>
+    <string name="enable_auto_hiding_summary">지원될 경우, 키보드가 닫힐 때 변환 결과창을 함께 닫습니다.</string>
+    <!-- About Preferences -->
+    <string name="about_app_info_title">漢字變換器</string>
+    <string name="about_app_info_summary">개발자 연락처: hgl1002@naver.com</string>
+    <string name="about_oss_licenses_title">오픈소스 라이선스</string>
+    <string name="about_dictionary_license_title">한자 사전 라이선스</string>
+    <!-- Information Activity -->
+    <string name="title_activity_information">漢字變換器 정보</string>
+    <string name="first_fragment_label">안내</string>
+    <string name="information_details">漢字變換器의 주요 기능을 쓰려면 접근성 서비스를 사용해야 합니다.
+\n
+\n 접근성 서비스 권한은 오직 다음과 같은 목적으로만 활용됩니다.
+\n - 사용자가 입력한 텍스트 중 한자로 변환할 내용 추출
+\n - 한자로 변환된 내용으로 원본 텍스트 수정
+\n
+\n 漢字變換器는 사용자가 입력한 내용을 다른 목적으로 活用하거나 수집하지 않습니다.</string>
+    <string name="information_question">접근성 서비스 사용에 동의하십니까\?</string>
+    <!-- Dictionary License Activity -->
+    <string name="title_activity_dictionary_license">한자 사전 라이선스 라이선스</string>
+    <string name="additional_dictionaries_title">추가 사전</string>
+    <string name="metro_station">도시철도 역명</string>
+    <string name="newly_coined">신조어</string>
+    <string name="cancel">취소</string>
+    <string name="user_dictionary_manager_title">사용자 사전 관리</string>
+    <string name="title_activity_user_dictionary_manager">사용자 사전 관리자</string>
+    <string name="clear_dictionary">사전 비우기</string>
+    <string name="new_dictionary">사전 생성</string>
+    <string name="edit_dictionary">사전 편집</string>
+    <string name="delete_dictionary">사전 삭제</string>
+    <string name="import_dictionary">사전 가져오기</string>
+    <string name="export_dictionary">사전 내보내기</string>
+    <string name="add_word">단어 추가</string>
+    <string name="input_dictionary_name">사전명</string>
+    <string name="enable_dictionary">사용하기</string>
+    <string name="input_hangul">한글</string>
+    <string name="input_hanja">한자</string>
+    <string name="input_description">설명</string>
+    <string name="confirm_delete_dictionary">정말로 이 사전을 삭제하시겠습니까\?</string>
+    <string name="confirm_clear_dictionary">정말로 이 사전을 비우시겠습니까\?</string>
+    <string name="delete">삭제</string>
+    <string name="clear">비우기</string>
+    <string name="person_name">인명</string>
+    <string name="assistant_title">한자 입력 도우미</string>
+    <string name="open_assistant">한자 입력 도우미 열기</string>
+    <string name="paste">붙여넣기</string>
+    <string name="expand">확장</string>
+    <string name="use_autocomplete_summary">입력 중인 단어를 예측합니다.</string>
+    <string name="assistant_enabled_apps_title">한자 입력 도우미 활성화</string>
+    <string name="use_autocomplete_title">자동완성 사용</string>
+    <string name="assistant_enabled_apps_summary">한자 입력 도우미를 켤 일반 변환 미지원 앱을 선택합니다.</string>
+    <string name="search_by_composition_title">조합으로 검색</string>
+    <string name="search_by_translation_title">훈으로 검색</string>
+    <string name="search_by_translation_summary">한자를 훈으로 검색합니다.</string>
+    <string name="search_by_composition_summary">한자를 구성요소로 검색합니다.</string>
+    <string name="about_donation_version_title">후원판</string>
+    <string name="about_donation_version_summary">개발자를 후원해주셔서 감사합니다.</string>
+    <string name="about_more_apps_title">앱 더보기</string>
+    <string name="about_more_apps_summary">개발자의 다른 앱을 확인해 보세요.</string>
+    <string name="about_donate_title">후원하기</string>
+    <string name="about_donate_summary">후원판을 구매하셔서 개발자를 후원하실 수 있습니다.</string>
+</resources>

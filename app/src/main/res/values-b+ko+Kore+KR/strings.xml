@@ -46,17 +46,17 @@
     <!-- Visuals Preferences -->
     <string name="window_type_title">變換 結果窓 種類</string>
     <string name="adjust_window_title">變換 結果窓 (가로) 調整</string>
-    <string name="adjust_window_summary">키보드의 單語 推薦欄에 맞게 調整해 주세요. (現在 畵面方向 基準)</string>
+    <string name="adjust_window_summary">키보드의 單語 推薦欄에 맞게 調整해 주세요. (現在 畵面 方向 基準)</string>
     <string name="adjust_window_information">調整을 貯藏하고 이 窓은 닫아주세요.</string>
     <string name="window_width_title">變換 結果窓 (세로) 너비</string>
-    <string name="window_height_title">變換 (세로) 結果窓 높이</string>
+    <string name="window_height_title">變換 結果窓 (세로) 높이</string>
     <string name="column_count_title">變換 結果窓 (세로) 列 數</string>
     <string name="window_color_title">變換 結果窓 色相</string>
-    <string name="show_extra_title">追加情報 表示</string>
-    <string name="show_extra_summary">變換 候補別로 追加情報 (訓 等)을 表示합니다.</string>
+    <string name="show_extra_title">追加 情報 表示</string>
+    <string name="show_extra_summary">變換 候補別로 追加 情報(訓 等)를 表示합니다.</string>
     <string name="custom_window_color_title">使用者 色相</string>
     <string name="custom_window_color_summary">變換 結果窓의 \'使用者\' 色相을 變更합니다.</string>
-    <string name="custom_window_color_text_title">使用者 色相 (直接入力)</string>
+    <string name="custom_window_color_text_title">使用者 色相 (直接 入力)</string>
     <string name="horizontal_list">가로 目錄</string>
     <string name="vertical_list">세로 目錄</string>
     <string name="color_default">基本</string>
@@ -74,7 +74,7 @@
     <string name="about_app_info_title">漢字變換器</string>
     <string name="about_app_info_summary">開發者 連絡處: hgl1002@naver.com</string>
     <string name="about_oss_licenses_title">오픈소스 라이선스</string>
-    <string name="about_dictionary_license_title">漢字辭典 라이선스</string>
+    <string name="about_dictionary_license_title">漢字 辭典 라이선스</string>
     <!-- Information Activity -->
     <string name="title_activity_information">漢字變換器 情報</string>
     <string name="first_fragment_label">案內</string>
@@ -87,7 +87,7 @@
 \n 漢字變換器는 使用者가 入力한 內容을 다른 目的으로 活用하거나 收集하지 않습니다.</string>
     <string name="information_question">接近性 서비스 使用에 同意하십니까\?</string>
     <!-- Dictionary License Activity -->
-    <string name="title_activity_dictionary_license">漢字辭典 라이선스</string>
+    <string name="title_activity_dictionary_license">漢字 辭典 라이선스</string>
     <string name="additional_dictionaries_title">追加 辭典</string>
     <string name="metro_station">都市鐵道 驛名</string>
     <string name="newly_coined">新造語</string>
@@ -122,7 +122,7 @@
     <string name="search_by_composition_title">組合으로 檢索</string>
     <string name="search_by_translation_title">訓으로 檢索</string>
     <string name="search_by_translation_summary">漢字를 訓으로 檢索합니다.</string>
-    <string name="search_by_composition_summary">漢字를 組合의 構成要素로 檢索합니다.</string>
+    <string name="search_by_composition_summary">漢字를 構成要素로 檢索합니다.</string>
     <string name="about_donation_version_title">後援版</string>
     <string name="about_donation_version_summary">開發者를 後援해주셔서 感謝합니다.</string>
     <string name="about_more_apps_title">앱 더보기</string>
