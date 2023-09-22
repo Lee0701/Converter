@@ -37,8 +37,8 @@ android {
         common {
             dimension "version"
             applicationIdSuffix ""
-            versionCode 21
-            versionName "0.4.3"
+            versionCode 22
+            versionName "0.4.4"
             buildConfigField 'boolean', 'IS_DONATION', 'false'
             manifestPlaceholders = [
                     appIcon: "@mipmap/ic_launcher",
@@ -65,7 +65,7 @@ android {
         jvmTarget = '17'
     }
     namespace 'io.github.lee0701.converter'
-    applicationVariants.all { variant ->
+    applicationVariants.configureEach { variant ->
         if (variant.productFlavors[0].name == 'common') {
             variant.mergeAssetsProvider.configure {
                 doLast {
