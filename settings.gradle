@@ -14,4 +14,3 @@ dependencyResolutionManagement {
 }
 include ':app'
 rootProject.name = "Converter"
-include ':library'

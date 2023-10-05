@@ -13,7 +13,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.PreferenceManager
 import androidx.room.Room
-import engine.DictionaryPredictor
+import io.github.lee0701.converter.engine.DictionaryPredictor
 import io.github.lee0701.converter.assistant.HorizontalInputAssistantLauncherWindow
 import io.github.lee0701.converter.assistant.InputAssistantLauncherWindow
 import io.github.lee0701.converter.assistant.InputAssistantWindow
@@ -25,21 +25,21 @@ import io.github.lee0701.converter.candidates.view.VerticalCandidatesWindow
 import io.github.lee0701.converter.dictionary.UserDictionaryDictionary
 import io.github.lee0701.converter.engine.HistoryHanjaConverter
 import io.github.lee0701.converter.history.HistoryDatabase
-import io.github.lee0701.converter.library.engine.CachingTFLitePredictor
-import io.github.lee0701.converter.library.engine.Candidate
-import io.github.lee0701.converter.library.engine.ComposingText
-import io.github.lee0701.converter.library.engine.CompoundHanjaConverter
-import io.github.lee0701.converter.library.engine.ContextSortingHanjaConverter
-import io.github.lee0701.converter.library.engine.DictionaryHanjaConverter
-import io.github.lee0701.converter.library.engine.DictionaryManager
-import io.github.lee0701.converter.library.engine.HanjaConverter
-import io.github.lee0701.converter.library.engine.LearningHanjaConverter
-import io.github.lee0701.converter.library.engine.NextWordPredictor
-import io.github.lee0701.converter.library.engine.OutputFormat
-import io.github.lee0701.converter.library.engine.Predictor
-import io.github.lee0701.converter.library.engine.ResortingPredictor
-import io.github.lee0701.converter.library.engine.SpecializedHanjaConverter
-import io.github.lee0701.converter.library.engine.TFLitePredictor
+import io.github.lee0701.converter.engine.CachingTFLitePredictor
+import io.github.lee0701.converter.engine.Candidate
+import io.github.lee0701.converter.engine.ComposingText
+import io.github.lee0701.converter.engine.CompoundHanjaConverter
+import io.github.lee0701.converter.engine.ContextSortingHanjaConverter
+import io.github.lee0701.converter.engine.DictionaryHanjaConverter
+import io.github.lee0701.converter.engine.DictionaryManager
+import io.github.lee0701.converter.engine.HanjaConverter
+import io.github.lee0701.converter.engine.LearningHanjaConverter
+import io.github.lee0701.converter.engine.NextWordPredictor
+import io.github.lee0701.converter.engine.OutputFormat
+import io.github.lee0701.converter.engine.Predictor
+import io.github.lee0701.converter.engine.ResortingPredictor
+import io.github.lee0701.converter.engine.SpecializedHanjaConverter
+import io.github.lee0701.converter.engine.TFLitePredictor
 import io.github.lee0701.converter.settings.SettingsActivity
 import io.github.lee0701.converter.userdictionary.UserDictionaryDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -420,9 +420,9 @@ class ConverterAccessibilityService: AccessibilityService() {
     private fun getExtraCandidates(hangul: CharSequence): List<Candidate> {
         if(hangul.isEmpty()) return emptyList()
         val list = mutableListOf<CharSequence>()
-        val nonHangulIndex = hangul.indexOfFirst { c -> !io.github.lee0701.converter.library.CharacterSet.isHangul(c) }
+        val nonHangulIndex = hangul.indexOfFirst { c -> !CharacterSet.isHangul(c) }
         list += if(nonHangulIndex > 0) hangul.slice(0 until nonHangulIndex) else hangul
-        if(io.github.lee0701.converter.library.CharacterSet.isHangul(hangul[0])) list.add(0, hangul[0].toString())
+        if(CharacterSet.isHangul(hangul[0])) list.add(0, hangul[0].toString())
         return list.map {
             Candidate(
                 it.toString(),
