@@ -1,10 +1,13 @@
 package io.github.lee0701.converter
 
 import android.accessibilityservice.AccessibilityService
+import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.IntentFilter
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -65,6 +68,8 @@ class ConverterAccessibilityService: AccessibilityService() {
     private lateinit var inputAssistantWindow: InputAssistantWindow
     private lateinit var inputAssistantLauncherWindow: InputAssistantLauncherWindow
 
+    private var externalConversionBroadcastReceiver: ExternalConversionBroadcastReceiver? = null
+
     // Accessibility Node where text from input assistant is pasted to
     private var source: AccessibilityNodeInfo? = null
 
@@ -86,12 +91,17 @@ class ConverterAccessibilityService: AccessibilityService() {
                 PreferenceManager.setDefaultValues(this, it, true)
             }
         }
+
+        externalConversionBroadcastReceiver = ExternalConversionBroadcastReceiver()
+        registerExternalConversionReceiver()
+
         restartService()
         INSTANCE = this
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        unregisterExternalConversionReceiver()
         INSTANCE = null
     }
 
@@ -202,6 +212,12 @@ class ConverterAccessibilityService: AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if(event == null) return
         val source = event.source
+
+        // Being used as external conversion engine
+        if(externalConversionBroadcastReceiver?.broadcastReceived == true) {
+            candidatesWindow.destroy()
+            return
+        }
 
         when(event.eventType) {
             AccessibilityEvent.TYPE_VIEW_CLICKED -> {
@@ -348,6 +364,27 @@ class ConverterAccessibilityService: AccessibilityService() {
         }
     }
 
+    fun externalConvert(text: String, delay: Long = 0) {
+        val composingText = ComposingText(text, 0, text.length)
+        job?.cancel()
+        job = scope.launch {
+            if(delay > 0) delay(delay)
+            if(!isActive) return@launch
+            val predictor = predictor
+            val converted = converter.convertPrefix(composingText).flatten()
+            val predicted = predictor?.predict(composingText)?.top(10) ?: listOf()
+            val candidates = getExtraCandidates(composingText.composing) +
+                    (if(converted.isNotEmpty()) predicted.take(1) else predicted) +
+                    converted
+            withContext(Dispatchers.Main) {
+                ExternalConversionResultBroadcaster.broadcast(
+                    this@ConverterAccessibilityService,
+                    candidates
+                )
+            }
+        }
+    }
+
     private fun showInputAssistantLauncherWindow(source: AccessibilityNodeInfo) {
         if(inputAssistantLauncherWindow.shown) return
         val rect = Rect().apply { source.getBoundsInScreen(this) }
@@ -438,6 +475,38 @@ class ConverterAccessibilityService: AccessibilityService() {
             if(a[i] != b[i]) return i
         }
         return len
+    }
+
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+    private fun registerExternalConversionReceiver() {
+        val receiver = externalConversionBroadcastReceiver ?: return
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(
+                receiver,
+                IntentFilter(ExternalConversionBroadcastReceiver.ACTION_CONVERT_TEXT),
+                ExternalConversionBroadcastReceiver.PERMISSION_CONVERT_TEXT,
+                handler,
+                RECEIVER_EXPORTED
+            )
+        } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(
+                receiver,
+                IntentFilter(ExternalConversionBroadcastReceiver.ACTION_CONVERT_TEXT),
+                ExternalConversionBroadcastReceiver.PERMISSION_CONVERT_TEXT,
+                handler,
+                0
+            )
+        } else {
+            registerReceiver(
+                receiver,
+                IntentFilter(ExternalConversionBroadcastReceiver.ACTION_CONVERT_TEXT)
+            )
+        }
+    }
+
+    private fun unregisterExternalConversionReceiver() {
+        val receiver = externalConversionBroadcastReceiver ?: return
+        unregisterReceiver(receiver)
     }
 
     companion object {
