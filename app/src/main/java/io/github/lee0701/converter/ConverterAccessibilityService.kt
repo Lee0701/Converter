@@ -71,7 +71,7 @@ class ConverterAccessibilityService: AccessibilityService() {
     private lateinit var inputAssistantWindow: InputAssistantWindow
     private lateinit var inputAssistantLauncherWindow: InputAssistantLauncherWindow
 
-    private var externalConversionBroadcastReceiver: ConversionRequestBroadcastReceiver? = null
+    private var conversionRequestBroadcastReceiver: ConversionRequestBroadcastReceiver? = null
 
     // Accessibility Node where text from input assistant is pasted to
     private var source: AccessibilityNodeInfo? = null
@@ -95,9 +95,6 @@ class ConverterAccessibilityService: AccessibilityService() {
             }
         }
 
-        externalConversionBroadcastReceiver = ConversionRequestBroadcastReceiver { text ->
-            externalConvert(text)
-        }
         registerExternalConversionReceiver()
 
         restartService()
@@ -219,7 +216,7 @@ class ConverterAccessibilityService: AccessibilityService() {
         val source = event.source
 
         // Being used as external conversion engine
-        if(externalConversionBroadcastReceiver?.broadcastReceived == true) {
+        if(conversionRequestBroadcastReceiver?.broadcastReceived == true) {
             candidatesWindow.destroy()
             return
         }
@@ -483,7 +480,11 @@ class ConverterAccessibilityService: AccessibilityService() {
     }
 
     private fun registerExternalConversionReceiver() {
-        val receiver = externalConversionBroadcastReceiver ?: return
+        unregisterExternalConversionReceiver()
+        val receiver = ConversionRequestBroadcastReceiver { text ->
+            externalConvert(text)
+        }
+        conversionRequestBroadcastReceiver = receiver
         ContextCompat.registerReceiver(
             this,
             receiver,
@@ -497,8 +498,9 @@ class ConverterAccessibilityService: AccessibilityService() {
     }
 
     private fun unregisterExternalConversionReceiver() {
-        val receiver = externalConversionBroadcastReceiver ?: return
+        val receiver = conversionRequestBroadcastReceiver ?: return
         unregisterReceiver(receiver)
+        conversionRequestBroadcastReceiver = null
     }
 
     companion object {
