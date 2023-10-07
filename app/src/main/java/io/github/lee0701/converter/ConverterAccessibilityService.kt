@@ -45,6 +45,9 @@ import io.github.lee0701.converter.engine.SpecializedHanjaConverter
 import io.github.lee0701.converter.engine.TFLitePredictor
 import io.github.lee0701.converter.settings.SettingsActivity
 import io.github.lee0701.converter.userdictionary.UserDictionaryDatabase
+import io.github.lee0701.mboard_lib.conversion.Constants
+import io.github.lee0701.mboard_lib.conversion.ConversionRequestBroadcastReceiver
+import io.github.lee0701.mboard_lib.conversion.ConversionResultBroadcaster
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -68,7 +71,7 @@ class ConverterAccessibilityService: AccessibilityService() {
     private lateinit var inputAssistantWindow: InputAssistantWindow
     private lateinit var inputAssistantLauncherWindow: InputAssistantLauncherWindow
 
-    private var externalConversionBroadcastReceiver: ExternalConversionBroadcastReceiver? = null
+    private var externalConversionBroadcastReceiver: ConversionRequestBroadcastReceiver? = null
 
     // Accessibility Node where text from input assistant is pasted to
     private var source: AccessibilityNodeInfo? = null
@@ -92,7 +95,9 @@ class ConverterAccessibilityService: AccessibilityService() {
             }
         }
 
-        externalConversionBroadcastReceiver = ExternalConversionBroadcastReceiver()
+        externalConversionBroadcastReceiver = ConversionRequestBroadcastReceiver { text ->
+            externalConvert(text)
+        }
         registerExternalConversionReceiver()
 
         restartService()
@@ -377,9 +382,9 @@ class ConverterAccessibilityService: AccessibilityService() {
                     (if(converted.isNotEmpty()) predicted.take(1) else predicted) +
                     converted
             withContext(Dispatchers.Main) {
-                ExternalConversionResultBroadcaster.broadcast(
+                ConversionResultBroadcaster.broadcast(
                     this@ConverterAccessibilityService,
-                    candidates
+                    candidates.map { (hangul, hanja, extra) -> listOf(hangul, hanja, extra) }
                 )
             }
         }
@@ -483,23 +488,23 @@ class ConverterAccessibilityService: AccessibilityService() {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(
                 receiver,
-                IntentFilter(ExternalConversionBroadcastReceiver.ACTION_CONVERT_TEXT),
-                ExternalConversionBroadcastReceiver.PERMISSION_CONVERT_TEXT,
+                IntentFilter(Constants.ACTION_CONVERT_TEXT),
+                Constants.PERMISSION_CONVERT_TEXT,
                 handler,
                 RECEIVER_EXPORTED
             )
         } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerReceiver(
                 receiver,
-                IntentFilter(ExternalConversionBroadcastReceiver.ACTION_CONVERT_TEXT),
-                ExternalConversionBroadcastReceiver.PERMISSION_CONVERT_TEXT,
+                IntentFilter(Constants.ACTION_CONVERT_TEXT),
+                Constants.PERMISSION_CONVERT_TEXT,
                 handler,
                 0
             )
         } else {
             registerReceiver(
                 receiver,
-                IntentFilter(ExternalConversionBroadcastReceiver.ACTION_CONVERT_TEXT)
+                IntentFilter(Constants.ACTION_CONVERT_TEXT)
             )
         }
     }
