@@ -1,7 +1,6 @@
 package io.github.lee0701.converter
 
 import android.accessibilityservice.AccessibilityService
-import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -13,10 +12,10 @@ import android.os.Handler
 import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.PreferenceManager
 import androidx.room.Room
-import io.github.lee0701.converter.engine.DictionaryPredictor
 import io.github.lee0701.converter.assistant.HorizontalInputAssistantLauncherWindow
 import io.github.lee0701.converter.assistant.InputAssistantLauncherWindow
 import io.github.lee0701.converter.assistant.InputAssistantWindow
@@ -26,8 +25,6 @@ import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.view.VerticalCandidatesWindow
 import io.github.lee0701.converter.dictionary.UserDictionaryDictionary
-import io.github.lee0701.converter.engine.HistoryHanjaConverter
-import io.github.lee0701.converter.history.HistoryDatabase
 import io.github.lee0701.converter.engine.CachingTFLitePredictor
 import io.github.lee0701.converter.engine.Candidate
 import io.github.lee0701.converter.engine.ComposingText
@@ -35,7 +32,9 @@ import io.github.lee0701.converter.engine.CompoundHanjaConverter
 import io.github.lee0701.converter.engine.ContextSortingHanjaConverter
 import io.github.lee0701.converter.engine.DictionaryHanjaConverter
 import io.github.lee0701.converter.engine.DictionaryManager
+import io.github.lee0701.converter.engine.DictionaryPredictor
 import io.github.lee0701.converter.engine.HanjaConverter
+import io.github.lee0701.converter.engine.HistoryHanjaConverter
 import io.github.lee0701.converter.engine.LearningHanjaConverter
 import io.github.lee0701.converter.engine.NextWordPredictor
 import io.github.lee0701.converter.engine.OutputFormat
@@ -43,6 +42,7 @@ import io.github.lee0701.converter.engine.Predictor
 import io.github.lee0701.converter.engine.ResortingPredictor
 import io.github.lee0701.converter.engine.SpecializedHanjaConverter
 import io.github.lee0701.converter.engine.TFLitePredictor
+import io.github.lee0701.converter.history.HistoryDatabase
 import io.github.lee0701.converter.settings.SettingsActivity
 import io.github.lee0701.converter.userdictionary.UserDictionaryDatabase
 import io.github.lee0701.mboard_lib.conversion.Constants
@@ -369,7 +369,7 @@ class ConverterAccessibilityService: AccessibilityService() {
         }
     }
 
-    fun externalConvert(text: String, delay: Long = 0) {
+    private fun externalConvert(text: String, delay: Long = 0) {
         val composingText = ComposingText(text, 0, text.length)
         job?.cancel()
         job = scope.launch {
@@ -482,31 +482,18 @@ class ConverterAccessibilityService: AccessibilityService() {
         return len
     }
 
-    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     private fun registerExternalConversionReceiver() {
         val receiver = externalConversionBroadcastReceiver ?: return
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(
-                receiver,
-                IntentFilter(Constants.ACTION_CONVERT_TEXT),
-                Constants.PERMISSION_CONVERT_TEXT,
-                handler,
-                RECEIVER_EXPORTED
-            )
-        } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            registerReceiver(
-                receiver,
-                IntentFilter(Constants.ACTION_CONVERT_TEXT),
-                Constants.PERMISSION_CONVERT_TEXT,
-                handler,
-                0
-            )
-        } else {
-            registerReceiver(
-                receiver,
-                IntentFilter(Constants.ACTION_CONVERT_TEXT)
-            )
-        }
+        ContextCompat.registerReceiver(
+            this,
+            receiver,
+            IntentFilter(Constants.ACTION_CONVERT_TEXT),
+            Constants.PERMISSION_CONVERT_TEXT,
+            handler,
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                ContextCompat.RECEIVER_EXPORTED
+            else ContextCompat.RECEIVER_NOT_EXPORTED
+        )
     }
 
     private fun unregisterExternalConversionReceiver() {
