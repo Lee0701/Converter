@@ -11,6 +11,9 @@
         <package android:name="com.samsung.android.app.notes" />
     </queries>
 
+    <uses-permission android:name="ee.oyatl.ime.f.fusion.permission.CONVERT_TEXT" />
+    <uses-permission android:name="ee.oyatl.ime.f.fusion.permission.RECEIVE_CONVERTED_TEXT" />
+
     <application
         android:allowBackup="true"
         android:icon="${appIcon}"
@@ -18,6 +21,7 @@
         android:roundIcon="${appIconRound}"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".settings.UserDictionaryManagerActivity"
             android:theme="@style/AppTheme.NoActionBar"
