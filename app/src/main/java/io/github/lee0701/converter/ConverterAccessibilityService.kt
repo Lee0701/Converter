@@ -19,7 +19,6 @@ import androidx.room.Room
 import ee.oyatl.ime.f.fusion.Constants
 import ee.oyatl.ime.f.fusion.ConversionRequestBroadcastReceiver
 import ee.oyatl.ime.f.fusion.ConversionResultBroadcaster
-import ee.oyatl.ime.f.fusion.FusionConverter
 import io.github.lee0701.converter.assistant.HorizontalInputAssistantLauncherWindow
 import io.github.lee0701.converter.assistant.InputAssistantLauncherWindow
 import io.github.lee0701.converter.assistant.InputAssistantWindow
@@ -87,12 +86,13 @@ class ConverterAccessibilityService: AccessibilityService() {
     private var ignoreText: CharSequence? = null
     private var broadcastReceived = false
 
-    private val fusionConverter: FusionConverter = object: FusionConverter {
-        override fun convert(text: String) {
-            broadcastReceived = true
-            this@ConverterAccessibilityService.externalConvert(text)
+    private val conversionResultListener: ConversionRequestBroadcastReceiver.Listener =
+        object: ConversionRequestBroadcastReceiver.Listener {
+            override fun onText(text: String) {
+                broadcastReceived = true
+                this@ConverterAccessibilityService.externalConvert(text)
+            }
         }
-    }
 
     override fun onCreate() {
         super.onCreate()
@@ -489,7 +489,7 @@ class ConverterAccessibilityService: AccessibilityService() {
 
     private fun registerExternalConversionReceiver() {
         unregisterExternalConversionReceiver()
-        val receiver = ConversionRequestBroadcastReceiver(fusionConverter)
+        val receiver = ConversionRequestBroadcastReceiver(conversionResultListener)
         conversionRequestBroadcastReceiver = receiver
         ContextCompat.registerReceiver(
             this,
