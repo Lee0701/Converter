@@ -12,5 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-include ':app'
 rootProject.name = "Converter"
+include ':app'
+include ':mboard-lib:lib'

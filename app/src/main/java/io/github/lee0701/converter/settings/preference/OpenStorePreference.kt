@@ -15,7 +15,6 @@ class OpenStorePreference(
 
     override fun onClick() {
         val intent = Intent(Intent.ACTION_VIEW).apply {
-            println(uri)
             data = Uri.parse(uri)
             setPackage("com.android.vending")
         }

@@ -1,7 +1,9 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.android.gms.oss-licenses-plugin'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'com.google.android.gms.oss-licenses-plugin'
+}
 
 android {
     compileSdk 34
@@ -77,9 +79,13 @@ android {
 }
 
 dependencies {
+    implementation project(':mboard-lib:lib')
+
     def room_version = '2.5.2'
     def lifecycle_version = '2.6.2'
 
+    implementation 'org.tensorflow:tensorflow-lite-support:0.4.4'
+    implementation 'org.tensorflow:tensorflow-lite-metadata:0.4.4'
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
