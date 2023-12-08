@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 import android.graphics.Rect
 import android.view.WindowManager
 import androidx.preference.PreferenceManager
-import io.github.lee0701.converter.library.engine.Candidate
+import io.github.lee0701.converter.engine.Candidate
 
 abstract class CandidatesWindow(context: Context) {
 

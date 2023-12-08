@@ -3,6 +3,8 @@ package io.github.lee0701.converter.settings
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.accessibility.AccessibilityManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
@@ -16,6 +18,7 @@ import io.github.lee0701.converter.settings.preference.ShowCandidateWindowAdjust
 
 class SettingsActivity : AppCompatActivity() {
 
+    private val handler = Handler(Looper.getMainLooper())
     private lateinit var binding: ActivitySettingsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

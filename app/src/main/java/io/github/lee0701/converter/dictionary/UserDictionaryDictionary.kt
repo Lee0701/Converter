@@ -1,8 +1,5 @@
 package io.github.lee0701.converter.dictionary
 
-import io.github.lee0701.converter.library.dictionary.HanjaDictionary
-import io.github.lee0701.converter.library.dictionary.ListDictionary
-import io.github.lee0701.converter.library.dictionary.PredictingDictionary
 import io.github.lee0701.converter.userdictionary.UserDictionaryDatabase
 
 class UserDictionaryDictionary(

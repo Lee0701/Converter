@@ -4,16 +4,21 @@ import android.accessibilityservice.AccessibilityService
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.IntentFilter
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.PreferenceManager
 import androidx.room.Room
-import engine.DictionaryPredictor
+import ee.oyatl.ime.f.fusion.Constants
+import ee.oyatl.ime.f.fusion.ConversionRequestBroadcastReceiver
+import ee.oyatl.ime.f.fusion.ConversionResultBroadcaster
 import io.github.lee0701.converter.assistant.HorizontalInputAssistantLauncherWindow
 import io.github.lee0701.converter.assistant.InputAssistantLauncherWindow
 import io.github.lee0701.converter.assistant.InputAssistantWindow
@@ -23,23 +28,24 @@ import io.github.lee0701.converter.candidates.view.CandidatesWindowHider
 import io.github.lee0701.converter.candidates.view.HorizontalCandidatesWindow
 import io.github.lee0701.converter.candidates.view.VerticalCandidatesWindow
 import io.github.lee0701.converter.dictionary.UserDictionaryDictionary
+import io.github.lee0701.converter.engine.CachingTFLitePredictor
+import io.github.lee0701.converter.engine.Candidate
+import io.github.lee0701.converter.engine.ComposingText
+import io.github.lee0701.converter.engine.CompoundHanjaConverter
+import io.github.lee0701.converter.engine.ContextSortingHanjaConverter
+import io.github.lee0701.converter.engine.DictionaryHanjaConverter
+import io.github.lee0701.converter.engine.DictionaryManager
+import io.github.lee0701.converter.engine.DictionaryPredictor
+import io.github.lee0701.converter.engine.HanjaConverter
 import io.github.lee0701.converter.engine.HistoryHanjaConverter
+import io.github.lee0701.converter.engine.LearningHanjaConverter
+import io.github.lee0701.converter.engine.NextWordPredictor
+import io.github.lee0701.converter.engine.OutputFormat
+import io.github.lee0701.converter.engine.Predictor
+import io.github.lee0701.converter.engine.ResortingPredictor
+import io.github.lee0701.converter.engine.SpecializedHanjaConverter
+import io.github.lee0701.converter.engine.TFLitePredictor
 import io.github.lee0701.converter.history.HistoryDatabase
-import io.github.lee0701.converter.library.engine.CachingTFLitePredictor
-import io.github.lee0701.converter.library.engine.Candidate
-import io.github.lee0701.converter.library.engine.ComposingText
-import io.github.lee0701.converter.library.engine.CompoundHanjaConverter
-import io.github.lee0701.converter.library.engine.ContextSortingHanjaConverter
-import io.github.lee0701.converter.library.engine.DictionaryHanjaConverter
-import io.github.lee0701.converter.library.engine.DictionaryManager
-import io.github.lee0701.converter.library.engine.HanjaConverter
-import io.github.lee0701.converter.library.engine.LearningHanjaConverter
-import io.github.lee0701.converter.library.engine.NextWordPredictor
-import io.github.lee0701.converter.library.engine.OutputFormat
-import io.github.lee0701.converter.library.engine.Predictor
-import io.github.lee0701.converter.library.engine.ResortingPredictor
-import io.github.lee0701.converter.library.engine.SpecializedHanjaConverter
-import io.github.lee0701.converter.library.engine.TFLitePredictor
 import io.github.lee0701.converter.settings.SettingsActivity
 import io.github.lee0701.converter.userdictionary.UserDictionaryDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -53,7 +59,6 @@ import kotlin.math.max
 import kotlin.math.min
 
 class ConverterAccessibilityService: AccessibilityService() {
-
     private val handler = Handler(Looper.getMainLooper())
     private val scope = CoroutineScope(Dispatchers.IO)
     private var job: Job? = null
@@ -64,6 +69,8 @@ class ConverterAccessibilityService: AccessibilityService() {
     private lateinit var candidatesWindow: CandidatesWindow
     private lateinit var inputAssistantWindow: InputAssistantWindow
     private lateinit var inputAssistantLauncherWindow: InputAssistantLauncherWindow
+
+    private var conversionRequestBroadcastReceiver: ConversionRequestBroadcastReceiver? = null
 
     // Accessibility Node where text from input assistant is pasted to
     private var source: AccessibilityNodeInfo? = null
@@ -77,6 +84,15 @@ class ConverterAccessibilityService: AccessibilityService() {
 
     private val rect = Rect()
     private var ignoreText: CharSequence? = null
+    private var broadcastReceived = false
+
+    private val conversionResultListener: ConversionRequestBroadcastReceiver.Listener =
+        object: ConversionRequestBroadcastReceiver.Listener {
+            override fun onText(text: String) {
+                broadcastReceived = true
+                this@ConverterAccessibilityService.externalConvert(text)
+            }
+        }
 
     override fun onCreate() {
         super.onCreate()
@@ -86,12 +102,16 @@ class ConverterAccessibilityService: AccessibilityService() {
                 PreferenceManager.setDefaultValues(this, it, true)
             }
         }
+
+        registerExternalConversionReceiver()
+
         restartService()
         INSTANCE = this
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        unregisterExternalConversionReceiver()
         INSTANCE = null
     }
 
@@ -202,6 +222,12 @@ class ConverterAccessibilityService: AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if(event == null) return
         val source = event.source
+
+        // Being used as external conversion engine
+        if(broadcastReceived) {
+            candidatesWindow.destroy()
+            return
+        }
 
         when(event.eventType) {
             AccessibilityEvent.TYPE_VIEW_CLICKED -> {
@@ -348,6 +374,27 @@ class ConverterAccessibilityService: AccessibilityService() {
         }
     }
 
+    private fun externalConvert(text: String, delay: Long = 0) {
+        val composingText = ComposingText(text, 0, text.length)
+        job?.cancel()
+        job = scope.launch {
+            if(delay > 0) delay(delay)
+            if(!isActive) return@launch
+            val predictor = predictor
+            val converted = converter.convertPrefix(composingText).flatten()
+            val predicted = predictor?.predict(composingText)?.top(10) ?: listOf()
+            val candidates = getExtraCandidates(composingText.composing) +
+                    (if(converted.isNotEmpty()) predicted.take(1) else predicted) +
+                    converted
+            withContext(Dispatchers.Main) {
+                ConversionResultBroadcaster.broadcast(
+                    this@ConverterAccessibilityService,
+                    candidates.map { (hangul, hanja, extra) -> listOf(hangul, hanja, extra) }
+                )
+            }
+        }
+    }
+
     private fun showInputAssistantLauncherWindow(source: AccessibilityNodeInfo) {
         if(inputAssistantLauncherWindow.shown) return
         val rect = Rect().apply { source.getBoundsInScreen(this) }
@@ -420,9 +467,9 @@ class ConverterAccessibilityService: AccessibilityService() {
     private fun getExtraCandidates(hangul: CharSequence): List<Candidate> {
         if(hangul.isEmpty()) return emptyList()
         val list = mutableListOf<CharSequence>()
-        val nonHangulIndex = hangul.indexOfFirst { c -> !io.github.lee0701.converter.library.CharacterSet.isHangul(c) }
+        val nonHangulIndex = hangul.indexOfFirst { c -> !CharacterSet.isHangul(c) }
         list += if(nonHangulIndex > 0) hangul.slice(0 until nonHangulIndex) else hangul
-        if(io.github.lee0701.converter.library.CharacterSet.isHangul(hangul[0])) list.add(0, hangul[0].toString())
+        if(CharacterSet.isHangul(hangul[0])) list.add(0, hangul[0].toString())
         return list.map {
             Candidate(
                 it.toString(),
@@ -438,6 +485,28 @@ class ConverterAccessibilityService: AccessibilityService() {
             if(a[i] != b[i]) return i
         }
         return len
+    }
+
+    private fun registerExternalConversionReceiver() {
+        unregisterExternalConversionReceiver()
+        val receiver = ConversionRequestBroadcastReceiver(conversionResultListener)
+        conversionRequestBroadcastReceiver = receiver
+        ContextCompat.registerReceiver(
+            this,
+            receiver,
+            IntentFilter(Constants.ACTION_CONVERT_TEXT),
+            Constants.PERMISSION_CONVERT_TEXT,
+            handler,
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                ContextCompat.RECEIVER_EXPORTED
+            else ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
+
+    private fun unregisterExternalConversionReceiver() {
+        val receiver = conversionRequestBroadcastReceiver ?: return
+        unregisterReceiver(receiver)
+        conversionRequestBroadcastReceiver = null
     }
 
     companion object {

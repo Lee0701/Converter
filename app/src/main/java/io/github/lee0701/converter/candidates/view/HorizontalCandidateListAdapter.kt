@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.github.lee0701.converter.databinding.CandidateItemHorizontalBinding
-import io.github.lee0701.converter.library.engine.Candidate
+import io.github.lee0701.converter.engine.Candidate
 
 class HorizontalCandidateListAdapter(
     private val showExtra: Boolean,

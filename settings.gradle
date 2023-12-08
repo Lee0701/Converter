@@ -10,8 +10,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        mavenLocal()
     }
 }
-include ':app'
 rootProject.name = "Converter"
-include ':library'
+include ':app'

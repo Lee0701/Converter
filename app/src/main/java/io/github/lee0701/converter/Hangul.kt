@@ -1,7 +1,5 @@
 package io.github.lee0701.converter
 
-import java.text.Normalizer
-
 object Hangul {
 
     fun combineJamo(a: Char, b: Char): String {

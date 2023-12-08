@@ -2,10 +2,6 @@ package io.github.lee0701.converter.engine
 
 import io.github.lee0701.converter.history.HistoryDatabase
 import io.github.lee0701.converter.history.Word
-import io.github.lee0701.converter.library.engine.Candidate
-import io.github.lee0701.converter.library.engine.ComposingText
-import io.github.lee0701.converter.library.engine.LearningHanjaConverter
-import io.github.lee0701.converter.library.engine.PredictingHanjaConverter
 
 class HistoryHanjaConverter(
     private val database: HistoryDatabase,
