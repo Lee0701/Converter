@@ -79,7 +79,6 @@ android {
 }
 
 dependencies {
-    implementation 'ee.oyatl.ime.f.fusion:hyper:1'
 
     def room_version = '2.6.1'
     def lifecycle_version = '2.6.2'
