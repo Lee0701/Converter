@@ -1,0 +1,5 @@
+keys:
+- !<include>
+  name: "keyboard/row_qwerty_alpha_2_left.yaml"
+- !<include>
+  name: "keyboard/row_qwerty_alpha_2_right.yaml"

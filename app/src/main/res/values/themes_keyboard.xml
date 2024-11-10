@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Converter.Keyboard" parent="AppTheme">
+        <item name="background">@color/keyboard_bg_light</item>
+    </style>
+
+    <style name="Theme.Converter.Keyboard.Key">
+        <item name="android:textSize">@dimen/key_text_size</item>
+        <item name="android:textColor">@color/key_fg_light</item>
+        <item name="marginHorizontal">@dimen/key_margin_horizontal</item>
+        <item name="marginVertical">@dimen/key_margin_vertical</item>
+        <item name="background">@drawable/key_bg</item>
+        <item name="backgroundTint">@color/key_bg_static_light</item>
+        <item name="iconTint">@color/key_fg_light</item>
+    </style>
+
+    <style name="Theme.Converter.Keyboard.Key.Mod" parent="Theme.Converter.Keyboard.Key">
+        <item name="backgroundTint">@color/key_bg_static_light_mod</item>
+    </style>
+
+    <style name="Theme.Converter.Keyboard.Key.Return" parent="Theme.Converter.Keyboard.Key">
+        <item name="backgroundTint">@color/key_bg_static_light_return</item>
+        <item name="iconTint">@color/key_fg_light_return</item>
+    </style>
+
+    <style name="Theme.Converter.Keyboard.KeyPopup">
+        <item name="android:textSize">@dimen/key_popup_text_size</item>
+        <item name="android:textColor">@color/key_fg_light</item>
+        <item name="background">@drawable/key_popup_bg</item>
+        <item name="backgroundTint">@color/key_bg_static_light</item>
+        <item name="iconTint">@color/key_fg_light</item>
+    </style>
+</resources>

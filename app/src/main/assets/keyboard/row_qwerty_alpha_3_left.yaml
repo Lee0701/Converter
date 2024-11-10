@@ -1,0 +1,16 @@
+keys:
+- !<key>
+  code: "KEYCODE_Z"
+  output: "Z"
+- !<key>
+  code: "KEYCODE_X"
+  output: "X"
+- !<key>
+  code: "KEYCODE_C"
+  output: "C"
+- !<key>
+  code: "KEYCODE_V"
+  output: "V"
+- !<key>
+  code: "KEYCODE_B"
+  output: "B"

@@ -1,0 +1,28 @@
+rows:
+- keys:
+  - !<include>
+    name: "keyboard/row_qwerty_alpha_1.yaml"
+- keys:
+  - !<spacer>
+    width: 0.5
+  - !<include>
+    name: "keyboard/row_qwerty_alpha_2.yaml"
+  - !<spacer>
+    width: 0.5
+- keys:
+  - !<key>
+    code: "KEYCODE_SHIFT_LEFT"
+    iconType: "Shift"
+    width: 1.5
+    type: "Modifier"
+  - !<include>
+    name: "keyboard/row_qwerty_alpha_3.yaml"
+  - !<key>
+    code: "KEYCODE_DEL"
+    iconType: "Backspace"
+    width: 1.5
+    repeatable: true
+    type: "Modifier"
+- keys:
+  - !<include>
+    name: "keyboard/row_mobile_bottom.yaml"

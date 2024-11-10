@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="resource" format="reference" />
+
+    <attr name="background" format="reference" />
+    <attr name="backgroundTint" format="color" />
+    <attr name="marginHorizontal" format="dimension" />
+    <attr name="marginVertical" format="dimension" />
+
+    <declare-styleable name="Keyboard">
+        <attr name="background" />
+        <attr name="backgroundTint" />
+    </declare-styleable>
+
+    <declare-styleable name="Keyboard.Key">
+        <attr name="marginHorizontal" />
+        <attr name="marginVertical" />
+        <attr name="background" />
+        <attr name="backgroundTint" />
+        <attr name="iconTint" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="Keyboard.KeyPopup">
+        <attr name="background" />
+        <attr name="backgroundTint" />
+    </declare-styleable>
+
+    <declare-styleable name="Tab">
+        <attr name="background" />
+        <attr name="backgroundTint" />
+        <attr name="tabHeight" format="dimension" />
+        <attr name="tabBarMargin" format="dimension" />
+        <attr name="tabMargin" format="dimension" />
+        <attr name="tabPaddingVertical" format="dimension" />
+        <attr name="tabPaddingHorizontal" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="Preference">
+        <attr name="android:textSize" format="dimension" />
+        <attr name="android:textColor" format="color" />
+        <attr name="titleTextAppearance" format="reference" />
+        <attr name="summaryTextAppearance" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="SliderPreference">
+        <attr name="valueFrom" format="float" />
+        <attr name="stepSize" format="float" />
+        <attr name="valueTo" format="float" />
+    </declare-styleable>
+
+    <declare-styleable name="EnterKeyboardSettingsPreference">
+        <attr name="fileName" format="string" />
+        <attr name="template" format="string" />
+        <attr name="hardware" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="TouchInterceptingFrameLayout">
+        <attr name="intercept" format="boolean" />
+    </declare-styleable>
+</resources>

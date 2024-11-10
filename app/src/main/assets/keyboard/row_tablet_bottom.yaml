@@ -1,0 +1,20 @@
+keys:
+- !<key>
+  code: "KEYCODE_SYM"
+  iconType: "Option"
+  width: 1.5
+  type: "Modifier"
+- !<key>
+  code: "KEYCODE_LANGUAGE_SWITCH"
+  iconType: "Language"
+  type: "ModifierAlt"
+- !<key>
+  code: "KEYCODE_SPACE"
+  label: ""
+  width: 7.0
+  type: "Space"
+- !<key>
+  code: "KEYCODE_SYM"
+  iconType: "Option"
+  width: 1.5
+  type: "Modifier"

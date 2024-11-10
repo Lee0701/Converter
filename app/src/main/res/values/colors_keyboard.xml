@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="gray_100">#FFEEEEEE</color>
+    <color name="gray_200">#FFCCCCCC</color>
+    <color name="gray_300">#FFAAAAAA</color>
+    <color name="gray_500">#FF888888</color>
+    <color name="gray_700">#FF666666</color>
+    <color name="gray_900">#FF444444</color>
+
+    <color name="keyboard_bg_light">#f0f0f3</color>
+    <color name="key_bg_light_unpressed">#ffffff</color>
+    <color name="key_bg_light_pressed">#f0f0f3</color>
+    <color name="key_bg_light_mod_unpressed">#d1e5f4</color>
+    <color name="key_bg_light_mod_pressed">#b5cad7</color>
+    <color name="key_bg_light_return_unpressed">#76d1ff</color>
+    <color name="key_bg_light_return_pressed">#00668b</color>
+    <color name="key_fg_light">#191c1e</color>
+    <color name="key_fg_light_return">#191c1e</color>
+
+    <color name="keyboard_bg_dark">#191c1e</color>
+    <color name="key_bg_dark_unpressed">#2e3133</color>
+    <color name="key_bg_dark_pressed">#191c1e</color>
+    <color name="key_bg_dark_mod_unpressed">#454749</color>
+    <color name="key_bg_dark_mod_pressed">#9aaebb</color>
+    <color name="key_bg_dark_return_unpressed">#c1e8ff</color>
+    <color name="key_bg_dark_return_pressed">#4bb6e8</color>
+    <color name="key_fg_dark">#f0f0f3</color>
+    <color name="key_fg_dark_return">#191c1e</color>
+
+    <color name="icon_tint">@color/white</color>
+    <color name="transparent_background_tint">#88000000</color>
+</resources>

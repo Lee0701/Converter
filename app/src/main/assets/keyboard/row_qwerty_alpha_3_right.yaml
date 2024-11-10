@@ -1,0 +1,7 @@
+keys:
+- !<key>
+  code: "KEYCODE_N"
+  output: "N"
+- !<key>
+  code: "KEYCODE_M"
+  output: "M"
