@@ -355,21 +355,6 @@ class ConverterAccessibilityService: AccessibilityService() {
         }
     }
 
-    private fun externalConvert(text: String, delay: Long = 0) {
-        val composingText = ComposingText(text, 0, text.length)
-        job?.cancel()
-        job = scope.launch {
-            if(delay > 0) delay(delay)
-            if(!isActive) return@launch
-            val predictor = predictor
-            val converted = converter.convertPrefix(composingText).flatten()
-            val predicted = predictor?.predict(composingText)?.top(10) ?: listOf()
-            val candidates = getExtraCandidates(composingText.composing) +
-                    (if(converted.isNotEmpty()) predicted.take(1) else predicted) +
-                    converted
-        }
-    }
-
     private fun showInputAssistantLauncherWindow(source: AccessibilityNodeInfo) {
         if(inputAssistantLauncherWindow.shown) return
         val rect = Rect().apply { source.getBoundsInScreen(this) }
