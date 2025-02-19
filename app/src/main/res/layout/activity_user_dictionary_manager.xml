@@ -38,7 +38,6 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
-            app:title="@string/title_activity_user_dictionary_manager"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFF</color>
+    <color name="searched_by_translation">#2274A5</color>
+    <color name="searched_by_composition">#406343</color>
+</resources>

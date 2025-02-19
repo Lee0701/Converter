@@ -9,6 +9,7 @@ class DictionaryLicenseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityDictionaryLicenseBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
 
         val bytes = assets.open("dict/base.bin").readBytes()
         val endIndex = bytes.indexOf(0)

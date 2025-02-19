@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.preference.PreferenceManager
 import androidx.room.Room
+import com.google.android.material.color.DynamicColors
 import io.github.lee0701.converter.assistant.HorizontalInputAssistantLauncherWindow
 import io.github.lee0701.converter.assistant.InputAssistantLauncherWindow
 import io.github.lee0701.converter.assistant.InputAssistantWindow
@@ -195,7 +196,7 @@ class ConverterAccessibilityService: AccessibilityService() {
             else -> VerticalCandidatesWindow(this@ConverterAccessibilityService)
         }
 
-        inputAssistantWindow = InputAssistantWindow(this)
+        inputAssistantWindow = InputAssistantWindow(DynamicColors.wrapContextIfAvailable(this))
         inputAssistantLauncherWindow = when(preferences.getString("window_type", "horizontal")) {
             "horizontal" -> HorizontalInputAssistantLauncherWindow(this)
             else -> VerticalInputAssistantLauncherWindow(this)

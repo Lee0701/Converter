@@ -4,13 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.preference.PreferenceManager
 import io.github.lee0701.converter.databinding.ActivityInformationBinding
 
 class InformationActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityInformationBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,7 +16,6 @@ class InformationActivity : AppCompatActivity() {
 
         binding = ActivityInformationBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setSupportActionBar(binding.toolbar)
 
         binding.content.buttonAgree.setOnClickListener {
