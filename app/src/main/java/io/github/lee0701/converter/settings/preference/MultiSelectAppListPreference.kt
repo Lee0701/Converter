@@ -12,7 +12,7 @@ class MultiSelectAppListPreference(
     init {
         val packages = context.packageManager?.getInstalledPackages(0)
         if(packages != null) {
-            val list = packages.map { it.applicationInfo?.loadLabel(context.packageManager) to it.packageName }.sortedBy { it.first.toString() }
+            val list = packages.map { it.applicationInfo?.loadLabel(context.packageManager) to it.packageName }.sortedBy { it.first.toString()    }
             entries = list.map { it.first }.toTypedArray()
             entryValues = list.map { it.second }.toTypedArray()
         }
